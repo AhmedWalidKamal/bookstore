@@ -1,1 +1,1 @@
-# bookstore-database
+# bookstore
