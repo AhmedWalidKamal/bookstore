@@ -1,6 +1,7 @@
 
 # Output directory
 bin/
+out/
 
 # Intellij Configuration
 .idea/
@@ -19,7 +20,6 @@ bin/
 .mtj.tmp/
 
 # Package Files #
-*.jar
 *.war
 *.ear
 *.zip
