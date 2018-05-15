@@ -2,6 +2,7 @@
 # Output directory
 bin/
 out/
+build/
 
 # Intellij Configuration
 .idea/
