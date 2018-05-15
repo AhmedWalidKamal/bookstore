@@ -9,17 +9,17 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="539.0" prefWidth="1076.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.SignUp">
+<AnchorPane prefHeight="539.0" prefWidth="1076.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <JFXButton id="signUpButton" layoutX="127.0" layoutY="347.0" prefHeight="36.0" prefWidth="92.0" style="-fx-background-color: #01466f;" text="Sign Up" textFill="WHITE" />
       <ImageView fitHeight="25.0" fitWidth="25.0" layoutX="85.0" layoutY="256.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../../../../Downloads/padlock.png" />
+            <Image url="@resources/padlock.png" />
          </image>
       </ImageView>
       <ImageView fitHeight="25.0" fitWidth="25.0" layoutX="85.0" layoutY="206.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../../../../Downloads/user.png" />
+            <Image url="@resources/user.png" />
          </image>
       </ImageView>
       <JFXTextField layoutX="123.0" layoutY="200.0" prefHeight="36.0" prefWidth="340.0" promptText="User Name" />
@@ -29,7 +29,7 @@
       <JFXTextField layoutX="123.0" layoutY="150.0" prefHeight="36.0" prefWidth="340.0" promptText="Email Address" />
       <ImageView fitHeight="25.0" fitWidth="25.0" layoutX="85.0" layoutY="156.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../../../../Downloads/letter.png" />
+            <Image url="@resources/letter.png" />
          </image>
       </ImageView>
       <ImageView fitHeight="539.0" fitWidth="621.0" layoutX="537.0" pickOnBounds="true" preserveRatio="true">
