@@ -19,7 +19,7 @@
             <Font name="System Bold" size="24.0" />
          </font>
       </Label>
-      <JFXButton id="signUpButton" fx:id="signUpButton" buttonType="RAISED" layoutX="866.0" layoutY="64.0" prefHeight="36.0" prefWidth="92.0" ripplerFill="#2929290d" style="-fx-background-color: #01466f;" text="Sign Up" textFill="WHITE" />
+      <JFXButton id="signUpButton" fx:id="signUpButton" buttonType="RAISED" layoutX="866.0" layoutY="64.0" onAction="#handleSignUpButtonAction" prefHeight="36.0" prefWidth="92.0" ripplerFill="#2929290d" style="-fx-background-color: #01466f;" text="Sign Up" textFill="WHITE" />
       <Label layoutX="683.0" layoutY="70.0" prefHeight="25.0" prefWidth="101.0" text="Not a member?" textFill="#a0a2ab" />
       <JFXTextField layoutX="655.0" layoutY="323.0" prefHeight="36.0" prefWidth="340.0" promptText="Password" />
       <JFXTextField layoutX="655.0" layoutY="270.0" prefHeight="36.0" prefWidth="340.0" promptText="User Name" />
@@ -34,7 +34,7 @@
          </image>
       </ImageView>
       <JFXCheckBox layoutX="662.0" layoutY="430.0" text="Remember Me" />
-      <JFXButton id="signInButton" buttonType="RAISED" layoutX="854.0" layoutY="421.0" prefHeight="36.0" prefWidth="92.0" ripplerFill="BLACK" style="-fx-background-color: #01466f;" text="Sign In" textFill="WHITE" />
+      <JFXButton id="signInButton" fx:id="signInButton" buttonType="RAISED" layoutX="854.0" layoutY="421.0" onAction="#handleSignInButtonAction" prefHeight="36.0" prefWidth="92.0" ripplerFill="BLACK" style="-fx-background-color: #01466f;" text="Sign In" textFill="WHITE" />
       <JFXButton ellipsisString="" layoutX="745.0" layoutY="490.0" prefHeight="25.0" prefWidth="135.0" text="Forgot Password?" underline="true" />
       <ImageView fitHeight="539.0" fitWidth="546.0" pickOnBounds="true" preserveRatio="true">
          <image>
