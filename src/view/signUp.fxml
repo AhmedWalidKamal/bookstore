@@ -9,7 +9,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="539.0" prefWidth="1076.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="539.0" prefWidth="1076.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.SignUp">
    <children>
       <JFXButton id="signUpButton" layoutX="127.0" layoutY="347.0" prefHeight="36.0" prefWidth="92.0" style="-fx-background-color: #01466f;" text="Sign Up" textFill="WHITE" />
       <ImageView fitHeight="25.0" fitWidth="25.0" layoutX="85.0" layoutY="256.0" pickOnBounds="true" preserveRatio="true">
