@@ -1,0 +1,25 @@
+group 'com.csed.db'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Bookstore',
+                'Implementation-Version': version,
+                'Main-Class': 'app.Main'
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.jfoenix:jfoenix:8.0.3' // Java 8
+    compile 'com.gluonhq:charm-down-desktop:2.0.1'
+    testCompile 'junit:junit:4.12'
+}
