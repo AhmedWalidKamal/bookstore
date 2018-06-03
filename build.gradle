@@ -42,6 +42,7 @@ dependencies {
     //compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.jfoenix:jfoenix:8.0.3' // Java 8
     compile 'com.gluonhq:charm-down-desktop:2.0.1'
-    compile group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '2.2.5'
+    compile group: 'mysql', name: 'mysql-connector-java', version: '6.0.6'
+    //compile group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '2.2.5'
     testCompile 'junit:junit:4.12'
 }
