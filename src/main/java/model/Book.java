@@ -5,6 +5,15 @@ import java.util.Objects;
 
 public class Book {
 
+    public static final String ISBN_COLNAME = "ISBN";
+    public static final String PUBLISHER_NAME_COLNAME = "PUBLISHER_NAME";
+    public static final String BOOK_TITLE_COLNAME = "BOOK_TITLE";
+    public static final String BOOKS_IN_STOCK_COLNAME = "BOOKS_IN_STOCK";
+    public static final String MIN_THRESHOLD_COLNAME = "MIN_THRESHOLD";
+    public static final String PUBLICATION_YEAR_COLNAME = "PUBLICATION_YEAR";
+    public static final String PRICE_COLNAME = "PRICE";
+    public static final String CATEGORY_COLNAME = "CATEGORY";
+
     private String ISBN;
     private String publisherName;
     private String bookTitle;
@@ -15,7 +24,7 @@ public class Book {
     private String category;
 
     public Book() {
-        
+
     }
 
     public String getISBN() {

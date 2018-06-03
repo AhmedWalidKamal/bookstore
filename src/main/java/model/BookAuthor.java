@@ -3,6 +3,10 @@ package model;
 import java.util.Objects;
 
 public class BookAuthor {
+
+    public static final String ISBN_COLNAME = "ISBN";
+    public static final String AUTHOR_NAME_COLNAME = "AUTHOR_NAME";
+
     private String ISBN;
     private String authorName;
 

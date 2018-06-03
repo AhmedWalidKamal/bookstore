@@ -3,6 +3,11 @@ package model;
 import java.util.Objects;
 
 public class Publisher {
+
+    public static final String PUBLISHER_NAME_COLNAME = "PUBLISHER_NAME";
+    public static final String ADDRESS_COLNAME = "ADDRESS";
+    public static final String TELEPHONE_NUMBER_COLNAME = "TELEPHONE_NUMBER";
+
     private String publisherName;
     private String address;
     private String telephoneNumber;

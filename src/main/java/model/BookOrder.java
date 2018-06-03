@@ -3,6 +3,12 @@ package model;
 import java.util.Objects;
 
 public class BookOrder {
+
+    public static final String ISBN_COLNAME = "ISBN";
+    public static final String QUANTITY_COLNAME = "QUANTITY";
+    public static final String PUBLISHER_NAME_COLNAME = "PUBLISHER_NAME";
+    public static final String ORDER_NO_COLNAME = "ORDER_NO";
+
     private int orderNo;
     private String publisherName;
     private String ISBN;
