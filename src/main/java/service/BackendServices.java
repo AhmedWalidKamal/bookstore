@@ -1,20 +1,25 @@
 package service;
 
 import model.Book;
+import model.BookOrder;
 import model.BookstoreUser;
 
 import java.sql.*;
+import java.text.SimpleDateFormat;
+import java.time.Year;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.ResourceBundle;
 
-public class LoginSystem {
+public class BackendServices {
     private Connection DBConnection;
     private ResourceBundle resourceBundle;
     /**
-     * Constructs a new LoginSystem
+     * Constructs a new BackendServices
      * @throws SQLException If the connection to the database failed.
      */
-    public LoginSystem() throws SQLException {
+    public BackendServices() throws SQLException {
         resourceBundle = ResourceBundle.getBundle("services.dbuser");
         String user = resourceBundle.getString("user");
         String password = resourceBundle.getString("password");
@@ -103,11 +108,11 @@ public class LoginSystem {
         curBook.setISBN(rs.getString(Book.ISBN_COLNAME));
         curBook.setPublisherName(rs.getString(Book.PUBLISHER_NAME_COLNAME));
         curBook.setBooksInStock(rs.getInt(Book.BOOKS_IN_STOCK_COLNAME));
+        curBook.setMinThreshold(rs.getInt(Book.MIN_THRESHOLD_COLNAME));
         curBook.setBookTitle(rs.getString(Book.BOOK_TITLE_COLNAME));
         curBook.setCategory(rs.getString(Book.CATEGORY_COLNAME));
         curBook.setPrice(rs.getDouble(Book.PRICE_COLNAME));
-        // TODO: Set Publication Year.
-//            curBook.setPublicationYear(rs.get);
+        curBook.setPublicationYear(rs.getDate(Book.PUBLICATION_YEAR_COLNAME));
         return curBook;
     }
 
@@ -167,6 +172,87 @@ public class LoginSystem {
         return result;
     }
 
+    public boolean addBook(String ISBN, String publisherName, String bookTitle,
+                           int booksInStock, int minThreshold, Date publicationYear,
+                           double price, String category) throws SQLException {
+
+        if (ISBN == null || publisherName == null || bookTitle == null
+                || booksInStock < 0 || minThreshold < 0 || publicationYear == null
+                || price <= 0 || category == null) {
+            return false;
+        }
+        String sqlQuery = "INSERT INTO BOOK (" +
+                Book.ISBN_COLNAME +  ", " +
+                Book.PUBLISHER_NAME_COLNAME + ", " +
+                Book.BOOK_TITLE_COLNAME + ", " +
+                Book.BOOKS_IN_STOCK_COLNAME + ", " +
+                Book.MIN_THRESHOLD_COLNAME + ", " +
+                Book.PUBLICATION_YEAR_COLNAME + ", " +
+                Book.PRICE_COLNAME + ", " +
+                Book.CATEGORY_COLNAME + ") VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+
+        PreparedStatement preparedStatement = DBConnection.prepareStatement(sqlQuery);
+        preparedStatement.setString(1, ISBN);
+        preparedStatement.setString(2, publisherName);
+        preparedStatement.setString(3, bookTitle);
+        preparedStatement.setInt(4, booksInStock);
+        preparedStatement.setInt(5, minThreshold);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
+        String yearStr = sdf.format(publicationYear);
+        preparedStatement.setString(6, yearStr);
+        preparedStatement.setDouble(7, price);
+        preparedStatement.setString(8, category);
+
+        int updateCount = preparedStatement.executeUpdate();
+
+        return updateCount > 0;
+    }
+
+    public boolean addBook(String ISBN, String publisherName, String bookTitle,
+                           int minThreshold, Date publicationYear,
+                           double price, String category) throws SQLException {
+        return addBook(ISBN, publisherName, bookTitle, 0, minThreshold,
+                publicationYear, price, category);
+    }
+
+    public boolean modifyBook(String ISBN, String colName, String newValue) throws SQLException {
+        String sqlQuery = "UPDATE BOOK SET " + colName +
+                " = ? WHERE " + Book.ISBN_COLNAME + " = ?";
+        PreparedStatement preparedStatement = DBConnection.prepareStatement(sqlQuery);
+        preparedStatement.setString(1, newValue);
+        preparedStatement.setString(2, ISBN);
+
+        int updateCount = preparedStatement.executeUpdate();
+
+        return updateCount > 0;
+    }
+
+    public boolean modifyBook(String ISBN, String colName, Date newYear) throws SQLException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
+        String yearStr = sdf.format(newYear);
+
+        return modifyBook(ISBN, colName, yearStr);
+    }
+
+    public boolean modifyBook(String ISBN, String colName, int newValue) throws SQLException {
+        return modifyBook(ISBN, colName, Integer.toString(newValue));
+    }
+
+    public boolean modifyBook(String ISBN, String colName, double newValue) throws SQLException {
+        return modifyBook(ISBN, colName, Double.toString(newValue));
+    }
+
+    public boolean deleteBook(String ISBN) throws SQLException {
+        String sqlQuery = "DELETE FROM BOOK WHERE " + Book.ISBN_COLNAME + " = ?";
+        PreparedStatement preparedStatement = DBConnection.prepareStatement(sqlQuery);
+        preparedStatement.setString(1, ISBN);
+
+        int updateCount = preparedStatement.executeUpdate();
+
+        return updateCount > 0;
+    }
+
     public int getNumberOfBooks() throws SQLException {
         Statement statement = DBConnection.createStatement();
         ResultSet rs = statement.executeQuery("SELECT COUNT(*) FROM BOOK");
@@ -183,11 +269,15 @@ public class LoginSystem {
                 " = ? WHERE " + BookstoreUser.USER_NAME_COLNAME + " = ?";
         PreparedStatement preparedStatement = DBConnection.prepareStatement(sqlQuery);
         preparedStatement.setString(1, value);
-        preparedStatement.setString(1, userName);
+        preparedStatement.setString(2, userName);
 
         int updateCount = preparedStatement.executeUpdate();
 
         return updateCount > 0;
+    }
+
+    public boolean promote(String userName, String newRole) throws SQLException {
+        return updateUser(userName, BookstoreUser.USER_GROUP_COLNAME, newRole);
     }
 
     public boolean updatePassword(String userName, String oldPassword, String newPassword) throws SQLException {
@@ -221,9 +311,44 @@ public class LoginSystem {
 
     }
 
+    public int orderBook(String ISBN, String publisherName, int quantity) throws SQLException {
+
+        if (ISBN == null || publisherName == null || quantity <= 0) {
+            return -1;
+        }
+        String sqlQuery = "INSERT INTO BOOK_ORDERS (" +
+                BookOrder.ISBN_COLNAME +  ", " +
+                BookOrder.PUBLISHER_NAME_COLNAME + ", " +
+                BookOrder.QUANTITY_COLNAME + ") VALUES(?, ?, ?)";
+
+        PreparedStatement preparedStatement = DBConnection.prepareStatement(sqlQuery,
+                                                Statement.RETURN_GENERATED_KEYS);
+        preparedStatement.setString(1, ISBN);
+        preparedStatement.setString(2, publisherName);
+        preparedStatement.setInt(3, quantity);
+
+        int updateCount = preparedStatement.executeUpdate();
+
+        ResultSet rs = preparedStatement.getGeneratedKeys();
+        rs.next();
+        return rs.getInt(1);
+    }
+
+    public boolean confirmOrder(int orderNo) throws SQLException {
+        String sqlQuery = "DELETE FROM BOOK_ORDERS WHERE " +
+                BookOrder.ORDER_NO_COLNAME +  " = ?";
+
+        PreparedStatement preparedStatement = DBConnection.prepareStatement(sqlQuery);
+        preparedStatement.setInt(1, orderNo);
+
+        int updateCount = preparedStatement.executeUpdate();
+
+        return updateCount > 0;
+    }
+
     public static void main(String[] args) {
         try {
-            LoginSystem sys = new LoginSystem();
+            BackendServices sys = new BackendServices();
 //            sys.register("Barry", "barry@bmail.bom", "bassword", "manager");
 //            sys.register("b4", "b2@a.c", "pw", "customer");
             String usergroup = sys.login("Barry", "bassword").getUserGroup();
@@ -231,12 +356,13 @@ public class LoginSystem {
             usergroup = sys.login("b4", "pw").getUserGroup();
             System.out.println(usergroup);
             for (Book book : sys.getBooks(1, 3)) {
-                System.out.println(book.getBookTitle() + "\t" + book.getISBN() + "\t" + book.getCategory() + "\t" + book.getPublisherName());
+                System.out.println(book.getBookTitle() + "\t" + book.getISBN() + "\t" + book.getCategory() + "\t" + book.getPublisherName() + "\t" + book.getBooksInStock());
             }
             System.out.println("" + sys.getNumberOfBooks() + " " + sys.getNumberOfPages(3));
 //            System.out.println(sys.buyBook("1234567890127", 50));
+            System.out.println(sys.confirmOrder(sys.orderBook("1234567890127", "Ahmed Walid", 5000)));
             for (Book book : sys.findBooks(1, 5, Book.PUBLISHER_NAME_COLNAME, "Ahmed Walid")) {
-                System.out.println(book.getBookTitle() + "\t" + book.getISBN() + "\t" + book.getCategory() + "\t" + book.getPublisherName());
+                System.out.println(book.getBookTitle() + "\t" + book.getISBN() + "\t" + book.getCategory() + "\t" + book.getPublisherName() + "\t" + book.getBooksInStock());
             }
         } catch (SQLException e) {
             e.printStackTrace();

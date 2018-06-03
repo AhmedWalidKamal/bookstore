@@ -1,6 +1,7 @@
 package model;
 
 import java.time.Year;
+import java.util.Date;
 import java.util.Objects;
 
 public class Book {
@@ -19,7 +20,7 @@ public class Book {
     private String bookTitle;
     private int booksInStock;
     private int minThreshold;
-    private Year publicationYear;
+    private Date publicationYear;
     private double price;
     private String category;
 
@@ -67,11 +68,11 @@ public class Book {
         this.minThreshold = minThreshold;
     }
 
-    public Year getPublicationYear() {
+    public Date getPublicationYear() {
         return publicationYear;
     }
 
-    public void setPublicationYear(Year publicationYear) {
+    public void setPublicationYear(Date publicationYear) {
         this.publicationYear = publicationYear;
     }
 
