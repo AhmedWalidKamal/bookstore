@@ -265,7 +265,7 @@ public class BackendServices {
     }
 
     public boolean updateUser(String userName, String colName, String value) throws SQLException {
-        String sqlQuery = "UPDATE USER SET " + colName +
+        String sqlQuery = "UPDATE BOOKSTORE_USER SET " + colName +
                 " = ? WHERE " + BookstoreUser.USER_NAME_COLNAME + " = ?";
         PreparedStatement preparedStatement = DBConnection.prepareStatement(sqlQuery);
         preparedStatement.setString(1, value);
@@ -353,6 +353,8 @@ public class BackendServices {
 //            sys.register("b4", "b2@a.c", "pw", "customer");
             String usergroup = sys.login("Barry", "bassword").getUserGroup();
             System.out.println(usergroup);
+            
+
             usergroup = sys.login("b4", "pw").getUserGroup();
             System.out.println(usergroup);
             for (Book book : sys.getBooks(1, 3)) {
