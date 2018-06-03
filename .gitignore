@@ -7,10 +7,6 @@ build/
 .idea/
 *.iml
 
-# Gradle Files
-.gradle
-**/build/
-
 # Compiled class file
 *.class
 
@@ -38,3 +34,16 @@ hs_err_pid*
 
 # config file
 src/main/resources/services/dbuser.properties
+
+# Gradle
+.gradle
+**/build/
+
+# Ignore Gradle GUI config
+gradle-app.setting
+
+# Cache of project
+.gradletasknamecache
+
+# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
+!gradle-wrapper.jar
