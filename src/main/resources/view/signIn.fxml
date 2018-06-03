@@ -25,12 +25,12 @@
       <JFXTextField layoutX="655.0" layoutY="270.0" prefHeight="36.0" prefWidth="340.0" promptText="User Name" />
       <ImageView fitHeight="25.0" fitWidth="25.0" layoutX="612.0" layoutY="276.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@resources/user.png" />
+            <Image url="@images/user.png" />
          </image>
       </ImageView>
       <ImageView fitHeight="25.0" fitWidth="25.0" layoutX="612.0" layoutY="329.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@resources/padlock.png" />
+            <Image url="@images/padlock.png" />
          </image>
       </ImageView>
       <JFXCheckBox layoutX="662.0" layoutY="430.0" text="Remember Me" />
@@ -38,7 +38,7 @@
       <JFXButton ellipsisString="" layoutX="745.0" layoutY="490.0" prefHeight="25.0" prefWidth="135.0" text="Forgot Password?" underline="true" />
       <ImageView fitHeight="539.0" fitWidth="546.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@resources/SignIn.jpg" />
+            <Image url="@images/SignIn.jpg" />
          </image>
       </ImageView>
    </children>
