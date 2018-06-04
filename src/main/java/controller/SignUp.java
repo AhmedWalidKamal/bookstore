@@ -9,10 +9,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import service.BackendServices;
-
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -32,15 +32,16 @@ public class SignUp {
     @FXML
     private JFXPasswordField passwordField;
 
+    @FXML
+    private Label registrationErrorLabel;
+
+    private BackendServices sys;
 
     @FXML
     private void handleSignUpButtonAction(ActionEvent event) {
         try {
-
-            BackendServices sys = new BackendServices();
             sys.register(userNameTextField.getText(), emailTextField.getText(),
                     passwordField.getText(), "customer");
-
             // Successfuly registration
             clearInputFields();
             goToSignIn();
@@ -48,9 +49,7 @@ public class SignUp {
 //            e.printStackTrace();
             // Log error instead of printing to console
             clearInputFields();
-            emailTextField.getStyleClass().add("wrong-credentials");
-            userNameTextField.getStyleClass().add("wrong-credentials");
-            passwordField.getStyleClass().add("wrong-credentials");
+            registrationErrorLabel.setVisible(true);
             System.out.println("Registration error!");
         }
     }
@@ -114,8 +113,16 @@ public class SignUp {
             if(!newVal) passwordField.validate();
         });
     }
+
     @FXML
     public void initialize() {
+        try {
+            sys = new BackendServices();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Log error
+            System.out.println("Couldn't establish connection");
+        }
         initEmailTextField();
         initUserNameTextField();
         initPassTextField();
