@@ -6,14 +6,8 @@ import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.validation.RequiredFieldValidator;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import service.BackendServices;
-import java.io.IOException;
 import java.sql.SQLException;
 
 public class SignUp {
@@ -36,11 +30,12 @@ public class SignUp {
     private Label registrationErrorLabel;
 
     private BackendServices sys;
+    private MainController mainController;
 
     @FXML
     private void handleSignUpButtonAction(ActionEvent event) {
         try {
-            sys.register(userNameTextField.getText(), emailTextField.getText(),
+            sys.register(userNameTextField.getText().trim(), emailTextField.getText().trim(),
                     passwordField.getText(), "customer");
             // Successfuly registration
             clearInputFields();
@@ -58,10 +53,6 @@ public class SignUp {
         goToSignIn();
     }
 
-    private void closeStage() {
-        ((Stage) signInButton.getScene().getWindow()).close();
-    }
-
     private void clearInputFields() {
         emailTextField.clear();
         userNameTextField.clear();
@@ -69,19 +60,7 @@ public class SignUp {
     }
 
     private void goToSignIn() {
-        closeStage();
-        loadNewStage();
-    }
-    private void loadNewStage() {
-        try {
-            Parent parent = FXMLLoader.load(getClass().getResource("/view/signIn.fxml"));
-            Stage stage = new Stage(StageStyle.DECORATED);
-            stage.setTitle("Sign In");
-            stage.setScene(new Scene(parent));
-            stage.show();
-        } catch (IOException ex) {
-            // Log Exception
-        }
+        mainController.loadSignInScene();
     }
 
     private void initEmailTextField() {
@@ -116,16 +95,16 @@ public class SignUp {
 
     @FXML
     public void initialize() {
-        try {
-            sys = new BackendServices();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            // Log error
-            System.out.println("Couldn't establish connection");
-        }
         initEmailTextField();
         initUserNameTextField();
         initPassTextField();
     }
 
+    public void setBackEndService(BackendServices sys) {
+        this.sys = sys;
+    }
+
+    public void setMainController(MainController mainController) {
+        this.mainController = mainController;
+    }
 }

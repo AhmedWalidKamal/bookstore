@@ -5,16 +5,13 @@ import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import service.BackendServices;
 
-import java.io.IOException;
 
 public class SignIn {
+
+    private MainController mainController;
+    private BackendServices sys;
 
     @FXML
     private JFXButton signUpButton;
@@ -30,28 +27,18 @@ public class SignIn {
 
     @FXML
     private void handleSignUpButtonAction(ActionEvent event) {
-        closeStage();
-        loadMain();
+        mainController.loadSignUpScene();
     }
 
     @FXML
     private void handleSignInButtonAction(ActionEvent event) {
     }
 
-    private void closeStage() {
-        ((Stage) signUpButton.getScene().getWindow()).close();
+    public void setBackEndService(BackendServices sys) {
+        this.sys = sys;
     }
 
-    private void loadMain() {
-        try {
-            Parent parent = FXMLLoader.load(getClass().getResource("/view/signUp.fxml"));
-            Stage stage = new Stage(StageStyle.DECORATED);
-            stage.setTitle("Register");
-            stage.setScene(new Scene(parent));
-            stage.show();
-        } catch (IOException ex) {
-            // Log Exception
-            ex.printStackTrace();
-        }
+    public void setMainController(MainController mainController) {
+        this.mainController = mainController;
     }
 }
