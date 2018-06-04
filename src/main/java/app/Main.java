@@ -1,5 +1,6 @@
 package app;
 
+import controller.MainController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -12,10 +13,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("/view/signIn.fxml"));
-        primaryStage.setTitle("Library Bookstores!");
-        primaryStage.setScene(new Scene(root, 1000, 1000));
-        primaryStage.show();
+        new MainController(primaryStage);
     }
 
     public static void main(String[] args) {
