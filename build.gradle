@@ -38,7 +38,7 @@ jar {
 
 dependencies {
 //    compile fileTree(dir: 'libs', include: ['*.jar'])
-
+    compile group: 'net.sf.jasperreports', name: 'jasperreports', version: '4.5.0'
     compile group: 'com.jfoenix', name: 'jfoenix', version: '8.0.3'
     compile group: 'com.gluonhq', name: 'charm-down-desktop', version: '2.0.1'
     compile group: 'org.webjars', name: 'font-awesome', version: '4.7.0'

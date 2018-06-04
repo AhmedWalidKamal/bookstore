@@ -4,6 +4,8 @@ import model.Book;
 import model.BookOrder;
 import model.BookstoreUser;
 
+import java.io.File;
+import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -21,6 +23,7 @@ import java.util.ResourceBundle;
 public class BackendServices {
     private Connection DBConnection;
     private ResourceBundle resourceBundle;
+    private String jasperPath;
 
     /**
      * Constructs a new BackendServices
@@ -34,6 +37,12 @@ public class BackendServices {
         String connectionUrl = "jdbc:mysql://localhost:3306/BOOKSTORE?useUnicode=true&" +
                 "characterEncoding=UTF-8";
         DBConnection = DriverManager.getConnection(connectionUrl, user, password);
+        try {
+            jasperPath = new File(getClass().getResource("/jasper/").toURI()).getPath();
+        } catch (URISyntaxException e) {
+            jasperPath = null;
+        }
+        System.out.println(jasperPath);
     }
 
     private BookstoreUser getUser(ResultSet rs) throws SQLException {
@@ -383,6 +392,44 @@ public class BackendServices {
         return updateCount > 0;
     }
 
+    public boolean printJasperReport(String jasperFile, String outputFile, String reportTitle) {
+
+        if (jasperPath == null) {
+            return false;
+        }
+
+        if (outputFile == null) {
+            outputFile = jasperFile + JasperReportService.PDF_EXTENSION;
+        }
+
+        jasperFile = jasperPath + File.separator + jasperFile + JasperReportService.JASPER_EXTENSION;
+
+        JasperReportService.printReport(DBConnection, reportTitle,
+                jasperFile, outputFile);
+        return false;
+    }
+
+    public boolean printLastMonthReport(String outputFile) {
+        String reportLastMonthFileName = "report-last-month-sales";
+        String reportLastMonthTitle = "Last Month Sales";
+
+        return printJasperReport(reportLastMonthFileName, outputFile, reportLastMonthTitle);
+    }
+
+    public boolean printTopSellingBooks(String outputFile) {
+        String reportLastMonthFileName = "report-top-ten-selling-books";
+        String reportLastMonthTitle = "Top Ten Selling Books in The Past Three Months";
+
+        return printJasperReport(reportLastMonthFileName, outputFile, reportLastMonthTitle);
+    }
+
+    public boolean printTopUsers(String outputFile) {
+        String reportLastMonthFileName = "report-top-five-customers";
+        String reportLastMonthTitle = "Top Five Users in The Past Three Months";
+
+        return printJasperReport(reportLastMonthFileName, outputFile, reportLastMonthTitle);
+    }
+
     public static void main(String[] args) {
         try {
             BackendServices sys = new BackendServices();
@@ -399,11 +446,12 @@ public class BackendServices {
                 System.out.println(book.getBookTitle() + "\t" + book.getISBN() + "\t" + book.getCategory() + "\t" + book.getPublisherName() + "\t" + book.getBooksInStock());
             }
             System.out.println("" + sys.getNumberOfBooks() + " " + sys.getNumberOfPages(3));
-            System.out.println("\n" + sys.buyBook("b4","1234567890127", 500) + "\n");
-            System.out.println(sys.confirmOrder(sys.orderBook("1234567890127", "Ahmed Walid", 5000)));
+            System.out.println(sys.confirmOrder(sys.orderBook("1234567890126", "Ahmed Walid", 5000)));
+            System.out.println("\n" + sys.buyBook("b4","1234567890126", 500) + "\n");
             for (Book book : sys.findBooks(1, 5, Book.PUBLISHER_NAME_COLNAME, "Ahmed Walid")) {
                 System.out.println(book.getBookTitle() + "\t" + book.getISBN() + "\t" + book.getCategory() + "\t" + book.getPublisherName() + "\t" + book.getBooksInStock());
             }
+            sys.printLastMonthReport(null);
         } catch (SQLException e) {
             e.printStackTrace();
         }
