@@ -41,5 +41,10 @@
             <Image url="@images/SignIn.jpg" />
          </image>
       </ImageView>
+      <Label fx:id="loginErrorLabel" layoutX="763.0" layoutY="382.0" text="Login Failed!" textFill="#ff0606" visible="false">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>
