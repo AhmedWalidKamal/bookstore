@@ -4,19 +4,27 @@ import model.Book;
 import model.BookOrder;
 import model.BookstoreUser;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.PreparedStatement;
+import java.sql.CallableStatement;
+import java.sql.Types;
+
+import java.util.Date;
 import java.text.SimpleDateFormat;
-import java.time.Year;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.ResourceBundle;
 
 public class BackendServices {
     private Connection DBConnection;
     private ResourceBundle resourceBundle;
+
     /**
      * Constructs a new BackendServices
+     *
      * @throws SQLException If the connection to the database failed.
      */
     public BackendServices() throws SQLException {
@@ -82,10 +90,10 @@ public class BackendServices {
             return null;
         }
         String sqlQuery = "INSERT INTO BOOKSTORE_USER (" +
-                 BookstoreUser.USER_NAME_COLNAME +  ", " +
-                 BookstoreUser.EMAIL_COLNAME + ", " +
-                 BookstoreUser.PASSWORD_COLNAME + ", " +
-                 BookstoreUser.USER_GROUP_COLNAME + ") VALUES(?, ?, ?, ?)";
+                BookstoreUser.USER_NAME_COLNAME + ", " +
+                BookstoreUser.EMAIL_COLNAME + ", " +
+                BookstoreUser.PASSWORD_COLNAME + ", " +
+                BookstoreUser.USER_GROUP_COLNAME + ") VALUES(?, ?, ?, ?)";
 
         PreparedStatement preparedStatement = DBConnection.prepareStatement(sqlQuery);
         preparedStatement.setString(1, userName);
@@ -136,7 +144,6 @@ public class BackendServices {
         preparedStatement.setInt(2, (pageNumber - 1) * pageSize);
 
 
-
         ResultSet rs = preparedStatement.executeQuery();
         System.out.println(preparedStatement.toString());
 
@@ -157,7 +164,6 @@ public class BackendServices {
         preparedStatement.setString(1, value);
         preparedStatement.setInt(2, pageSize);
         preparedStatement.setInt(3, (pageNumber - 1) * pageSize);
-
 
 
         ResultSet rs = preparedStatement.executeQuery();
@@ -182,7 +188,7 @@ public class BackendServices {
             return false;
         }
         String sqlQuery = "INSERT INTO BOOK (" +
-                Book.ISBN_COLNAME +  ", " +
+                Book.ISBN_COLNAME + ", " +
                 Book.PUBLISHER_NAME_COLNAME + ", " +
                 Book.BOOK_TITLE_COLNAME + ", " +
                 Book.BOOKS_IN_STOCK_COLNAME + ", " +
@@ -281,34 +287,65 @@ public class BackendServices {
     }
 
     public boolean updatePassword(String userName, String oldPassword, String newPassword) throws SQLException {
-        BookstoreUser curUser = login(userName, oldPassword);
-        if (curUser != null) {
-            return updateUser(userName, BookstoreUser.PASSWORD_COLNAME, newPassword);
+        String sqlQuery = "{CALL UPDATE_PASSWORD(?, ?, ?, ?, ?)}";
+        CallableStatement callStatement = DBConnection.prepareCall(sqlQuery);
+        callStatement.setString(1, userName);
+        callStatement.setString(2, oldPassword);
+        callStatement.setString(3, newPassword);
+        callStatement.registerOutParameter(4, Types.BOOLEAN);
+        callStatement.registerOutParameter(5, Types.VARCHAR);
+
+        int updateCount = callStatement.executeUpdate();
+
+        boolean success = callStatement.getBoolean(4);
+
+        String errorMessage = callStatement.getString(5);
+
+        if (errorMessage != null) {
+            System.out.println(errorMessage);
         }
-        return false;
+
+        return success;
     }
 
     public int getNumberOfPages(int pageSize) throws SQLException {
         return (getNumberOfBooks() - 1) / pageSize + 1;
     }
 
-    public boolean buyBook(String ISBN, int quantity) throws SQLException {
-        String sqlQuery = "UPDATE BOOK SET " + Book.BOOKS_IN_STOCK_COLNAME +
-                " = " + Book.BOOKS_IN_STOCK_COLNAME + " - ?"
-                + " WHERE " + Book.ISBN_COLNAME + " = ?";
-        PreparedStatement preparedStatement = DBConnection.prepareStatement(sqlQuery);
+    public boolean buyBook(String userName, String ISBN, int quantity, Date purchaseDate) throws SQLException {
+        String sqlQuery = "{CALL MAKE_PURCHASE(?, ?, ?, ?, ?, ?, ?, ?)}";
+        CallableStatement callStatement = DBConnection.prepareCall(sqlQuery);
+        callStatement.setString(1, userName);
+        callStatement.setString(2, ISBN);
+        callStatement.setDate(3, new java.sql.Date(purchaseDate.getTime()));
+        callStatement.setInt(4, quantity);
+        callStatement.registerOutParameter(5, Types.BOOLEAN);
+        callStatement.registerOutParameter(6, Types.INTEGER);
+        callStatement.registerOutParameter(7, Types.FLOAT);
+        callStatement.registerOutParameter(8, Types.VARCHAR);
 
-        preparedStatement.setInt(1, quantity);
-        preparedStatement.setString(2, ISBN);
+        int updateCount = callStatement.executeUpdate();
 
-        try {
-            int updateCount = preparedStatement.executeUpdate();
-            return updateCount > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+        boolean success = callStatement.getBoolean(5);
+
+        int purchaseId = callStatement.getInt(6);
+
+        double totalCost = callStatement.getDouble(7);
+
+        System.out.println(totalCost);
+
+        String errorMessage = callStatement.getString(8);
+
+        if (errorMessage != null) {
+            System.out.println(errorMessage);
         }
 
+        return success;
+
+    }
+
+    public boolean buyBook(String userName, String ISBN, int quantity) throws SQLException {
+        return buyBook(userName, ISBN, quantity, new Date());
     }
 
     public int orderBook(String ISBN, String publisherName, int quantity) throws SQLException {
@@ -353,15 +390,16 @@ public class BackendServices {
 //            sys.register("b4", "b2@a.c", "pw", "customer");
             String usergroup = sys.login("Barry", "bassword").getUserGroup();
             System.out.println(usergroup);
-            
+
 
             usergroup = sys.login("b4", "pw").getUserGroup();
             System.out.println(usergroup);
+            System.out.println(sys.updatePassword("b4", "pw", "pw"));
             for (Book book : sys.getBooks(1, 3)) {
                 System.out.println(book.getBookTitle() + "\t" + book.getISBN() + "\t" + book.getCategory() + "\t" + book.getPublisherName() + "\t" + book.getBooksInStock());
             }
             System.out.println("" + sys.getNumberOfBooks() + " " + sys.getNumberOfPages(3));
-//            System.out.println(sys.buyBook("1234567890127", 50));
+            System.out.println("\n" + sys.buyBook("b4","1234567890127", 500) + "\n");
             System.out.println(sys.confirmOrder(sys.orderBook("1234567890127", "Ahmed Walid", 5000)));
             for (Book book : sys.findBooks(1, 5, Book.PUBLISHER_NAME_COLNAME, "Ahmed Walid")) {
                 System.out.println(book.getBookTitle() + "\t" + book.getISBN() + "\t" + book.getCategory() + "\t" + book.getPublisherName() + "\t" + book.getBooksInStock());
