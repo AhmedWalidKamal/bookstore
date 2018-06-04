@@ -1,6 +1,8 @@
 package controller;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXPasswordField;
+import com.jfoenix.controls.JFXTextField;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -8,6 +10,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import service.BackendServices;
 
 import java.io.IOException;
 
@@ -19,6 +22,11 @@ public class SignIn {
     @FXML
     private JFXButton signInButton;
 
+    @FXML
+    private JFXTextField userNameTextField;
+
+    @FXML
+    private JFXPasswordField passwordField;
 
     @FXML
     private void handleSignUpButtonAction(ActionEvent event) {
@@ -43,6 +51,7 @@ public class SignIn {
             stage.show();
         } catch (IOException ex) {
             // Log Exception
+            ex.printStackTrace();
         }
     }
 }
