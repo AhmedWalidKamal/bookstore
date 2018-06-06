@@ -1,10 +1,8 @@
 package controller;
 
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import service.BackendServices;
 
 import java.io.IOException;
@@ -15,13 +13,16 @@ public class MainController {
     private Stage primaryStage;
     private BackendServices sys;
 
-    public MainController(Stage primaryStage) throws IOException{
+    public MainController(Stage primaryStage) {
         this.primaryStage = primaryStage;
         try {
             // Establish connection with database
             sys = new BackendServices();
 
             loadSignInScene();
+
+//            sys.showTopSellingBooks(primaryStage);
+
         } catch (SQLException e) {
             e.printStackTrace();
             // Log error

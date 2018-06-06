@@ -1,19 +1,17 @@
 package service;
 
+import javafx.stage.Stage;
 import net.sf.jasperreports.engine.*;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import org.fxutils.viewer.JasperViewerFX;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-public class JasperReportService {
+class JasperReportService {
 
     public static final String JASPER_EXTENSION = ".jasper";
     public static final String JRXML_EXTENSION = ".jrxml";
@@ -22,6 +20,14 @@ public class JasperReportService {
     public static void compileJasper(String jasperFileName) throws JRException {
         JasperCompileManager.compileReportToFile(jasperFileName + JRXML_EXTENSION,
                 jasperFileName + JASPER_EXTENSION);
+    }
+
+    public static void showJasperReport(Stage primaryStage, String windowTitle,
+                                        String inputFile, HashMap<String, Object> parametersMap,
+                                        Connection DBConnection) {
+        JasperViewerFX viewer = new JasperViewerFX(primaryStage,
+                windowTitle, inputFile, parametersMap, DBConnection);
+        viewer.show();
     }
 
     public static void printReport(Connection DBConnection, String reportTitle, String jasperFileName, String outputFile) {
