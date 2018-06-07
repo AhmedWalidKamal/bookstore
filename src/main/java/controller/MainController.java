@@ -30,6 +30,13 @@ public class MainController {
         }
     }
 
+    public void setCurrentUser(BookstoreUser user) {
+        currentUser = user;
+    }
+
+    public BookstoreUser getCurrentUser() {
+        return this.currentUser;
+    }
     private void initShoppingCartController(ShoppingCart shoppingCart) {
         shoppingCart.setBackEndService(sys);
         shoppingCart.setMainController(this);
@@ -91,8 +98,11 @@ public class MainController {
     public void loadProfileScene() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/profile.fxml"));
-            primaryStage.setScene(new Scene(loader.load()));
-            primaryStage.setTitle("Profile Page");
+            Scene scene = new Scene(loader.load());
+            scene.getStylesheets().add(getClass().getResource("/view/css/profile.css").toExternalForm());
+            primaryStage.setScene(scene);
+            primaryStage.setTitle("Manage Profile");
+//            primaryStage.setMaximized(true);
             primaryStage.show();
             initProfileController(loader.getController());
         } catch (IOException e) {

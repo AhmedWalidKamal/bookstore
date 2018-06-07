@@ -50,22 +50,20 @@ public class SignIn {
             if (user == null) {
                 clearInputFields();
                 loginErrorLabel.setVisible(true);
-                System.out.println("LOGIN FAILED");
             } else {
                 // Successfuly sign in
                 JFXSnackbar bar = new JFXSnackbar(rootPane);
                 bar.enqueue(new JFXSnackbar.SnackbarEvent("Login Successful!"));
                 clearInputFields();
                 loginErrorLabel.setVisible(false);
-                System.out.println("LOGIN SUCCESSFUL");
-//                goToHome();
+                mainController.setCurrentUser(user);
+                mainController.loadProfileScene(); // Should be changed to load home when home is ready.
             }
         } catch (SQLException e) {
 //            e.printStackTrace();
             // Log error instead of printing to console
             clearInputFields();
             loginErrorLabel.setVisible(true);
-            System.out.println("LOGIN FAILED");
         }
     }
 
