@@ -77,7 +77,7 @@ public class SignIn {
 
     private void initUserNameTextField() {
         RequiredFieldValidator validator = new RequiredFieldValidator();
-        validator.setMessage("User Name Required");
+        validator.setMessage("Username Required");
 //            validator.setAwsomeIcon(new Icon(AwesomeIcon.WARNING,"2em",";","error"));
         userNameTextField.getValidators().add(validator);
         userNameTextField.focusedProperty().addListener((o,oldVal,newVal)->{

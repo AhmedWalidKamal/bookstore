@@ -1,14 +1,10 @@
 package controller;
 
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import model.BookstoreUser;
 import service.BackendServices;
-import javafx.geometry.Rectangle2D;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -19,14 +15,14 @@ public class MainController {
     private BackendServices sys;
     private BookstoreUser currentUser;
 
-    public MainController(Stage primaryStage) throws IOException{
+    public MainController(Stage primaryStage) {
         this.primaryStage = primaryStage;
         this.currentUser = null;
         try {
             // Establish connection with database
             sys = new BackendServices();
-
             loadSignInScene(false);
+//            sys.showTopSellingBooks(primaryStage);
         } catch (SQLException e) {
             e.printStackTrace();
             // Log error

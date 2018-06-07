@@ -1,0 +1,178 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN"
+        "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+
+<jasperReport xmlns = "http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation = "http://jasperreports.sourceforge.net/jasperreports
+   http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name = "jasper_report_template" language = "java" pageWidth = "595"
+              pageHeight = "842" columnWidth = "555" leftMargin = "20" rightMargin = "20"
+              topMargin = "20" bottomMargin = "20">
+
+   <parameter name = "ReportTitle" class = "java.lang.String"/>
+
+   <queryString>
+      <![CDATA[SELECT USER_NAME As "User", EMAIL AS `Email`, SUM(QUANTITY) AS `Copies Purchased`,
+       SUM(TOTAL_COST) AS `Total Cost` FROM USER_PURCHASES
+        NATURAL JOIN BOOKSTORE_USER
+         WHERE PURCHASE_DATE BETWEEN (CURRENT_DATE() - INTERVAL 3 MONTH)
+          AND
+           CURRENT_DATE() GROUP BY `User` ORDER BY `Copies Purchased` DESC LIMIT 5;]]>
+   </queryString>
+
+   <field name = "User" class = "java.lang.String">
+      <fieldDescription><![CDATA[]]></fieldDescription>
+   </field>
+
+   <field name = "Email" class = "java.lang.String">
+      <fieldDescription><![CDATA[]]></fieldDescription>
+   </field>
+   <field name = "Copies Purchased" class = "java.lang.String">
+      <fieldDescription><![CDATA[]]></fieldDescription>
+   </field>
+   <field name = "Total Cost" class = "java.lang.String">
+      <fieldDescription><![CDATA[]]></fieldDescription>
+   </field>
+
+
+   <title>
+      <band height = "70">
+
+         <line>
+            <reportElement x = "0" y = "0" width = "515" height = "1"/>
+         </line>
+
+         <textField isBlankWhenNull = "true" bookmarkLevel = "1" isStretchWithOverflow="true">
+            <reportElement x = "0" y = "10" width = "515" height = "30"/>
+
+            <textElement textAlignment = "Center">
+               <font size = "22"/>
+            </textElement>
+
+            <textFieldExpression class = "java.lang.String">
+               <![CDATA[$P{ReportTitle}]]>
+            </textFieldExpression>
+
+            <anchorNameExpression><![CDATA["Title"]]></anchorNameExpression>
+         </textField>
+
+      </band>
+   </title>
+
+   <columnHeader>
+      <band height = "23">
+
+         <staticText>
+            <reportElement mode = "Opaque" x = "0" y = "3" width = "550"
+                           height = "15" backcolor = "#70A9A9" />
+
+            <box>
+               <bottomPen lineWidth = "1.0" lineColor = "#CCCCCC" />
+            </box>
+
+            <textElement />
+            <text><![CDATA[]]> </text>
+         </staticText>
+
+         <staticText>
+            <reportElement x = "0" y = "0" width = "100" height = "15" />
+
+            <textElement textAlignment = "Center" verticalAlignment = "Bottom">
+               <font isBold = "true" />
+            </textElement>
+
+            <text><![CDATA[User]]></text>
+         </staticText>
+
+         <staticText>
+            <reportElement x = "200" y = "0" width = "200" height = "15" />
+
+            <textElement textAlignment = "Center" verticalAlignment = "Bottom">
+               <font isBold = "true" />
+            </textElement>
+
+            <text><![CDATA[Email]]></text>
+         </staticText>
+
+         <staticText>
+            <reportElement x = "400" y = "0" width = "75" height = "15" />
+
+            <textElement textAlignment = "Center" verticalAlignment = "Bottom">
+               <font isBold = "true" />
+            </textElement>
+
+            <text><![CDATA[Copies Purchased]]></text>
+         </staticText>
+
+         <staticText>
+            <reportElement x = "475" y = "0" width = "75" height = "15" />
+
+            <textElement textAlignment = "Center" verticalAlignment = "Bottom">
+               <font isBold = "true" />
+            </textElement>
+
+            <text><![CDATA[Total Cost]]></text>
+         </staticText>
+
+      </band>
+   </columnHeader>
+
+   <detail>
+      <band height = "16">
+
+         <staticText>
+            <reportElement mode = "Opaque" x = "0" y = "0" width = "550"
+                           height = "14" backcolor = "#E5ECF9" />
+
+            <box>
+               <bottomPen lineWidth = "0.25" lineColor = "#CCCCCC" />
+            </box>
+
+            <textElement />
+            <text><![CDATA[]]> </text>
+         </staticText>
+
+         <textField>
+            <reportElement x = "0" y = "0" width = "200" height = "15" />
+
+            <textElement textAlignment = "Center" verticalAlignment = "Middle">
+               <font size = "9" />
+            </textElement>
+
+            <textFieldExpression class = "java.lang.String">
+               <![CDATA[$F{User}]]>
+            </textFieldExpression>
+         </textField>
+
+         <textField>
+            <reportElement x = "200" y = "0" width = "200" height = "15" />
+            <textElement textAlignment = "Center" verticalAlignment = "Middle" />
+
+            <textFieldExpression class = "java.lang.String">
+               <![CDATA[$F{Email}]]>
+            </textFieldExpression>
+         </textField>
+
+         <textField>
+            <reportElement x = "400" y = "0" width = "75" height = "15" />
+            <textElement textAlignment = "Center" verticalAlignment = "Middle" />
+
+            <textFieldExpression class = "java.lang.String">
+               <![CDATA[$F{Copies Purchased}]]>
+            </textFieldExpression>
+         </textField>
+
+         <textField>
+            <reportElement x = "475" y = "0" width = "75" height = "15" />
+            <textElement textAlignment = "Center" verticalAlignment = "Middle" />
+
+            <textFieldExpression class = "java.lang.String">
+               <![CDATA[$F{Total Cost}]]>
+            </textFieldExpression>
+         </textField>
+
+      </band>
+   </detail>
+
+</jasperReport>
