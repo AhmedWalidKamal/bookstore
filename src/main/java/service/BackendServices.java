@@ -182,7 +182,8 @@ public class BackendServices {
         return books;
     }
 
-    private void buildQueryCondition(StringBuilder sqlQuery, Map<String, ArrayList<String>> colValues) {
+    private void buildQueryCondition(StringBuilder sqlQuery,
+                                     LinkedHashMap<String, ArrayList<String>> colValues) {
         int cnt = 0;
         for (String colName : colValues.keySet()) {
             cnt++;
@@ -201,10 +202,10 @@ public class BackendServices {
     }
 
     public BookList findBooks(int pageNumber, int pageSize,
-                                     Map<String, ArrayList<String>> colValues,
+                                     LinkedHashMap<String, ArrayList<String>> colValues,
                                      String orderCol, boolean ascending) throws SQLException {
-        Map<String, ArrayList<String>> authorConditions = new HashMap<>();
-        Map<String, ArrayList<String>> bookConditions = new HashMap<>();
+        LinkedHashMap<String, ArrayList<String>> authorConditions = new LinkedHashMap<>();
+        LinkedHashMap<String, ArrayList<String>> bookConditions = new LinkedHashMap<>();
 
         if (!Book.columns.contains(orderCol)) {
             return null;
@@ -281,7 +282,7 @@ public class BackendServices {
     public BookList findBooks(int pageNumber, int pageSize,
                               String colName, ArrayList<String> values,
                               String orderCol, boolean ascending) throws SQLException {
-        Map<String, ArrayList<String>> colValues = new HashMap<>();
+        LinkedHashMap<String, ArrayList<String>> colValues = new LinkedHashMap<>();
         colValues.put(colName, values);
         return findBooks(pageNumber, pageSize, colValues, orderCol, ascending);
     }
@@ -443,12 +444,31 @@ public class BackendServices {
         return -1;
     }
 
-    public boolean updateUser(String userName, String colName, String value) throws SQLException {
-        String sqlQuery = "UPDATE BOOKSTORE_USER SET " + colName +
-                " = ? WHERE " + BookstoreUser.USER_NAME_COLNAME + " = ?";
-        PreparedStatement preparedStatement = DBConnection.prepareStatement(sqlQuery);
-        preparedStatement.setString(1, value);
-        preparedStatement.setString(2, userName);
+    public boolean updateUser(String userName, LinkedHashMap<String, String> colValues) throws SQLException {
+                //";
+        if (colValues == null || colValues.isEmpty()) {
+            return false;
+        }
+        StringBuilder sqlQuery = new StringBuilder();
+        sqlQuery.append("UPDATE BOOKSTORE_USER SET ");
+
+        for (String colName : colValues.keySet()) {
+            sqlQuery.append("BOOKSTORE_USER.`");
+            sqlQuery.append(colName);
+            sqlQuery.append("` = ? ");
+        }
+
+        sqlQuery.append(" WHERE " + BookstoreUser.USER_NAME_COLNAME + " = ?");
+
+        PreparedStatement preparedStatement = DBConnection.prepareStatement(sqlQuery.toString());
+
+        int pos = 1;
+
+        for (String colName : colValues.keySet()) {
+            preparedStatement.setString(pos++, colValues.get(colName));
+        }
+
+        preparedStatement.setString(pos, userName);
 
         int updateCount = preparedStatement.executeUpdate();
 
@@ -456,7 +476,9 @@ public class BackendServices {
     }
 
     public boolean promote(String userName, String newRole) throws SQLException {
-        return updateUser(userName, BookstoreUser.USER_GROUP_COLNAME, newRole);
+        LinkedHashMap<String, String> colValues = new LinkedHashMap<>();
+        colValues.put(BookstoreUser.USER_GROUP_COLNAME, newRole);
+        return updateUser(userName, colValues);
     }
 
     public boolean updatePassword(String userName, String oldPassword, String newPassword) throws SQLException {
@@ -649,7 +671,7 @@ public class BackendServices {
                 System.out.println(book.getBookTitle() + "\t" + book.getISBN() + "\t" + book.getCategory() + "\t" + book.getPublisherName() + "\t" + book.getBooksInStock() + "\t" + Arrays.toString(book.getAuthors().toArray()));
             }
 
-            Map<String, ArrayList<String>> colValues = new HashMap<>();
+            LinkedHashMap<String, ArrayList<String>> colValues = new LinkedHashMap<>();
             colValues.put("ISBN", new ArrayList<>(Arrays.asList("1234567890123", "1234567890127")));
             colValues.put("BOOKS_IN_STOCK", new ArrayList<>(Arrays.asList("0")));
             colValues.put(BookAuthor.AUTHOR_NAME_COLNAME, new ArrayList<>(Arrays.asList("A", "B")));
