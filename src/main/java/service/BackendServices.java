@@ -396,16 +396,42 @@ public class BackendServices {
                 publicationYear, price, category, bookAuthors);
     }
 
-    public boolean modifyBook(String ISBN, String colName, String newValue) throws SQLException {
-        String sqlQuery = "UPDATE BOOK SET `" + colName +
-                "` = ? WHERE " + Book.ISBN_COLNAME + " = ?";
-        PreparedStatement preparedStatement = DBConnection.prepareStatement(sqlQuery);
-        preparedStatement.setString(1, newValue);
-        preparedStatement.setString(2, ISBN);
+    public boolean modifyBook(String ISBN, LinkedHashMap<String, String> colValues) throws SQLException {
+        if (colValues == null || colValues.isEmpty()) {
+            return false;
+        }
+        StringBuilder sqlQuery = new StringBuilder();
+        sqlQuery.append("UPDATE BOOK SET ");
+
+        for (String colName : colValues.keySet()) {
+            sqlQuery.append("BOOK.`");
+            sqlQuery.append(colName);
+            sqlQuery.append("` = ? ");
+        }
+
+        sqlQuery.append(" WHERE " + Book.ISBN_COLNAME + " = ?");
+
+        PreparedStatement preparedStatement = DBConnection.prepareStatement(sqlQuery.toString());
+
+        int pos = 1;
+
+        for (String colName : colValues.keySet()) {
+            preparedStatement.setString(pos++, colValues.get(colName));
+        }
+
+        preparedStatement.setString(pos, ISBN);
 
         int updateCount = preparedStatement.executeUpdate();
 
         return updateCount > 0;
+    }
+
+
+    public boolean modifyBook(String ISBN, String colName, String newValue) throws SQLException {
+        LinkedHashMap<String, String> colValues = new LinkedHashMap<>();
+        colValues.put(colName, newValue);
+
+        return modifyBook(ISBN, colValues);
     }
 
     public boolean modifyBook(String ISBN, String colName, Date newYear) throws SQLException {
@@ -445,7 +471,7 @@ public class BackendServices {
     }
 
     public boolean updateUser(String userName, LinkedHashMap<String, String> colValues) throws SQLException {
-                //";
+
         if (colValues == null || colValues.isEmpty()) {
             return false;
         }
