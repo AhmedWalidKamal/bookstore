@@ -304,14 +304,16 @@ public class BackendServices {
 
     public boolean addBook(String ISBN, String publisherName, String bookTitle,
                            int booksInStock, int minThreshold, Date publicationYear,
-                           double price, String category) throws SQLException {
-
+                           double price, String category, Collection<String> bookAuthors) throws SQLException {
         if (ISBN == null || publisherName == null || bookTitle == null
                 || booksInStock < 0 || minThreshold < 0 || publicationYear == null
                 || price <= 0 || category == null) {
             return false;
         }
-        String sqlQuery = "INSERT INTO BOOK (`" +
+
+        DBConnection.setAutoCommit(false);
+
+        String bookInsertQuery = "INSERT INTO BOOK (`" +
                 Book.ISBN_COLNAME + "`, `" +
                 Book.PUBLISHER_NAME_COLNAME + "`, `" +
                 Book.BOOK_TITLE_COLNAME + "`, `" +
@@ -321,29 +323,76 @@ public class BackendServices {
                 Book.PRICE_COLNAME + "`, `" +
                 Book.CATEGORY_COLNAME + "`) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
 
-        PreparedStatement preparedStatement = DBConnection.prepareStatement(sqlQuery);
-        preparedStatement.setString(1, ISBN);
-        preparedStatement.setString(2, publisherName);
-        preparedStatement.setString(3, bookTitle);
-        preparedStatement.setInt(4, booksInStock);
-        preparedStatement.setInt(5, minThreshold);
+        PreparedStatement bookInsertStatement = null;
+        PreparedStatement authorInsertStatement = null;
+        boolean retVal = false;
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
-        String yearStr = sdf.format(publicationYear);
-        preparedStatement.setString(6, yearStr);
-        preparedStatement.setDouble(7, price);
-        preparedStatement.setString(8, category);
+        try {
+            bookInsertStatement = DBConnection.prepareStatement(bookInsertQuery);
+            bookInsertStatement.setString(1, ISBN);
+            bookInsertStatement.setString(2, publisherName);
+            bookInsertStatement.setString(3, bookTitle);
+            bookInsertStatement.setInt(4, booksInStock);
+            bookInsertStatement.setInt(5, minThreshold);
 
-        int updateCount = preparedStatement.executeUpdate();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
+            String yearStr = sdf.format(publicationYear);
+            bookInsertStatement.setString(6, yearStr);
+            bookInsertStatement.setDouble(7, price);
+            bookInsertStatement.setString(8, category);
 
-        return updateCount > 0;
+            bookInsertStatement.executeUpdate();
+            System.out.println(bookInsertStatement);
+
+
+            if (!bookAuthors.isEmpty()) {
+                StringBuilder authorInsertQuery = new StringBuilder();
+                authorInsertQuery.append("INSERT INTO BOOK_AUTHORS VALUES ");
+
+                for (int i = 0; i < bookAuthors.size() ; i++) {
+                    authorInsertQuery.append("(?, ?)");
+
+                    if (i < bookAuthors.size() - 1) {
+                        authorInsertQuery.append(", ");
+                    }
+                }
+
+                authorInsertStatement = DBConnection.prepareStatement(authorInsertQuery.toString());
+
+                int pos = 1;
+
+                for (String author : bookAuthors) {
+                    authorInsertStatement.setString(pos++, ISBN);
+                    authorInsertStatement.setString(pos++, author);
+                }
+
+                authorInsertStatement.executeUpdate();
+
+                System.out.println(authorInsertStatement);
+            }
+
+
+            DBConnection.commit();
+            retVal = true;
+        } catch (SQLException ex) {
+            DBConnection.rollback();
+        } finally {
+            if (bookInsertStatement != null) {
+                bookInsertStatement.close();
+            }
+            if (authorInsertStatement != null) {
+                authorInsertStatement.close();
+            }
+            DBConnection.setAutoCommit(true);
+        }
+        return retVal;
     }
 
     public boolean addBook(String ISBN, String publisherName, String bookTitle,
                            int minThreshold, Date publicationYear,
-                           double price, String category) throws SQLException {
+                           double price, String category, Collection<String> bookAuthors) throws SQLException {
         return addBook(ISBN, publisherName, bookTitle, 0, minThreshold,
-                publicationYear, price, category);
+                publicationYear, price, category, bookAuthors);
     }
 
     public boolean modifyBook(String ISBN, String colName, String newValue) throws SQLException {
