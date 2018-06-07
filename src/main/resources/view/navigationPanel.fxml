@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.gluonhq.charm.glisten.control.Avatar?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
 
 <BorderPane styleClass="BorderPane" stylesheets="@css/navigationPanel.css" xmlns="http://javafx.com/javafx/8.0.162-ea">
    <left>
@@ -27,7 +23,7 @@
            </VBox>
          <Separator styleClass="Separator">
             <VBox.margin>
-               <Insets left="35.0" right="35.0" />
+               <Insets left="27.0" right="27.0" />
             </VBox.margin></Separator>
            <HBox styleClass="nav-entry">
                <ImageView fitHeight="17.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
@@ -41,31 +37,36 @@
            </HBox>
            <HBox styleClass="nav-entry">
                <ImageView fitHeight="17.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
-                   <Image url="@images/shopping-cart-icon.png"/>
+                   <Image url="@images/shopping-cart-icon.png" />
                </ImageView>
                <Label styleClass="nav-entry-label" text="Shopping Cart">
                    <HBox.margin>
-                       <Insets left="7.0"/>
+                       <Insets left="7.0" />
                    </HBox.margin>
                </Label>
+            <Label styleClass="round-label" text="0">
+               <HBox.margin>
+                  <Insets left="7.0" />
+               </HBox.margin>
+            </Label>
            </HBox>
            <HBox styleClass="nav-entry">
                <ImageView fitHeight="17.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
-                   <Image url="@images/profile-icon.png"/>
+                   <Image url="@images/profile-icon.png" />
                </ImageView>
                <Label styleClass="nav-entry-label" text="Profile">
                    <HBox.margin>
-                       <Insets left="7.0"/>
+                       <Insets left="7.0" />
                    </HBox.margin>
                </Label>
            </HBox>
            <HBox styleClass="nav-entry">
                <ImageView fitHeight="17.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
-                   <Image url="@images/admin-icon.png"/>
+                   <Image url="@images/admin-icon.png" />
                </ImageView>
                <Label styleClass="nav-entry-label" text="Administration">
                    <HBox.margin>
-                       <Insets left="7.0"/>
+                       <Insets left="7.0" />
                    </HBox.margin>
                </Label>
            </HBox>
@@ -83,7 +84,7 @@
                        </HBox.margin>
                    </Label>
                <padding>
-                  <Insets bottom="15.0" />
+                  <Insets bottom="10.0" top="10.0" />
                </padding>
                </HBox>
            </VBox>

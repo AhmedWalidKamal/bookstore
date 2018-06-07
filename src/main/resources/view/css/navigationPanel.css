@@ -46,7 +46,13 @@
     -fx-pref-width: 235.0px;
     -fx-translate-y: 110.0px;
     -fx-alignment: "CENTER";
+    -fx-background-color: transparent;
 }
+
+.nav-entry:hover {
+    -fx-background-color: #202332;
+}
+
 .nav-entry-label {
     -fx-font-family: "Cantarell Regular";
     -fx-font-size: 12.0px;
@@ -54,15 +60,35 @@
 }
 .sign-out-VBox {
     -fx-min-width: 235.0px;
-    -fx-pref-height: 300.0px;
+    -fx-pref-height: 250.0px;
     -fx-pref-width: 235.0px;
+    -fx-translate-y: 20.0px;
     -fx-alignment: "BOTTOM_CENTER";
 }
 
 .sign-out-HBox {
-    -fx-min-height: 25.0px;
+    -fx-min-height: 45.0px;
     -fx-min-width: 235.0px;
-    -fx-pref-height: 25.0px;
+    -fx-pref-height: 45.0px;
     -fx-pref-width: 235.0px;
     -fx-alignment: "CENTER";
+    -fx-translate-y: -20.0px;
+    -fx-background-color: transparent;
+}
+.sign-out-HBox:hover {
+    -fx-background-color: #202332;
+}
+
+.round-label {
+    -fx-min-height: 20.0px;
+    -fx-min-width: 25.0px;
+    -fx-pref-height: 20.0px;
+    -fx-pref-width: 25.0px;
+    -fx-max-height: 20.0px;
+    -fx-max-width: 25.0px;
+    -fx-background-color: #bdbfcd;
+    -fx-background-radius: 100%;
+    -fx-alignment: "CENTER";
+    -fx-font-family: "Cantarell Bold";
+    -fx-font-size: 12.0px;
 }
