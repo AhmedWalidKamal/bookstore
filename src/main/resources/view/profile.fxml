@@ -54,22 +54,6 @@
                      </VBox.margin></JFXTextField>
                </children>
             </VBox>
-            <HBox prefHeight="50.0" prefWidth="417.0" spacing="30.0">
-               <children>
-                  <VBox prefHeight="100.0" prefWidth="187.0">
-                     <children>
-                        <Label prefHeight="21.0" prefWidth="137.0" text="Credit Card Number" />
-                        <JFXTextField prefHeight="25.0" prefWidth="142.0" />
-                     </children>
-                  </VBox>
-                  <VBox layoutX="10.0" layoutY="10.0" prefHeight="100.0" prefWidth="187.0">
-                     <children>
-                        <Label prefHeight="21.0" prefWidth="107.0" text="Expiration Date" />
-                        <JFXDatePicker />
-                     </children>
-                  </VBox>
-               </children>
-            </HBox>
             <VBox layoutX="10.0" layoutY="150.0" prefHeight="45.0" prefWidth="417.0">
                <children>
                   <Label text="Shipping Address" />
@@ -80,7 +64,24 @@
                   </JFXTextField>
                </children>
             </VBox>
-            <JFXButton buttonType="RAISED" prefHeight="37.0" prefWidth="121.0" ripplerFill="#2929290d" style="-fx-background-color: #01466f;" text="Update Profile" textFill="WHITE" />
+            <JFXButton buttonType="RAISED" prefHeight="37.0" prefWidth="138.0" ripplerFill="#2929290d" style="-fx-background-color: #01466f;" text="Update Profile" textFill="WHITE" />
+            <HBox layoutX="10.0" layoutY="80.0" prefHeight="50.0" prefWidth="417.0" spacing="30.0">
+               <children>
+                  <VBox prefHeight="100.0" prefWidth="187.0">
+                     <children>
+                        <Label prefHeight="21.0" prefWidth="91.0" text="Old Password" />
+                        <JFXTextField prefHeight="25.0" prefWidth="142.0" />
+                     </children>
+                  </VBox>
+                  <VBox layoutX="10.0" layoutY="10.0" prefHeight="100.0" prefWidth="187.0">
+                     <children>
+                        <Label prefHeight="21.0" prefWidth="100.0" text="New Password" />
+                        <JFXTextField prefHeight="25.0" prefWidth="142.0" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <JFXButton buttonType="RAISED" layoutX="158.0" layoutY="280.0" prefHeight="37.0" prefWidth="138.0" ripplerFill="#2929290d" style="-fx-background-color: #01466f;" text="Change Password" textFill="WHITE" />
          </children>
       </VBox>
    </children>
