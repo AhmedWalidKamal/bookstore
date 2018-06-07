@@ -1,8 +1,7 @@
 package model;
 
 import java.time.Year;
-import java.util.Date;
-import java.util.Objects;
+import java.util.*;
 
 public class Book {
 
@@ -15,6 +14,15 @@ public class Book {
     public static final String PRICE_COLNAME = "PRICE";
     public static final String CATEGORY_COLNAME = "CATEGORY";
 
+    public static final List<String> columns = Arrays.asList(ISBN_COLNAME,
+                                                             PUBLISHER_NAME_COLNAME,
+                                                             BOOK_TITLE_COLNAME,
+                                                             BOOKS_IN_STOCK_COLNAME,
+                                                             MIN_THRESHOLD_COLNAME,
+                                                             PUBLICATION_YEAR_COLNAME,
+                                                             PRICE_COLNAME,
+                                                             CATEGORY_COLNAME);
+
     private String ISBN;
     private String publisherName;
     private String bookTitle;
@@ -24,8 +32,10 @@ public class Book {
     private double price;
     private String category;
 
-    public Book() {
+    private List<BookAuthor> authors;
 
+    public Book() {
+        authors = new ArrayList<>();
     }
 
     public String getISBN() {
@@ -90,6 +100,14 @@ public class Book {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public List<BookAuthor> getAuthors() {
+        return authors;
+    }
+
+    public void setAuthors(List<BookAuthor> authors) {
+        this.authors = authors;
     }
 
     @Override
