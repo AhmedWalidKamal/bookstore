@@ -9,7 +9,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="539.0" prefWidth="1076.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.SignUp">
+<AnchorPane fx:id="rootPane" prefHeight="539.0" prefWidth="1076.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.SignUp">
    <children>
       <ImageView fitHeight="25.0" fitWidth="25.0" layoutX="85.0" layoutY="272.0" pickOnBounds="true" preserveRatio="true">
          <image>
@@ -22,7 +22,7 @@
          </image>
       </ImageView>
       <JFXTextField fx:id="emailTextField" layoutX="123.0" layoutY="150.0" prefHeight="36.0" prefWidth="340.0" promptText="Email Address" />
-      <JFXTextField fx:id="userNameTextField" layoutX="123.0" layoutY="208.0" prefHeight="36.0" prefWidth="340.0" promptText="User Name" />
+      <JFXTextField fx:id="userNameTextField" layoutX="123.0" layoutY="208.0" prefHeight="36.0" prefWidth="340.0" promptText="Username" />
       <JFXPasswordField fx:id="passwordField" layoutX="124.0" layoutY="265.0" prefHeight="36.0" prefWidth="340.0" promptText="Password" />
       <JFXButton id="signUpButton" fx:id="signUpButton" layoutX="127.0" layoutY="357.0" onAction="#handleSignUpButtonAction" prefHeight="36.0" prefWidth="92.0" style="-fx-background-color: #01466f;" text="Sign Up" textFill="WHITE" />
       <JFXButton id="signInButton" fx:id="signInButton" layoutX="300.0" layoutY="357.0" onAction="#handleSignInButtonAction" prefHeight="36.0" prefWidth="92.0" style="-fx-background-color: #01466f;" text="Sign In" textFill="WHITE" />

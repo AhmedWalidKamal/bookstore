@@ -2,11 +2,13 @@ package controller;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPasswordField;
+import com.jfoenix.controls.JFXSnackbar;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.validation.RequiredFieldValidator;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
 import model.BookstoreUser;
 import service.BackendServices;
 
@@ -34,6 +36,9 @@ public class SignIn {
     private Label loginErrorLabel;
 
     @FXML
+    private AnchorPane rootPane;
+
+    @FXML
     private void handleSignUpButtonAction(ActionEvent event) {
         mainController.loadSignUpScene();
     }
@@ -47,7 +52,9 @@ public class SignIn {
                 loginErrorLabel.setVisible(true);
                 System.out.println("LOGIN FAILED");
             } else {
-                // Successfuly registration
+                // Successfuly sign in
+                JFXSnackbar bar = new JFXSnackbar(rootPane);
+                bar.enqueue(new JFXSnackbar.SnackbarEvent("Login Successful!"));
                 clearInputFields();
                 loginErrorLabel.setVisible(false);
                 System.out.println("LOGIN SUCCESSFUL");
@@ -70,7 +77,7 @@ public class SignIn {
 
     private void initUserNameTextField() {
         RequiredFieldValidator validator = new RequiredFieldValidator();
-        validator.setMessage("User Name Required");
+        validator.setMessage("Username Required");
 //            validator.setAwsomeIcon(new Icon(AwesomeIcon.WARNING,"2em",";","error"));
         userNameTextField.getValidators().add(validator);
         userNameTextField.focusedProperty().addListener((o,oldVal,newVal)->{
@@ -86,6 +93,11 @@ public class SignIn {
         passwordField.focusedProperty().addListener((o,oldVal,newVal)->{
             if(!newVal) passwordField.validate();
         });
+    }
+
+    public void dispRegMessage() {
+        JFXSnackbar bar = new JFXSnackbar(rootPane);
+        bar.enqueue(new JFXSnackbar.SnackbarEvent("Registration Successful!"));
     }
 
     private void clearInputFields() {

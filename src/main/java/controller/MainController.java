@@ -3,6 +3,7 @@ package controller;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import model.BookstoreUser;
 import service.BackendServices;
 
 import java.io.IOException;
@@ -12,17 +13,16 @@ public class MainController {
 
     private Stage primaryStage;
     private BackendServices sys;
+    private BookstoreUser currentUser;
 
     public MainController(Stage primaryStage) {
         this.primaryStage = primaryStage;
+        this.currentUser = null;
         try {
             // Establish connection with database
             sys = new BackendServices();
-
-            loadSignInScene();
-
+            loadSignInScene(false);
 //            sys.showTopSellingBooks(primaryStage);
-
         } catch (SQLException e) {
             e.printStackTrace();
             // Log error
@@ -50,18 +50,24 @@ public class MainController {
         signUp.setMainController(this);
     }
 
-    private void initSignInController(SignIn signIn) {
+    private void initSignInController(SignIn signIn, boolean displayRegistrationMessage) {
         signIn.setBackEndService(sys);
         signIn.setMainController(this);
+        if (displayRegistrationMessage) {
+            signIn.dispRegMessage();
+        }
     }
 
-    public void loadSignInScene() {
+    public void loadSignInScene(boolean displayRegistrationMessage) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/signIn.fxml"));
-            primaryStage.setScene(new Scene(loader.load()));
-            primaryStage.setTitle("Library Bookstores!");
+            Scene scene = new Scene(loader.load());
+            scene.getStylesheets().add(getClass().getResource("/css/signIn.css").toExternalForm());
+            primaryStage.setScene(scene);
+            primaryStage.setTitle("Library Bookstores");
+//            primaryStage.setMaximized(true);
             primaryStage.show();
-            initSignInController(loader.getController());
+            initSignInController(loader.getController(), displayRegistrationMessage);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -71,7 +77,9 @@ public class MainController {
     public void loadSignUpScene() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/signUp.fxml"));
-            primaryStage.setScene(new Scene(loader.load()));
+            Scene scene = new Scene(loader.load());
+            scene.getStylesheets().add(getClass().getResource("/css/signUp.css").toExternalForm());
+            primaryStage.setScene(scene);
             primaryStage.setTitle("Register");
             primaryStage.show();
             initSignUpController(loader.getController());
