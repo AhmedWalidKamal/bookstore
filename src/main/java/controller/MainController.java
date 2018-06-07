@@ -62,7 +62,7 @@ public class MainController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/signIn.fxml"));
             Scene scene = new Scene(loader.load());
-            scene.getStylesheets().add(getClass().getResource("/css/signIn.css").toExternalForm());
+            scene.getStylesheets().add(getClass().getResource("view/css/signIn.css").toExternalForm());
             primaryStage.setScene(scene);
             primaryStage.setTitle("Library Bookstores");
 //            primaryStage.setMaximized(true);
@@ -78,7 +78,7 @@ public class MainController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/signUp.fxml"));
             Scene scene = new Scene(loader.load());
-            scene.getStylesheets().add(getClass().getResource("/css/signUp.css").toExternalForm());
+            scene.getStylesheets().add(getClass().getResource("view/css/signUp.css").toExternalForm());
             primaryStage.setScene(scene);
             primaryStage.setTitle("Register");
             primaryStage.show();
