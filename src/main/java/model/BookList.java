@@ -1,15 +1,12 @@
 package model;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class BookList {
     private Map<String, Book> books;
 
     public BookList() {
-        books = new HashMap<>();
+        books = new LinkedHashMap<>();
     }
 
     public boolean contains(String ISBN) {
@@ -26,5 +23,9 @@ public class BookList {
 
     public Collection<Book> getBooks() {
         return books.values();
+    }
+
+    public int size() {
+        return books.size();
     }
 }

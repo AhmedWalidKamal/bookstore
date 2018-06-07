@@ -145,25 +145,24 @@ public class BackendServices {
         return curBook;
     }
 
-    public Book getBook(String ISBN) throws SQLException {
-        String sqlQuery = "SELECT * FROM BOOK LEFT OUTER JOIN BOOK_AUTHORS ON `BOOK_AUTHORS`.`"
-                + BookAuthor.ISBN_COLNAME  + "` = `BOOK`.`" + Book.ISBN_COLNAME +
-                "` WHERE " + Book.ISBN_COLNAME + " = ?";
-        PreparedStatement preparedStatement = DBConnection.prepareStatement(sqlQuery);
-        preparedStatement.setString(1, ISBN);
+    public BookList getBooks(int pageNumber, int pageSize, String orderCol, boolean ascending) throws SQLException {
 
-        ResultSet rs = preparedStatement.executeQuery();
-        Book curBook = null;
-        while (rs.next()) {
-            curBook = getBook(curBook, rs);
+        if (!Book.columns.contains(orderCol)) {
+            return null;
         }
-        return curBook;
-    }
 
-    public BookList getBooks(int pageNumber, int pageSize) throws SQLException {
-        String sqlQuery = "SELECT * FROM (SELECT * FROM BOOK LIMIT ? OFFSET ?) AS T" +
+        String sqlQuery = "SELECT * FROM (SELECT * FROM BOOK ORDER BY BOOK.`" + orderCol + "`";
+
+        if (ascending) {
+            sqlQuery += " ASC";
+        } else {
+            sqlQuery += " DESC";
+        }
+
+        sqlQuery += " LIMIT ? OFFSET ?) AS T" +
                 " LEFT OUTER JOIN BOOK_AUTHORS ON BOOK_AUTHORS."
                 + BookAuthor.ISBN_COLNAME  + " = T." + Book.ISBN_COLNAME;
+
         PreparedStatement preparedStatement = DBConnection.prepareStatement(sqlQuery);
         preparedStatement.setInt(1, pageSize);
         preparedStatement.setInt(2, (pageNumber - 1) * pageSize);
@@ -202,17 +201,25 @@ public class BackendServices {
     }
 
     public BookList findBooks(int pageNumber, int pageSize,
-                                     Map<String, ArrayList<String>> colValues) throws SQLException {
+                                     Map<String, ArrayList<String>> colValues,
+                                     String orderCol, boolean ascending) throws SQLException {
         Map<String, ArrayList<String>> authorConditions = new HashMap<>();
         Map<String, ArrayList<String>> bookConditions = new HashMap<>();
 
-        final String alias = "T";
+        if (!Book.columns.contains(orderCol)) {
+            return null;
+        }
 
+        final String alias = "T";
         for (String colName : colValues.keySet()) {
             if (colName.equals(BookAuthor.AUTHOR_NAME_COLNAME)) {
                 authorConditions.put("BOOK_AUTHORS.`" + colName + "`", colValues.get(colName));
             } else {
+                if (!Book.columns.contains(colName)) {
+                    return null;
+                }
                 bookConditions.put("BOOK.`" + colName + "`", colValues.get(colName));
+                authorConditions.put(alias + ".`" + colName + "`", colValues.get(colName));
             }
         }
 
@@ -223,9 +230,17 @@ public class BackendServices {
             sqlQuery.append(" WHERE ");
             buildQueryCondition(sqlQuery, bookConditions);
         }
-        sqlQuery.append(" LIMIT ? OFFSET ?) AS " + alias
+
+        sqlQuery.append(" ORDER BY BOOK.`" + orderCol + "`");
+        if (ascending) {
+            sqlQuery.append(" ASC");
+        } else {
+            sqlQuery.append(" DESC");
+        }
+        sqlQuery.append(" LIMIT ? OFFSET ?");
+        sqlQuery.append(" ) AS " + alias
                 + " LEFT OUTER JOIN BOOK_AUTHORS ON BOOK_AUTHORS.`"
-                + BookAuthor.ISBN_COLNAME  + "` = " + alias + ".`" + Book.ISBN_COLNAME);
+                + BookAuthor.ISBN_COLNAME  + "` = " + alias + ".`" + Book.ISBN_COLNAME + "`");
 
         if (!authorConditions.isEmpty()) {
             sqlQuery.append(" WHERE ");
@@ -249,8 +264,8 @@ public class BackendServices {
             }
         }
 
-        System.out.println(preparedStatement.toString());
         ResultSet rs = preparedStatement.executeQuery();
+        System.out.println(preparedStatement.toString());
 
         BookList books = new BookList();
 
@@ -263,17 +278,28 @@ public class BackendServices {
         return books;
     }
 
-    public BookList findBooks(int pageNumber, int pageSize, String colName, ArrayList<String> values) throws SQLException {
+    public BookList findBooks(int pageNumber, int pageSize,
+                              String colName, ArrayList<String> values,
+                              String orderCol, boolean ascending) throws SQLException {
         Map<String, ArrayList<String>> colValues = new HashMap<>();
         colValues.put(colName, values);
-        return findBooks(pageNumber, pageSize, colValues);
+        return findBooks(pageNumber, pageSize, colValues, orderCol, ascending);
     }
 
     public BookList findBooks(int pageNumber, int pageSize,
-                                     String colName, String value) throws SQLException {
+                                     String colName, String value,
+                              String orderCol, boolean ascending) throws SQLException {
         ArrayList<String> values = new ArrayList<>();
         values.add(value);
-        return findBooks(pageNumber, pageSize, colName, values);
+        return findBooks(pageNumber, pageSize, colName, values, orderCol, ascending);
+    }
+
+
+    public Book getBook(String ISBN) throws SQLException {
+        BookList books = findBooks(1, 1, Book.ISBN_COLNAME, ISBN,
+                Book.ISBN_COLNAME, true);
+
+        return books.findBook(ISBN);
     }
 
     public boolean addBook(String ISBN, String publisherName, String bookTitle,
@@ -563,23 +589,26 @@ public class BackendServices {
             usergroup = sys.login("b4", "pw").getUserGroup();
             System.out.println(usergroup);
             System.out.println(sys.updatePassword("b4", "pw", "pw"));
-            for (Book book : sys.getBooks(1, 5).getBooks()) {
+            for (Book book : sys.getBooks(1, 5, Book.BOOKS_IN_STOCK_COLNAME, true).getBooks()) {
                 System.out.println(book.getBookTitle() + "\t" + book.getISBN() + "\t" + book.getCategory() + "\t" + book.getPublisherName() + "\t" + book.getBooksInStock() + "\t" + Arrays.toString(book.getAuthors().toArray()));
             }
             System.out.println("" + sys.getNumberOfBooks() + " " + sys.getNumberOfPages(3));
             System.out.println(sys.confirmOrder(sys.orderBook("1234567890126", "Ahmed Walid", 5000)));
             System.out.println("\n" + sys.buyBook("b4","1234567890126", 500) + "\n");
 
-            for (Book book : sys.findBooks(1, 5, Book.PUBLISHER_NAME_COLNAME, "Ahmed Walid").getBooks()) {
+            for (Book book : sys.findBooks(1, 5, Book.PUBLISHER_NAME_COLNAME, "Ahmed Walid", Book.ISBN_COLNAME, false).getBooks()) {
                 System.out.println(book.getBookTitle() + "\t" + book.getISBN() + "\t" + book.getCategory() + "\t" + book.getPublisherName() + "\t" + book.getBooksInStock() + "\t" + Arrays.toString(book.getAuthors().toArray()));
             }
 
             Map<String, ArrayList<String>> colValues = new HashMap<>();
             colValues.put("ISBN", new ArrayList<>(Arrays.asList("1234567890123", "1234567890127")));
             colValues.put("BOOKS_IN_STOCK", new ArrayList<>(Arrays.asList("0")));
-            for (Book book : sys.findBooks(1, 5, colValues).getBooks()) {
+            colValues.put(BookAuthor.AUTHOR_NAME_COLNAME, new ArrayList<>(Arrays.asList("A", "B")));
+            for (Book book : sys.findBooks(1, 5, colValues, Book.ISBN_COLNAME, true).getBooks()) {
                 System.out.println(book.getBookTitle() + "\t" + book.getISBN() + "\t" + book.getCategory() + "\t" + book.getPublisherName() + "\t" + book.getBooksInStock() + "\t" + Arrays.toString(book.getAuthors().toArray()));
             }
+            Book book = sys.getBook("1234567890125");
+            System.out.println(book.getBookTitle() + "\t" + book.getISBN() + "\t" + book.getCategory() + "\t" + book.getPublisherName() + "\t" + book.getBooksInStock() + "\t" + Arrays.toString(book.getAuthors().toArray()));
 
         } catch (SQLException e) {
             e.printStackTrace();

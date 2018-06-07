@@ -1,10 +1,7 @@
 package model;
 
 import java.time.Year;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class Book {
 
@@ -16,6 +13,15 @@ public class Book {
     public static final String PUBLICATION_YEAR_COLNAME = "PUBLICATION_YEAR";
     public static final String PRICE_COLNAME = "PRICE";
     public static final String CATEGORY_COLNAME = "CATEGORY";
+
+    public static final List<String> columns = Arrays.asList(ISBN_COLNAME,
+                                                             PUBLISHER_NAME_COLNAME,
+                                                             BOOK_TITLE_COLNAME,
+                                                             BOOKS_IN_STOCK_COLNAME,
+                                                             MIN_THRESHOLD_COLNAME,
+                                                             PUBLICATION_YEAR_COLNAME,
+                                                             PRICE_COLNAME,
+                                                             CATEGORY_COLNAME);
 
     private String ISBN;
     private String publisherName;
