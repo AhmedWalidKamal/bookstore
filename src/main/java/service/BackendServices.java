@@ -533,40 +533,90 @@ public class BackendServices {
         return (getNumberOfBooks() - 1) / pageSize + 1;
     }
 
-    public boolean buyBook(String userName, String ISBN, int quantity, Date purchaseDate) throws SQLException {
+    public boolean buyBooks(String userName,
+                           Map<String, Integer> bookQuantities,
+                           Date purchaseDate) throws SQLException {
         String sqlQuery = "{CALL MAKE_PURCHASE(?, ?, ?, ?, ?, ?, ?, ?)}";
-        CallableStatement callStatement = DBConnection.prepareCall(sqlQuery);
-        callStatement.setString(1, userName);
-        callStatement.setString(2, ISBN);
-        callStatement.setDate(3, new java.sql.Date(purchaseDate.getTime()));
-        callStatement.setInt(4, quantity);
-        callStatement.registerOutParameter(5, Types.BOOLEAN);
-        callStatement.registerOutParameter(6, Types.INTEGER);
-        callStatement.registerOutParameter(7, Types.FLOAT);
-        callStatement.registerOutParameter(8, Types.VARCHAR);
+        Collection<Statement> statements = new ArrayList<>();
 
-        int updateCount = callStatement.executeUpdate();
-
-        boolean success = callStatement.getBoolean(5);
-
-        int purchaseId = callStatement.getInt(6);
-
-        double totalCost = callStatement.getDouble(7);
-
-        System.out.println(totalCost);
-
-        String errorMessage = callStatement.getString(8);
-
-        if (errorMessage != null) {
-            System.out.println(errorMessage);
+        if (bookQuantities.isEmpty()) {
+            return false;
         }
 
-        return success;
+        DBConnection.setAutoCommit(false);
 
+        boolean retVal = false;
+
+        try {
+            for (String ISBN : bookQuantities.keySet()) {
+                CallableStatement callStatement = DBConnection.prepareCall(sqlQuery);
+
+                statements.add(callStatement);
+
+                callStatement.setString(1, userName);
+                callStatement.setString(2, ISBN);
+                callStatement.setDate(3, new java.sql.Date(purchaseDate.getTime()));
+                callStatement.setInt(4, bookQuantities.get(ISBN));
+                callStatement.registerOutParameter(5, Types.BOOLEAN);
+                callStatement.registerOutParameter(6, Types.INTEGER);
+                callStatement.registerOutParameter(7, Types.FLOAT);
+                callStatement.registerOutParameter(8, Types.VARCHAR);
+
+
+                int updateCount = callStatement.executeUpdate();
+
+                System.out.println(callStatement);
+
+                boolean success = callStatement.getBoolean(5);
+
+
+                int purchaseId = callStatement.getInt(6);
+
+                double totalCost = callStatement.getDouble(7);
+
+
+                String errorMessage = callStatement.getString(8);
+
+                if (!success) {
+                    throw new SQLException(errorMessage);
+                }
+
+                System.out.println(totalCost);
+
+
+                if (errorMessage != null) {
+                    System.out.println(errorMessage);
+                }
+            }
+
+            DBConnection.commit();
+            retVal = true;
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            DBConnection.rollback();
+        } finally {
+            for (Statement statement : statements) {
+                if (statement != null) {
+                    statement.close();
+                }
+            }
+            DBConnection.setAutoCommit(true);
+        }
+
+        return retVal;
+    }
+
+    public boolean buyBook(String userName, Map<String, Integer> bookQuantities) throws SQLException {
+        return buyBooks(userName, bookQuantities, new Date());
     }
 
     public boolean buyBook(String userName, String ISBN, int quantity) throws SQLException {
-        return buyBook(userName, ISBN, quantity, new Date());
+        Map<String, Integer> bookQuantities = new HashMap<>();
+
+        bookQuantities.put(ISBN, quantity);
+
+        return buyBook(userName, bookQuantities);
     }
 
     public int orderBook(String ISBN, String publisherName, int quantity) throws SQLException {
@@ -690,8 +740,8 @@ public class BackendServices {
                 System.out.println(book.getBookTitle() + "\t" + book.getISBN() + "\t" + book.getCategory() + "\t" + book.getPublisherName() + "\t" + book.getBooksInStock() + "\t" + Arrays.toString(book.getAuthors().toArray()));
             }
             System.out.println("" + sys.getNumberOfBooks() + " " + sys.getNumberOfPages(3));
-            System.out.println(sys.confirmOrder(sys.orderBook("1234567890126", "Ahmed Walid", 5000)));
             System.out.println("\n" + sys.buyBook("b4","1234567890126", 500) + "\n");
+            System.out.println(sys.confirmOrder(sys.orderBook("1234567890126", "Ahmed Walid", 5000)));
 
             for (Book book : sys.findBooks(1, 5, Book.PUBLISHER_NAME_COLNAME, "Ahmed Walid", Book.ISBN_COLNAME, false).getBooks()) {
                 System.out.println(book.getBookTitle() + "\t" + book.getISBN() + "\t" + book.getCategory() + "\t" + book.getPublisherName() + "\t" + book.getBooksInStock() + "\t" + Arrays.toString(book.getAuthors().toArray()));
