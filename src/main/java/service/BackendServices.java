@@ -1,19 +1,15 @@
 package service;
 
 import javafx.stage.Stage;
-import model.Book;
-import model.BookOrder;
-import model.BookstoreUser;
+import model.*;
 
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.*;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.ResourceBundle;
 
 public class BackendServices {
     private Connection DBConnection;
@@ -128,34 +124,46 @@ public class BackendServices {
         return curUser;
     }
 
-    private Book getBook(ResultSet rs) throws SQLException {
-        Book curBook = new Book();
-        curBook.setISBN(rs.getString(Book.ISBN_COLNAME));
-        curBook.setPublisherName(rs.getString(Book.PUBLISHER_NAME_COLNAME));
-        curBook.setBooksInStock(rs.getInt(Book.BOOKS_IN_STOCK_COLNAME));
-        curBook.setMinThreshold(rs.getInt(Book.MIN_THRESHOLD_COLNAME));
-        curBook.setBookTitle(rs.getString(Book.BOOK_TITLE_COLNAME));
-        curBook.setCategory(rs.getString(Book.CATEGORY_COLNAME));
-        curBook.setPrice(rs.getDouble(Book.PRICE_COLNAME));
-        curBook.setPublicationYear(rs.getDate(Book.PUBLICATION_YEAR_COLNAME));
+    private Book getBook(Book curBook, ResultSet rs) throws SQLException {
+        if (curBook == null) {
+            curBook = new Book();
+            curBook.setISBN(rs.getString(Book.ISBN_COLNAME));
+            curBook.setPublisherName(rs.getString(Book.PUBLISHER_NAME_COLNAME));
+            curBook.setBooksInStock(rs.getInt(Book.BOOKS_IN_STOCK_COLNAME));
+            curBook.setMinThreshold(rs.getInt(Book.MIN_THRESHOLD_COLNAME));
+            curBook.setBookTitle(rs.getString(Book.BOOK_TITLE_COLNAME));
+            curBook.setCategory(rs.getString(Book.CATEGORY_COLNAME));
+            curBook.setPrice(rs.getDouble(Book.PRICE_COLNAME));
+            curBook.setPublicationYear(rs.getDate(Book.PUBLICATION_YEAR_COLNAME));
+        }
+        BookAuthor author = new BookAuthor();
+        author.setISBN(curBook.getISBN());
+        author.setAuthorName(rs.getString(BookAuthor.AUTHOR_NAME_COLNAME));
+        if (author.getAuthorName() != null) {
+            curBook.getAuthors().add(author);
+        }
         return curBook;
     }
 
     public Book getBook(String ISBN) throws SQLException {
-        String sqlQuery = "SELECT * FROM BOOK WHERE " + Book.ISBN_COLNAME + " = ?";
+        String sqlQuery = "SELECT * FROM BOOK LEFT OUTER JOIN BOOK_AUTHORS ON `BOOK_AUTHORS`.`"
+                + BookAuthor.ISBN_COLNAME  + "` = `BOOK`.`" + Book.ISBN_COLNAME +
+                "` WHERE " + Book.ISBN_COLNAME + " = ?";
         PreparedStatement preparedStatement = DBConnection.prepareStatement(sqlQuery);
         preparedStatement.setString(1, ISBN);
 
         ResultSet rs = preparedStatement.executeQuery();
-        if (rs.next()) {
-            return getBook(rs);
-        } else {
-            return null;
+        Book curBook = null;
+        while (rs.next()) {
+            curBook = getBook(curBook, rs);
         }
+        return curBook;
     }
 
-    public ArrayList<Book> getBooks(int pageNumber, int pageSize) throws SQLException {
-        String sqlQuery = "SELECT * FROM BOOK LIMIT ? OFFSET ?";
+    public BookList getBooks(int pageNumber, int pageSize) throws SQLException {
+        String sqlQuery = "SELECT * FROM (SELECT * FROM BOOK LIMIT ? OFFSET ?) AS T" +
+                " LEFT OUTER JOIN BOOK_AUTHORS ON BOOK_AUTHORS."
+                + BookAuthor.ISBN_COLNAME  + " = T." + Book.ISBN_COLNAME;
         PreparedStatement preparedStatement = DBConnection.prepareStatement(sqlQuery);
         preparedStatement.setInt(1, pageSize);
         preparedStatement.setInt(2, (pageNumber - 1) * pageSize);
@@ -164,35 +172,108 @@ public class BackendServices {
         ResultSet rs = preparedStatement.executeQuery();
         System.out.println(preparedStatement.toString());
 
-        ArrayList<Book> result = new ArrayList<>();
+        BookList books = new BookList();
 
         while (rs.next()) {
-            Book curBook = getBook(rs);
-            result.add(curBook);
+            String ISBN = rs.getString(Book.ISBN_COLNAME);
+            Book curBook = books.findBook(ISBN);
+            curBook = getBook(curBook, rs);
+            books.addBook(curBook);
         }
-        return result;
+        return books;
     }
 
-    public ArrayList<Book> findBooks(int pageNumber, int pageSize, String colName, String value) throws SQLException {
-        String sqlQuery = "SELECT * FROM BOOK" +
-                " WHERE " + colName + " = ?" +
-                " LIMIT ? OFFSET ?";
-        PreparedStatement preparedStatement = DBConnection.prepareStatement(sqlQuery);
-        preparedStatement.setString(1, value);
-        preparedStatement.setInt(2, pageSize);
-        preparedStatement.setInt(3, (pageNumber - 1) * pageSize);
+    private void buildQueryCondition(StringBuilder sqlQuery, Map<String, ArrayList<String>> colValues) {
+        int cnt = 0;
+        for (String colName : colValues.keySet()) {
+            cnt++;
+            sqlQuery.append(colName);
+            sqlQuery.append(" = ?");
+            for (int i = 0 ; i < colValues.get(colName).size() - 1 ; i++) {
+                sqlQuery.append(" OR ");
+                sqlQuery.append(colName);
+                sqlQuery.append(" = ?");
+            }
+            if (cnt != colValues.size()) {
+                sqlQuery.append(" OR ");
+            }
+        }
 
+    }
 
-        ResultSet rs = preparedStatement.executeQuery();
+    public BookList findBooks(int pageNumber, int pageSize,
+                                     Map<String, ArrayList<String>> colValues) throws SQLException {
+        Map<String, ArrayList<String>> authorConditions = new HashMap<>();
+        Map<String, ArrayList<String>> bookConditions = new HashMap<>();
+
+        final String alias = "T";
+
+        for (String colName : colValues.keySet()) {
+            if (colName.equals(BookAuthor.AUTHOR_NAME_COLNAME)) {
+                authorConditions.put("BOOK_AUTHORS.`" + colName + "`", colValues.get(colName));
+            } else {
+                bookConditions.put("BOOK.`" + colName + "`", colValues.get(colName));
+            }
+        }
+
+        StringBuilder sqlQuery = new StringBuilder();
+        sqlQuery.append("SELECT * FROM (SELECT * FROM BOOK"); /* +
+                "` WHERE ");*/
+        if (!bookConditions.isEmpty()) {
+            sqlQuery.append(" WHERE ");
+            buildQueryCondition(sqlQuery, bookConditions);
+        }
+        sqlQuery.append(" LIMIT ? OFFSET ?) AS " + alias
+                + " LEFT OUTER JOIN BOOK_AUTHORS ON BOOK_AUTHORS.`"
+                + BookAuthor.ISBN_COLNAME  + "` = " + alias + ".`" + Book.ISBN_COLNAME);
+
+        if (!authorConditions.isEmpty()) {
+            sqlQuery.append(" WHERE ");
+            buildQueryCondition(sqlQuery, authorConditions);
+        }
+
+        PreparedStatement preparedStatement = DBConnection.prepareStatement(sqlQuery.toString());
+        int i = 1;
+        for (String colName : bookConditions.keySet()) {
+            for (int j = 0; j < bookConditions.get(colName).size() ; i++, j++) {
+                preparedStatement.setString(i, bookConditions.get(colName).get(j));
+            }
+        }
+
+        preparedStatement.setInt(i++, pageSize);
+        preparedStatement.setInt(i++, (pageNumber - 1) * pageSize);
+
+        for (String colName : authorConditions.keySet()) {
+            for (int j = 0; j < authorConditions.get(colName).size() ; i++, j++) {
+                preparedStatement.setString(i, authorConditions.get(colName).get(j));
+            }
+        }
+
         System.out.println(preparedStatement.toString());
+        ResultSet rs = preparedStatement.executeQuery();
 
-        ArrayList<Book> result = new ArrayList<>();
+        BookList books = new BookList();
 
         while (rs.next()) {
-            Book curBook = getBook(rs);
-            result.add(curBook);
+            String ISBN = rs.getString(Book.ISBN_COLNAME);
+            Book curBook = books.findBook(ISBN);
+            curBook = getBook(curBook, rs);
+            books.addBook(curBook);
         }
-        return result;
+        return books;
+    }
+
+    public BookList findBooks(int pageNumber, int pageSize, String colName, ArrayList<String> values) throws SQLException {
+        Map<String, ArrayList<String>> colValues = new HashMap<>();
+        colValues.put(colName, values);
+        return findBooks(pageNumber, pageSize, colValues);
+    }
+
+    public BookList findBooks(int pageNumber, int pageSize,
+                                     String colName, String value) throws SQLException {
+        ArrayList<String> values = new ArrayList<>();
+        values.add(value);
+        return findBooks(pageNumber, pageSize, colName, values);
     }
 
     public boolean addBook(String ISBN, String publisherName, String bookTitle,
@@ -204,15 +285,15 @@ public class BackendServices {
                 || price <= 0 || category == null) {
             return false;
         }
-        String sqlQuery = "INSERT INTO BOOK (" +
-                Book.ISBN_COLNAME + ", " +
-                Book.PUBLISHER_NAME_COLNAME + ", " +
-                Book.BOOK_TITLE_COLNAME + ", " +
-                Book.BOOKS_IN_STOCK_COLNAME + ", " +
-                Book.MIN_THRESHOLD_COLNAME + ", " +
-                Book.PUBLICATION_YEAR_COLNAME + ", " +
-                Book.PRICE_COLNAME + ", " +
-                Book.CATEGORY_COLNAME + ") VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+        String sqlQuery = "INSERT INTO BOOK (`" +
+                Book.ISBN_COLNAME + "`, `" +
+                Book.PUBLISHER_NAME_COLNAME + "`, `" +
+                Book.BOOK_TITLE_COLNAME + "`, `" +
+                Book.BOOKS_IN_STOCK_COLNAME + "`, `" +
+                Book.MIN_THRESHOLD_COLNAME + "`, `" +
+                Book.PUBLICATION_YEAR_COLNAME + "`, `" +
+                Book.PRICE_COLNAME + "`, `" +
+                Book.CATEGORY_COLNAME + "`) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
 
         PreparedStatement preparedStatement = DBConnection.prepareStatement(sqlQuery);
         preparedStatement.setString(1, ISBN);
@@ -240,8 +321,8 @@ public class BackendServices {
     }
 
     public boolean modifyBook(String ISBN, String colName, String newValue) throws SQLException {
-        String sqlQuery = "UPDATE BOOK SET " + colName +
-                " = ? WHERE " + Book.ISBN_COLNAME + " = ?";
+        String sqlQuery = "UPDATE BOOK SET `" + colName +
+                "` = ? WHERE " + Book.ISBN_COLNAME + " = ?";
         PreparedStatement preparedStatement = DBConnection.prepareStatement(sqlQuery);
         preparedStatement.setString(1, newValue);
         preparedStatement.setString(2, ISBN);
@@ -482,14 +563,22 @@ public class BackendServices {
             usergroup = sys.login("b4", "pw").getUserGroup();
             System.out.println(usergroup);
             System.out.println(sys.updatePassword("b4", "pw", "pw"));
-            for (Book book : sys.getBooks(1, 3)) {
-                System.out.println(book.getBookTitle() + "\t" + book.getISBN() + "\t" + book.getCategory() + "\t" + book.getPublisherName() + "\t" + book.getBooksInStock());
+            for (Book book : sys.getBooks(1, 5).getBooks()) {
+                System.out.println(book.getBookTitle() + "\t" + book.getISBN() + "\t" + book.getCategory() + "\t" + book.getPublisherName() + "\t" + book.getBooksInStock() + "\t" + Arrays.toString(book.getAuthors().toArray()));
             }
             System.out.println("" + sys.getNumberOfBooks() + " " + sys.getNumberOfPages(3));
             System.out.println(sys.confirmOrder(sys.orderBook("1234567890126", "Ahmed Walid", 5000)));
             System.out.println("\n" + sys.buyBook("b4","1234567890126", 500) + "\n");
-            for (Book book : sys.findBooks(1, 5, Book.PUBLISHER_NAME_COLNAME, "Ahmed Walid")) {
-                System.out.println(book.getBookTitle() + "\t" + book.getISBN() + "\t" + book.getCategory() + "\t" + book.getPublisherName() + "\t" + book.getBooksInStock());
+
+            for (Book book : sys.findBooks(1, 5, Book.PUBLISHER_NAME_COLNAME, "Ahmed Walid").getBooks()) {
+                System.out.println(book.getBookTitle() + "\t" + book.getISBN() + "\t" + book.getCategory() + "\t" + book.getPublisherName() + "\t" + book.getBooksInStock() + "\t" + Arrays.toString(book.getAuthors().toArray()));
+            }
+
+            Map<String, ArrayList<String>> colValues = new HashMap<>();
+            colValues.put("ISBN", new ArrayList<>(Arrays.asList("1234567890123", "1234567890127")));
+            colValues.put("BOOKS_IN_STOCK", new ArrayList<>(Arrays.asList("0")));
+            for (Book book : sys.findBooks(1, 5, colValues).getBooks()) {
+                System.out.println(book.getBookTitle() + "\t" + book.getISBN() + "\t" + book.getCategory() + "\t" + book.getPublisherName() + "\t" + book.getBooksInStock() + "\t" + Arrays.toString(book.getAuthors().toArray()));
             }
 
         } catch (SQLException e) {

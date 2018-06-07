@@ -44,4 +44,9 @@ public class BookAuthor {
 
         return Objects.hash(ISBN, authorName);
     }
+
+    @Override
+    public String toString() {
+        return authorName;
+    }
 }

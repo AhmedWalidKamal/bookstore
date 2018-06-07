@@ -1,7 +1,9 @@
 package model;
 
 import java.time.Year;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 public class Book {
@@ -24,8 +26,10 @@ public class Book {
     private double price;
     private String category;
 
-    public Book() {
+    private List<BookAuthor> authors;
 
+    public Book() {
+        authors = new ArrayList<>();
     }
 
     public String getISBN() {
@@ -90,6 +94,14 @@ public class Book {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public List<BookAuthor> getAuthors() {
+        return authors;
+    }
+
+    public void setAuthors(List<BookAuthor> authors) {
+        this.authors = authors;
     }
 
     @Override
