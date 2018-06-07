@@ -26,7 +26,7 @@ public class MainController {
             // Establish connection with database
             sys = new BackendServices();
 
-            loadSignInScene();
+            loadSignInScene(false);
         } catch (SQLException e) {
             e.printStackTrace();
             // Log error
@@ -54,24 +54,24 @@ public class MainController {
         signUp.setMainController(this);
     }
 
-    private void initSignInController(SignIn signIn) {
+    private void initSignInController(SignIn signIn, boolean displayRegistrationMessage) {
         signIn.setBackEndService(sys);
         signIn.setMainController(this);
+        if (displayRegistrationMessage) {
+            signIn.dispRegMessage();
+        }
     }
 
-    public void loadSignInScene() {
+    public void loadSignInScene(boolean displayRegistrationMessage) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/signIn.fxml"));
             Scene scene = new Scene(loader.load());
             scene.getStylesheets().add(getClass().getResource("/css/signIn.css").toExternalForm());
             primaryStage.setScene(scene);
-            primaryStage.setTitle("Library Bookstores!");
+            primaryStage.setTitle("Library Bookstores");
 //            primaryStage.setMaximized(true);
-            Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-            System.out.println(primaryScreenBounds.getWidth());
-            System.out.println(primaryScreenBounds.getHeight());
             primaryStage.show();
-            initSignInController(loader.getController());
+            initSignInController(loader.getController(), displayRegistrationMessage);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -81,7 +81,9 @@ public class MainController {
     public void loadSignUpScene() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/signUp.fxml"));
-            primaryStage.setScene(new Scene(loader.load()));
+            Scene scene = new Scene(loader.load());
+            scene.getStylesheets().add(getClass().getResource("/css/signUp.css").toExternalForm());
+            primaryStage.setScene(scene);
             primaryStage.setTitle("Register");
             primaryStage.show();
             initSignUpController(loader.getController());

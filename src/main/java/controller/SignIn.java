@@ -95,6 +95,11 @@ public class SignIn {
         });
     }
 
+    public void dispRegMessage() {
+        JFXSnackbar bar = new JFXSnackbar(rootPane);
+        bar.enqueue(new JFXSnackbar.SnackbarEvent("Registration Successful!"));
+    }
+
     private void clearInputFields() {
         userNameTextField.clear();
         passwordField.clear();

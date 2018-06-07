@@ -2,11 +2,13 @@ package controller;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPasswordField;
+import com.jfoenix.controls.JFXSnackbar;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.validation.RequiredFieldValidator;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
 import service.BackendServices;
 import java.sql.SQLException;
 
@@ -29,6 +31,9 @@ public class SignUp {
     @FXML
     private Label registrationErrorLabel;
 
+    @FXML
+    private AnchorPane rootPane;
+
     private BackendServices sys;
     private MainController mainController;
 
@@ -39,7 +44,7 @@ public class SignUp {
                     passwordField.getText(), "customer");
             // Successfuly registration
             clearInputFields();
-            goToSignIn();
+            goToSignIn(true);
         } catch (SQLException e) {
 //            e.printStackTrace();
             // Log error instead of printing to console
@@ -50,7 +55,7 @@ public class SignUp {
     }
     @FXML
     private void handleSignInButtonAction(ActionEvent event) {
-        goToSignIn();
+        goToSignIn(false);
     }
 
     private void clearInputFields() {
@@ -59,8 +64,8 @@ public class SignUp {
         passwordField.clear();
     }
 
-    private void goToSignIn() {
-        mainController.loadSignInScene();
+    private void goToSignIn(boolean dispRegistrationMessage) {
+        mainController.loadSignInScene(dispRegistrationMessage);
     }
 
     private void initEmailTextField() {
