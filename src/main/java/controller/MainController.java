@@ -11,87 +11,93 @@ import java.sql.SQLException;
 
 public class MainController {
 
+    private static MainController instance;
+
     private Stage primaryStage;
-    private BackendServices sys;
+    private BackendServices backendServices;
     private BookstoreUser currentUser;
 
-    public MainController(Stage primaryStage) {
-        this.primaryStage = primaryStage;
-        this.currentUser = null;
+    private SignIn signIn;
+    private SignUp signUp;
+    private NavigationPanel navigationPanel;
+
+    private MainController() {
+        primaryStage = null;
+        currentUser = null;
         try {
-            // Establish connection with database
-            sys = new BackendServices();
-            loadSignInScene(false);
-//            sys.showTopSellingBooks(primaryStage);
+            backendServices = new BackendServices();
         } catch (SQLException e) {
             e.printStackTrace();
-            // Log error
             System.out.println("Couldn't establish connection");
         }
     }
 
-    public void setCurrentUser(BookstoreUser user) {
+    public static MainController getInstance() {
+        if (instance == null) {
+            instance = new MainController();
+        }
+        return instance;
+    }
+
+    public void init () {
+        loadSignInScene(false);
+    }
+
+    BookstoreUser getCurrentUser() {
+        return this.currentUser;
+    }
+
+    void setCurrentUser(BookstoreUser user) {
         currentUser = user;
     }
 
-    public BookstoreUser getCurrentUser() {
-        return this.currentUser;
-    }
-    private void initShoppingCartController(ShoppingCart shoppingCart) {
-        shoppingCart.setBackEndService(sys);
-        shoppingCart.setMainController(this);
+    Stage getPrimaryStage() {
+        return this.primaryStage;
     }
 
-    private void initHomeController(Home home) {
-        home.setBackEndService(sys);
-        home.setMainController(this);
+    public void setPrimaryStage(Stage primaryStage) {
+        this.primaryStage = primaryStage;
     }
 
-    private void initProfileController(Profile profile) {
-        profile.initProfile(this);
+    BackendServices getBackendService() {
+        return this.backendServices;
     }
 
-    private void initSignUpController(SignUp signUp) {
-        signUp.setBackEndService(sys);
-        signUp.setMainController(this);
+    void setBackendServices(BackendServices backendServices) {
+        this.backendServices = backendServices;
     }
 
-    private void initSignInController(SignIn signIn, boolean displayRegistrationMessage) {
-        signIn.setBackEndService(sys);
-        signIn.setMainController(this);
+    void loadSignInScene(boolean displayRegistrationMessage) {
+        if (signIn == null) {
+            signIn = new SignIn();
+        }
+        signIn.clearInputFields();
+        if (primaryStage.getScene() == null) {
+            Scene scene = new Scene(signIn.getParent());
+            primaryStage.setScene(scene);
+        } else {
+            primaryStage.getScene().setRoot(signIn.getParent());
+        }
+        primaryStage.setTitle("Library Bookstores | Sign In");
+        primaryStage.show();
         if (displayRegistrationMessage) {
-            signIn.dispRegMessage();
+            signIn.displayRegMessage();
         }
     }
 
-    public void loadSignInScene(boolean displayRegistrationMessage) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/signIn.fxml"));
-            Scene scene = new Scene(loader.load());
-            scene.getStylesheets().add(getClass().getResource("/view/css/signIn.css").toExternalForm());
-            primaryStage.setScene(scene);
-            primaryStage.setTitle("Library Bookstores");
-//            primaryStage.setMaximized(true);
-            primaryStage.show();
-            initSignInController(loader.getController(), displayRegistrationMessage);
-        } catch (IOException e) {
-            e.printStackTrace();
+    void loadSignUpScene() {
+        if (signUp == null) {
+            signUp = new SignUp();
         }
-
-    }
-
-    public void loadSignUpScene() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/signUp.fxml"));
-            Scene scene = new Scene(loader.load());
-            scene.getStylesheets().add(getClass().getResource("/view/css/signUp.css").toExternalForm());
+        signUp.clearInputFields();
+        if (primaryStage.getScene() == null) {
+            Scene scene = new Scene(signUp.getParent());
             primaryStage.setScene(scene);
-            primaryStage.setTitle("Register");
-            primaryStage.show();
-            initSignUpController(loader.getController());
-        } catch (IOException e) {
-            e.printStackTrace();
+        } else {
+            primaryStage.getScene().setRoot(signUp.getParent());
         }
+        primaryStage.setTitle("Library Bookstores | Sign Up");
+        primaryStage.show();
     }
 
     public void loadProfileScene() {
@@ -103,13 +109,12 @@ public class MainController {
             primaryStage.setTitle("Manage Profile");
 //            primaryStage.setMaximized(true);
             primaryStage.show();
-            initProfileController(loader.getController());
+//            initProfileController(loader.getController());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public BackendServices getBackendService() {
-        return this.sys;
-    }
+
+
 }

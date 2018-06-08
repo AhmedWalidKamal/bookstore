@@ -9,43 +9,42 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="rootPane" prefHeight="539.0" prefWidth="1076.0" stylesheets="@css/signUp.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.SignUp">
-   <children>
-      <ImageView fitHeight="25.0" fitWidth="25.0" layoutX="85.0" layoutY="272.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@images/padlock.png" />
-         </image>
-      </ImageView>
-      <ImageView fitHeight="25.0" fitWidth="25.0" layoutX="85.0" layoutY="214.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@images/user.png" />
-         </image>
-      </ImageView>
-      <JFXTextField fx:id="emailTextField" layoutX="123.0" layoutY="150.0" prefHeight="36.0" prefWidth="340.0" promptText="Email Address" />
-      <JFXTextField fx:id="userNameTextField" layoutX="123.0" layoutY="208.0" prefHeight="36.0" prefWidth="340.0" promptText="Username" />
-      <JFXPasswordField fx:id="passwordField" layoutX="124.0" layoutY="265.0" prefHeight="36.0" prefWidth="340.0" promptText="Password" />
-      <JFXButton id="signUpButton" fx:id="signUpButton" layoutX="127.0" layoutY="357.0" onAction="#handleSignUpButtonAction" prefHeight="36.0" prefWidth="92.0" style="-fx-background-color: #01466f;" text="Sign Up" textFill="WHITE" />
-      <JFXButton id="signInButton" fx:id="signInButton" layoutX="300.0" layoutY="357.0" onAction="#handleSignInButtonAction" prefHeight="36.0" prefWidth="92.0" style="-fx-background-color: #01466f;" text="Sign In" textFill="WHITE" />
-      <Label layoutX="170.0" layoutY="83.0" prefHeight="49.0" prefWidth="198.0" text="Register Now!">
-         <font>
-            <Font name="System Bold" size="24.0" />
-         </font>
-      </Label>
-      <Label layoutX="284.0" layoutY="330.0" prefHeight="25.0" prefWidth="134.0" text="Already Registered?" textFill="#a0a2ab" />
-      <ImageView fitHeight="25.0" fitWidth="25.0" layoutX="85.0" layoutY="156.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@images/letter.png" />
-         </image>
-      </ImageView>
-      <ImageView fitHeight="539.0" fitWidth="621.0" layoutX="537.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@images/SUB.jpg" />
-         </image>
-      </ImageView>
-      <Label fx:id="registrationErrorLabel" layoutX="180.0" layoutY="422.0" textFill="#ff0606" visible="false">
-         <font>
-            <Font size="15.0" />
-         </font>
-      </Label>
-   </children>
+<AnchorPane stylesheets="/view/css/signUp.css" fx:id="rootPane" prefHeight="539.0" prefWidth="1076.0"
+            xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+   <ImageView fitHeight="25.0" fitWidth="25.0" layoutX="85.0" layoutY="272.0" pickOnBounds="true" preserveRatio="true">
+      <Image url="@images/padlock.png"/>
+   </ImageView>
+   <ImageView fitHeight="25.0" fitWidth="25.0" layoutX="85.0" layoutY="214.0" pickOnBounds="true" preserveRatio="true">
+      <Image url="@images/user.png"/>
+   </ImageView>
+   <JFXTextField fx:id="emailTextField" layoutX="123.0" layoutY="150.0" prefHeight="36.0" prefWidth="340.0"
+                 promptText="Email Address"/>
+   <JFXTextField fx:id="userNameTextField" layoutX="123.0" layoutY="208.0" prefHeight="36.0" prefWidth="340.0"
+                 promptText="Username"/>
+   <JFXPasswordField fx:id="passwordField" layoutX="124.0" layoutY="265.0" prefHeight="36.0" prefWidth="340.0"
+                     promptText="Password"/>
+   <JFXButton id="signUpButton" fx:id="signUpButton" layoutX="127.0" layoutY="357.0"
+              prefHeight="36.0" prefWidth="92.0"
+              style="-fx-background-color: #01466f;" text="Sign Up" textFill="WHITE"/>
+   <JFXButton id="signInButton" fx:id="signInButton" layoutX="300.0" layoutY="357.0"
+              prefHeight="36.0" prefWidth="92.0"
+              style="-fx-background-color: #01466f;" text="Sign In" textFill="WHITE"/>
+   <Label layoutX="170.0" layoutY="83.0" prefHeight="49.0" prefWidth="198.0" text="Register Now!">
+      <font>
+         <Font name="System Bold" size="24.0"/>
+      </font>
+   </Label>
+   <Label layoutX="284.0" layoutY="330.0" prefHeight="25.0" prefWidth="134.0" text="Already Registered?"
+          textFill="#a0a2ab"/>
+   <ImageView fitHeight="25.0" fitWidth="25.0" layoutX="85.0" layoutY="156.0" pickOnBounds="true" preserveRatio="true">
+      <Image url="@images/letter.png"/>
+   </ImageView>
+   <ImageView fitHeight="539.0" fitWidth="621.0" layoutX="537.0" pickOnBounds="true" preserveRatio="true">
+      <Image url="@images/SUB.jpg"/>
+   </ImageView>
+   <Label fx:id="registrationErrorLabel" layoutX="180.0" layoutY="422.0" textFill="#ff0606" visible="false">
+      <font>
+         <Font size="15.0"/>
+      </font>
+   </Label>
 </AnchorPane>
