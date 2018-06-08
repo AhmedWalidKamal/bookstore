@@ -1,17 +1,119 @@
 package controller;
 
-import service.BackendServices;
+import com.jfoenix.controls.*;
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
+
+import javafx.event.ActionEvent;
+import model.BookstoreUser;
+
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
+import java.util.LinkedHashMap;
 
 public class Profile {
 
-    private BackendServices sys;
+    @FXML
+    private JFXTextField firstName, lastName, phoneNumber, shippingAddress;
+
+    @FXML
+    private JFXPasswordField oldPassword, newPassword;
+
+    @FXML
+    private JFXDatePicker birthdate;
+
+    @FXML
+    private AnchorPane rootPane;
+
+    @FXML
+    private Label passwordErrorLabel, updateProfileErrorLabel;
+
     private MainController mainController;
 
-    public void setBackEndService(BackendServices sys) {
-        this.sys = sys;
+
+    private void clearPasswordFields() {
+        oldPassword.clear();
+        newPassword.clear();
     }
 
-    public void setMainController(MainController mainController) {
+    @FXML
+    private void handleUpdateProfileAction(ActionEvent actionEvent) {
+        if (validPhoneNumber()) {
+            LinkedHashMap<String, String> colsValues = new LinkedHashMap<>();
+            colsValues.put(BookstoreUser.UserProfile.FIRST_NAME_COLNAME, firstName.getText().trim());
+            colsValues.put(BookstoreUser.UserProfile.LAST_NAME_COLNAME, lastName.getText().trim());
+            colsValues.put(BookstoreUser.UserProfile.SHIPPING_ADDRESS_COLNAME, shippingAddress.getText().trim());
+            colsValues.put(BookstoreUser.UserProfile.BIRTH_DATE_COLNAME, birthdate.getValue().toString());
+            colsValues.put(BookstoreUser.UserProfile.PHONE_NUMBER_COLNAME, phoneNumber.getText().trim());
+            try {
+                this.mainController.getBackendService().updateUser(this.mainController.getCurrentUser().getUserName(), colsValues);
+                updateProfileErrorLabel.setVisible(false);
+                JFXSnackbar bar = new JFXSnackbar(rootPane);
+                bar.enqueue(new JFXSnackbar.SnackbarEvent("Profile Updated Successfully"));
+            } catch (SQLException e) {
+                e.printStackTrace();
+                updateProfileErrorLabel.setText("Could not update profile!");
+                updateProfileErrorLabel.setVisible(true);
+            }
+        } else {
+            updateProfileErrorLabel.setText("Invalid Phone Number!");
+            updateProfileErrorLabel.setVisible(true);
+        }
+    }
+
+    private boolean validPhoneNumber() {
+        return phoneNumber.getText().matches("[0-9]+") && phoneNumber.getText().length() == 11;
+    }
+
+    @FXML
+    private void handleChangePasswordAction(ActionEvent actionEvent) {
+        if (oldPassword.getText().length() < 6 ) {
+            passwordErrorLabel.setText("Old Password is too short!");
+            passwordErrorLabel.setVisible(true);
+        } else if (newPassword.getText().length() < 6) {
+            passwordErrorLabel.setText("New Password is too short!");
+            passwordErrorLabel.setVisible(true);
+        } else {
+            try {
+                boolean success = this.mainController.getBackendService().updatePassword(mainController.getCurrentUser().
+                        getUserName(), oldPassword.getText().trim(), newPassword.getText().trim());
+                if (success) {
+                    passwordErrorLabel.setVisible(false);
+                    JFXSnackbar bar = new JFXSnackbar(rootPane);
+                    bar.enqueue(new JFXSnackbar.SnackbarEvent("Password Changed Successfully!"));
+                } else {
+                    passwordErrorLabel.setText("Old Password is invalid!");
+                    passwordErrorLabel.setVisible(true);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                passwordErrorLabel.setText("Password change failed!");
+                passwordErrorLabel.setVisible(true);
+            }
+        }
+        clearPasswordFields();
+    }
+
+    public void initProfile(MainController mainController) {
         this.mainController = mainController;
+        initFields();
+    }
+
+    private void initFields() {
+        this.firstName.setText(this.mainController.getCurrentUser().getProfile().getFirstName());
+        this.lastName.setText(this.mainController.getCurrentUser().getProfile().getLastName());
+        Date date = this.mainController.getCurrentUser().getProfile().getBirthDate();
+        System.out.println(date.toString());
+        if (date != null) {
+            LocalDate localDate = Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+            this.birthdate.setValue(localDate);
+        }
+        this.phoneNumber.setText(this.mainController.getCurrentUser().getProfile().getPhoneNumber());
+        this.shippingAddress.setText(this.mainController.getCurrentUser().getProfile().getShippingAddress());
     }
 }

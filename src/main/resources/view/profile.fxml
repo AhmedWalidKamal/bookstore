@@ -2,14 +2,16 @@
 
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXDatePicker?>
+<?import com.jfoenix.controls.JFXPasswordField?>
 <?import com.jfoenix.controls.JFXTextField?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="539.0" prefWidth="1076.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Profile">
+<AnchorPane fx:id="rootPane" prefHeight="560.0" prefWidth="1076.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Profile">
    <children>
       <VBox alignment="TOP_CENTER" layoutX="339.0" layoutY="80.0" prefHeight="445.0" prefWidth="417.0" spacing="20.0">
          <children>
@@ -18,13 +20,13 @@
                   <VBox prefHeight="100.0" prefWidth="187.0">
                      <children>
                         <Label prefHeight="21.0" prefWidth="80.0" text="First Name" />
-                        <JFXTextField prefHeight="25.0" prefWidth="142.0" />
+                        <JFXTextField fx:id="firstName" prefHeight="25.0" prefWidth="142.0" />
                      </children>
                   </VBox>
                   <VBox layoutX="10.0" layoutY="10.0" prefHeight="100.0" prefWidth="187.0">
                      <children>
                         <Label prefHeight="21.0" prefWidth="80.0" text="Last Name" />
-                        <JFXTextField prefHeight="25.0" prefWidth="142.0" />
+                        <JFXTextField fx:id="lastName" prefHeight="25.0" prefWidth="142.0" />
                      </children>
                   </VBox>
                </children>
@@ -34,54 +36,55 @@
                   <VBox prefHeight="100.0" prefWidth="187.0">
                      <children>
                         <Label prefHeight="21.0" prefWidth="80.0" text="Birthdate" />
-                        <JFXDatePicker />
+                        <JFXDatePicker fx:id="birthdate" defaultColor="#01466f" />
                      </children>
                   </VBox>
                   <VBox layoutX="10.0" layoutY="10.0" prefHeight="100.0" prefWidth="187.0">
                      <children>
                         <Label prefHeight="21.0" prefWidth="100.0" text="Phone Number" />
-                        <JFXTextField prefHeight="25.0" prefWidth="142.0" />
+                        <JFXTextField fx:id="phoneNumber" prefHeight="25.0" prefWidth="142.0" />
                      </children>
                   </VBox>
                </children>
             </HBox>
-            <VBox prefHeight="45.0" prefWidth="417.0">
-               <children>
-                  <Label text="Email" />
-                  <JFXTextField prefHeight="25.0" prefWidth="394.0">
-                     <VBox.margin>
-                        <Insets right="12.0" />
-                     </VBox.margin></JFXTextField>
-               </children>
-            </VBox>
             <VBox layoutX="10.0" layoutY="150.0" prefHeight="45.0" prefWidth="417.0">
                <children>
                   <Label text="Shipping Address" />
-                  <JFXTextField prefHeight="25.0" prefWidth="394.0">
+                  <JFXTextField fx:id="shippingAddress" prefHeight="25.0" prefWidth="394.0">
                      <VBox.margin>
                         <Insets right="12.0" />
                      </VBox.margin>
                   </JFXTextField>
                </children>
             </VBox>
-            <JFXButton buttonType="RAISED" prefHeight="37.0" prefWidth="138.0" ripplerFill="#2929290d" style="-fx-background-color: #01466f;" text="Update Profile" textFill="WHITE" />
+            <Label fx:id="updateProfileErrorLabel" textFill="#ff0606" visible="false">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <JFXButton fx:id="updateProfile" buttonType="RAISED" onAction="#handleUpdateProfileAction" prefHeight="37.0" prefWidth="138.0" ripplerFill="#2929290d" style="-fx-background-color: #01466f;" text="Update Profile" textFill="WHITE" />
             <HBox layoutX="10.0" layoutY="80.0" prefHeight="50.0" prefWidth="417.0" spacing="30.0">
                <children>
                   <VBox prefHeight="100.0" prefWidth="187.0">
                      <children>
                         <Label prefHeight="21.0" prefWidth="91.0" text="Old Password" />
-                        <JFXTextField prefHeight="25.0" prefWidth="142.0" />
+                        <JFXPasswordField fx:id="oldPassword" />
                      </children>
                   </VBox>
                   <VBox layoutX="10.0" layoutY="10.0" prefHeight="100.0" prefWidth="187.0">
                      <children>
                         <Label prefHeight="21.0" prefWidth="100.0" text="New Password" />
-                        <JFXTextField prefHeight="25.0" prefWidth="142.0" />
+                        <JFXPasswordField fx:id="newPassword" />
                      </children>
                   </VBox>
                </children>
             </HBox>
-            <JFXButton buttonType="RAISED" layoutX="158.0" layoutY="280.0" prefHeight="37.0" prefWidth="138.0" ripplerFill="#2929290d" style="-fx-background-color: #01466f;" text="Change Password" textFill="WHITE" />
+            <Label fx:id="passwordErrorLabel" textFill="#ff0606" visible="false">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <JFXButton fx:id="changePassword" buttonType="RAISED" layoutX="158.0" layoutY="280.0" onAction="#handleChangePasswordAction" prefHeight="37.0" prefWidth="138.0" ripplerFill="#2929290d" style="-fx-background-color: #01466f;" text="Change Password" textFill="WHITE" />
          </children>
       </VBox>
    </children>
