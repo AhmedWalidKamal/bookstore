@@ -13,6 +13,8 @@ public class Book {
     public static final String PUBLICATION_YEAR_COLNAME = "PUBLICATION_YEAR";
     public static final String PRICE_COLNAME = "PRICE";
     public static final String CATEGORY_COLNAME = "CATEGORY";
+    public static final String IMAGE_PATH_COLNAME = "IMAGE_PATH";
+    public static final String RATING_COLNAME = "RATING";
 
     public static final List<String> columns = Arrays.asList(ISBN_COLNAME,
                                                              PUBLISHER_NAME_COLNAME,
@@ -21,7 +23,9 @@ public class Book {
                                                              MIN_THRESHOLD_COLNAME,
                                                              PUBLICATION_YEAR_COLNAME,
                                                              PRICE_COLNAME,
-                                                             CATEGORY_COLNAME);
+                                                             CATEGORY_COLNAME,
+                                                             IMAGE_PATH_COLNAME,
+                                                             RATING_COLNAME);
 
     private String ISBN;
     private String publisherName;
@@ -31,6 +35,9 @@ public class Book {
     private Date publicationYear;
     private double price;
     private String category;
+    private String imagePath;
+    private double rating;
+
 
     private List<BookAuthor> authors;
 
@@ -124,4 +131,19 @@ public class Book {
         return Objects.hash(ISBN);
     }
 
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
 }

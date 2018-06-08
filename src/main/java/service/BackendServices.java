@@ -55,9 +55,10 @@ public class BackendServices {
         curUser.setEmail(rs.getString(BookstoreUser.EMAIL_COLNAME));
         curUser.setUserGroup(rs.getString(BookstoreUser.USER_GROUP_COLNAME));
         curUser.getProfile().setFirstName(rs.getString(BookstoreUser.UserProfile.FIRST_NAME_COLNAME));
-        curUser.getProfile().setFirstName(rs.getString(BookstoreUser.UserProfile.LAST_NAME_COLNAME));
-        curUser.getProfile().setNationality(rs.getString(BookstoreUser.UserProfile.NATIONALITY_COLNAME));
-//                curUser.getProfile().setBirthDate(rs.getString(BookstoreUser.UserProfile.));
+        curUser.getProfile().setLastName(rs.getString(BookstoreUser.UserProfile.LAST_NAME_COLNAME));
+        curUser.getProfile().setPhoneNumber(rs.getString(BookstoreUser.UserProfile.PHONE_NUMBER_COLNAME));
+        curUser.getProfile().setShippingAddress(rs.getString(BookstoreUser.UserProfile.SHIPPING_ADDRESS_COLNAME));
+        curUser.getProfile().setBirthDate(rs.getDate(BookstoreUser.UserProfile.BIRTH_DATE_COLNAME));
         return curUser;
 
     }
@@ -82,7 +83,7 @@ public class BackendServices {
         return null;
     }
 
-    public BookstoreUser getUserProfile(String userName) throws SQLException {
+    public BookstoreUser getUserData(String userName) throws SQLException {
         if (userName == null) {
             return null;
         }
@@ -135,6 +136,8 @@ public class BackendServices {
             curBook.setCategory(rs.getString(Book.CATEGORY_COLNAME));
             curBook.setPrice(rs.getDouble(Book.PRICE_COLNAME));
             curBook.setPublicationYear(rs.getDate(Book.PUBLICATION_YEAR_COLNAME));
+            curBook.setImagePath(rs.getString(Book.IMAGE_PATH_COLNAME));
+            curBook.setRating(rs.getDouble(Book.RATING_COLNAME));
         }
         BookAuthor author = new BookAuthor();
         author.setISBN(curBook.getISBN());
@@ -401,12 +404,17 @@ public class BackendServices {
             return false;
         }
         StringBuilder sqlQuery = new StringBuilder();
-        sqlQuery.append("UPDATE BOOK SET ");
+        sqlQuery.append("UPDATE BOOK SET");
+
+        int i = 0;
 
         for (String colName : colValues.keySet()) {
-            sqlQuery.append("BOOK.`");
+            sqlQuery.append(" BOOK.`");
             sqlQuery.append(colName);
             sqlQuery.append("` = ? ");
+            if (i++ < colValues.size() - 1) {
+                sqlQuery.append(",");
+            }
         }
 
         sqlQuery.append(" WHERE " + Book.ISBN_COLNAME + " = ?");
@@ -422,6 +430,8 @@ public class BackendServices {
         preparedStatement.setString(pos, ISBN);
 
         int updateCount = preparedStatement.executeUpdate();
+
+        System.out.println(preparedStatement);
 
         return updateCount > 0;
     }
@@ -476,12 +486,17 @@ public class BackendServices {
             return false;
         }
         StringBuilder sqlQuery = new StringBuilder();
-        sqlQuery.append("UPDATE BOOKSTORE_USER SET ");
+        sqlQuery.append("UPDATE BOOKSTORE_USER SET");
+
+        int i = 0;
 
         for (String colName : colValues.keySet()) {
-            sqlQuery.append("BOOKSTORE_USER.`");
+            sqlQuery.append(" BOOKSTORE_USER.`");
             sqlQuery.append(colName);
-            sqlQuery.append("` = ? ");
+            sqlQuery.append("` = ?");
+            if (i++ < colValues.size() - 1) {
+                sqlQuery.append(",");
+            }
         }
 
         sqlQuery.append(" WHERE " + BookstoreUser.USER_NAME_COLNAME + " = ?");
@@ -497,6 +512,8 @@ public class BackendServices {
         preparedStatement.setString(pos, userName);
 
         int updateCount = preparedStatement.executeUpdate();
+
+        System.out.println(preparedStatement);
 
         return updateCount > 0;
     }
@@ -517,6 +534,8 @@ public class BackendServices {
         callStatement.registerOutParameter(5, Types.VARCHAR);
 
         int updateCount = callStatement.executeUpdate();
+
+        System.out.println(callStatement);
 
         boolean success = callStatement.getBoolean(4);
 
@@ -729,13 +748,12 @@ public class BackendServices {
             BackendServices sys = new BackendServices();
 //            sys.register("Barry", "barry@bmail.bom", "bassword", "manager");
 //            sys.register("b4", "b2@a.c", "pw", "customer");
-            String usergroup = sys.login("Barry", "bassword").getUserGroup();
-            System.out.println(usergroup);
+            String firstName = sys.login("Barry", "bassword").getProfile().getFirstName();
+            System.out.println(firstName);
 
-
-            usergroup = sys.login("b4", "pw").getUserGroup();
-            System.out.println(usergroup);
             System.out.println(sys.updatePassword("b4", "pw", "pw"));
+            String usergroup = sys.login("b4", "pw").getUserGroup();
+            System.out.println(usergroup);
             for (Book book : sys.getBooks(1, 5, Book.BOOKS_IN_STOCK_COLNAME, true).getBooks()) {
                 System.out.println(book.getBookTitle() + "\t" + book.getISBN() + "\t" + book.getCategory() + "\t" + book.getPublisherName() + "\t" + book.getBooksInStock() + "\t" + Arrays.toString(book.getAuthors().toArray()));
             }
@@ -756,6 +774,11 @@ public class BackendServices {
             }
             Book book = sys.getBook("1234567890125");
             System.out.println(book.getBookTitle() + "\t" + book.getISBN() + "\t" + book.getCategory() + "\t" + book.getPublisherName() + "\t" + book.getBooksInStock() + "\t" + Arrays.toString(book.getAuthors().toArray()));
+
+            LinkedHashMap<String, String> userUpdates = new LinkedHashMap<>();
+            userUpdates.put(BookstoreUser.UserProfile.FIRST_NAME_COLNAME, "Ahmed");
+            userUpdates.put(BookstoreUser.UserProfile.LAST_NAME_COLNAME, "Walid");
+            sys.updateUser("Barry", userUpdates);
 
         } catch (SQLException e) {
             e.printStackTrace();

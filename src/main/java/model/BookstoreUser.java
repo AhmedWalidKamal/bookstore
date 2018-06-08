@@ -72,12 +72,16 @@ public class BookstoreUser {
         public static final String FIRST_NAME_COLNAME = "FIRST_NAME";
         public static final String LAST_NAME_COLNAME = "LAST_NAME";
         public static final String BIRTH_DATE_COLNAME = "BIRTH_DATE";
-        public static final String NATIONALITY_COLNAME = "NATIONALITY";
+        public static final String PHONE_NUMBER_COLNAME = "PHONE_NUMBER";
+        public static final String SHIPPING_ADDRESS_COLNAME = "SHIPPING_ADDRESS";
+
 
         private String firstName;
         private String lastName;
         private Date birthDate;
-        private String nationality;
+        private String phoneNumber;
+        private String shippingAddress;
+
 
         public UserProfile() {
 
@@ -107,12 +111,20 @@ public class BookstoreUser {
             this.birthDate = birthDate;
         }
 
-        public String getNationality() {
-            return nationality;
+        public String getPhoneNumber() {
+            return phoneNumber;
         }
 
-        public void setNationality(String nationality) {
-            this.nationality = nationality;
+        public void setPhoneNumber(String phoneNumber) {
+            this.phoneNumber = phoneNumber;
+        }
+
+        public String getShippingAddress() {
+            return shippingAddress;
+        }
+
+        public void setShippingAddress(String shippingAddress) {
+            this.shippingAddress = shippingAddress;
         }
     }
 }
