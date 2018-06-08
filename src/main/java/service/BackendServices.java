@@ -78,8 +78,8 @@ public class BackendServices {
             for (Book book : sys.findBooks(1, 5, colValues, Book.ISBN_COLNAME, true).getBooks()) {
                 System.out.println(book.getBookTitle() + "\t" + book.getISBN() + "\t" + book.getCategory() + "\t" + book.getPublisherName() + "\t" + book.getBooksInStock() + "\t" + Arrays.toString(book.getAuthors().toArray()));
             }
-            Book book = sys.getBook("1234567890125");
-            System.out.println(book.getBookTitle() + "\t" + book.getISBN() + "\t" + book.getCategory() + "\t" + book.getPublisherName() + "\t" + book.getBooksInStock() + "\t" + Arrays.toString(book.getAuthors().toArray()));
+            Book bookz = sys.getBook("1234567890125");
+            System.out.println(bookz.getBookTitle() + "\t" + bookz.getISBN() + "\t" + bookz.getCategory() + "\t" + bookz.getPublisherName() + "\t" + bookz.getBooksInStock() + "\t" + Arrays.toString(bookz.getAuthors().toArray()));
 
             LinkedHashMap<String, String> userUpdates = new LinkedHashMap<>();
             userUpdates.put(BookstoreUser.UserProfile.FIRST_NAME_COLNAME, "Ahmed");
@@ -91,6 +91,17 @@ public class BackendServices {
             for (BookOrder order : sys.getOrders(1, 5)) {
                 System.out.println(order.getOrderNo() + "\t" + order.getISBN() + "\t" + order.getPublisherName() + "\t" + order.getQuantity());
             }
+
+            System.out.println("Books that contain Sleep");
+            colValues.clear();
+            colValues.put(Book.BOOK_TITLE_COLNAME, new ArrayList<>(Arrays.asList("Sleep")));
+            for (Book book : sys.findBooks(1, 5, colValues, Book.ISBN_COLNAME, false).getBooks()) {
+                System.out.println(book.getBookTitle() + "\t" + book.getISBN() + "\t" + book.getCategory() + "\t" + book.getPublisherName() + "\t" + book.getBooksInStock() + "\t" + Arrays.toString(book.getAuthors().toArray()));
+            }
+
+            BookList books = sys.getBooks(1, 1, "ISBN", true);
+            System.out.println(books.hasNext());
+            System.out.println(books.hasPrev());
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -221,7 +232,7 @@ public class BackendServices {
                 + BookAuthor.ISBN_COLNAME + " = T." + Book.ISBN_COLNAME;
 
         PreparedStatement preparedStatement = DBConnection.prepareStatement(sqlQuery);
-        preparedStatement.setInt(1, pageSize);
+        preparedStatement.setInt(1, pageSize + 1);
         preparedStatement.setInt(2, (pageNumber - 1) * pageSize);
 
 
@@ -229,8 +240,15 @@ public class BackendServices {
         System.out.println(preparedStatement.toString());
 
         BookList books = new BookList();
+        books.setPrev(pageNumber > 1);
+
+        int cnt = 0;
 
         while (rs.next()) {
+            if (cnt++ == pageSize) {
+                books.setNext(true);
+                break;
+            }
             String ISBN = rs.getString(Book.ISBN_COLNAME);
             Book curBook = books.findBook(ISBN);
             curBook = getBook(curBook, rs);
@@ -256,7 +274,7 @@ public class BackendServices {
                 sqlQuery.append(" = ?");
             }
             for (int i = 0; i < colValues.get(colName).size() - 1; i++) {
-                sqlQuery.append(" OR ");
+                sqlQuery.append(" AND ");
                 sqlQuery.append(colName);
                 if (colName.endsWith(bookTitleSuffix)
                         || colName.endsWith(bookPublisherSuffix)
@@ -267,7 +285,7 @@ public class BackendServices {
                 }
             }
             if (cnt != colValues.size()) {
-                sqlQuery.append(" OR ");
+                sqlQuery.append(" AND ");
             }
         }
 
@@ -292,7 +310,7 @@ public class BackendServices {
                     return null;
                 }
                 bookConditions.put("BOOK.`" + colName + "`", colValues.get(colName));
-                authorConditions.put(alias + ".`" + colName + "`", colValues.get(colName));
+//                authorConditions.put(alias + ".`" + colName + "`", colValues.get(colName));
             }
         }
 
@@ -338,7 +356,7 @@ public class BackendServices {
             }
         }
 
-        preparedStatement.setInt(i++, pageSize);
+        preparedStatement.setInt(i++, pageSize + 1);
         preparedStatement.setInt(i++, (pageNumber - 1) * pageSize);
 
         for (String colName : authorConditions.keySet()) {
@@ -359,7 +377,15 @@ public class BackendServices {
 
         BookList books = new BookList();
 
+        books.setPrev(pageNumber > 1);
+
+        int cnt = 0;
+
         while (rs.next()) {
+            if (cnt++ == pageSize) {
+                books.setNext(true);
+                break;
+            }
             String ISBN = rs.getString(Book.ISBN_COLNAME);
             Book curBook = books.findBook(ISBN);
             curBook = getBook(curBook, rs);
@@ -784,6 +810,22 @@ public class BackendServices {
         }
 
         return orders;
+    }
+
+    public int getNumberOfOrders() throws SQLException {
+        Statement statement = DBConnection.createStatement();
+        ResultSet rs = statement.executeQuery("SELECT COUNT(*) FROM BOOK_ORDERS");
+
+        if (rs.next()) {
+            return rs.getInt(1);
+        }
+
+        return -1;
+    }
+
+    public int getOrdersPageCount(int pageSize) throws SQLException {
+        return (getNumberOfOrders() - 1) / pageSize + 1;
+
     }
 
     public boolean printJasperReport(String jasperFile, String outputFile, String reportTitle) {
