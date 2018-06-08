@@ -242,14 +242,29 @@ public class BackendServices {
     private void buildQueryCondition(StringBuilder sqlQuery,
                                      LinkedHashMap<String, ArrayList<String>> colValues) {
         int cnt = 0;
+        String  bookTitleSuffix = Book.BOOK_TITLE_COLNAME + "`";
+        String  bookPublisherSuffix = Book.PUBLISHER_NAME_COLNAME + "`";
+        String  bookAuthorSuffix = BookAuthor.AUTHOR_NAME_COLNAME + "`";
         for (String colName : colValues.keySet()) {
             cnt++;
             sqlQuery.append(colName);
-            sqlQuery.append(" = ?");
+            if (colName.endsWith(bookTitleSuffix)
+                    || colName.endsWith(bookPublisherSuffix)
+                    || colName.endsWith(bookAuthorSuffix)) {
+                sqlQuery.append(" LIKE ?");
+            } else {
+                sqlQuery.append(" = ?");
+            }
             for (int i = 0; i < colValues.get(colName).size() - 1; i++) {
                 sqlQuery.append(" OR ");
                 sqlQuery.append(colName);
-                sqlQuery.append(" = ?");
+                if (colName.endsWith(bookTitleSuffix)
+                        || colName.endsWith(bookPublisherSuffix)
+                        || colName.endsWith(bookAuthorSuffix)) {
+                    sqlQuery.append(" LIKE ?");
+                } else {
+                    sqlQuery.append(" = ?");
+                }
             }
             if (cnt != colValues.size()) {
                 sqlQuery.append(" OR ");
@@ -305,11 +320,21 @@ public class BackendServices {
             buildQueryCondition(sqlQuery, authorConditions);
         }
 
+        String  bookTitleSuffix = Book.BOOK_TITLE_COLNAME + "`";
+        String  bookPublisherSuffix = Book.PUBLISHER_NAME_COLNAME + "`";
+        String  bookAuthorSuffix = BookAuthor.AUTHOR_NAME_COLNAME + "`";
+
         PreparedStatement preparedStatement = DBConnection.prepareStatement(sqlQuery.toString());
         int i = 1;
         for (String colName : bookConditions.keySet()) {
             for (int j = 0; j < bookConditions.get(colName).size(); i++, j++) {
-                preparedStatement.setString(i, bookConditions.get(colName).get(j));
+                if (colName.endsWith(bookTitleSuffix)
+                        || colName.endsWith(bookPublisherSuffix)
+                        || colName.endsWith(bookAuthorSuffix)) {
+                    preparedStatement.setString(i,  "%" + bookConditions.get(colName).get(j) + "%");
+                } else {
+                    preparedStatement.setString(i, bookConditions.get(colName).get(j));
+                }
             }
         }
 
@@ -318,7 +343,14 @@ public class BackendServices {
 
         for (String colName : authorConditions.keySet()) {
             for (int j = 0; j < authorConditions.get(colName).size(); i++, j++) {
-                preparedStatement.setString(i, authorConditions.get(colName).get(j));
+
+                if (colName.endsWith(bookTitleSuffix)
+                        || colName.endsWith(bookPublisherSuffix)
+                        || colName.endsWith(bookAuthorSuffix)) {
+                    preparedStatement.setString(i,  "%" + authorConditions.get(colName).get(j) + "%");
+                } else {
+                    preparedStatement.setString(i, authorConditions.get(colName).get(j));
+                }
             }
         }
 
