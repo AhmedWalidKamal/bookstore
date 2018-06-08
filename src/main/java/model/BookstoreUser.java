@@ -1,5 +1,6 @@
 package model;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Objects;
 
@@ -78,7 +79,7 @@ public class BookstoreUser {
 
         private String firstName;
         private String lastName;
-        private Date birthDate;
+        private LocalDate birthDate;
         private String phoneNumber;
         private String shippingAddress;
 
@@ -103,11 +104,11 @@ public class BookstoreUser {
             this.lastName = lastName;
         }
 
-        public Date getBirthDate() {
+        public LocalDate getBirthDate() {
             return birthDate;
         }
 
-        public void setBirthDate(Date birthDate) {
+        public void setBirthDate(LocalDate birthDate) {
             this.birthDate = birthDate;
         }
 

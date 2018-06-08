@@ -1,5 +1,6 @@
 package model;
 
+import java.time.LocalDate;
 import java.time.Year;
 import java.util.*;
 
@@ -32,7 +33,7 @@ public class Book {
     private String bookTitle;
     private int booksInStock;
     private int minThreshold;
-    private Date publicationYear;
+    private LocalDate publicationYear;
     private double price;
     private String category;
     private String imagePath;
@@ -85,11 +86,11 @@ public class Book {
         this.minThreshold = minThreshold;
     }
 
-    public Date getPublicationYear() {
+    public LocalDate getPublicationYear() {
         return publicationYear;
     }
 
-    public void setPublicationYear(Date publicationYear) {
+    public void setPublicationYear(LocalDate publicationYear) {
         this.publicationYear = publicationYear;
     }
 

@@ -6,10 +6,11 @@ import model.*;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
+
 import java.sql.*;
+import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.Date;
 
 public class BackendServices {
     private Connection DBConnection;
@@ -57,7 +58,7 @@ public class BackendServices {
             System.out.println(firstName);
 
             System.out.println(sys.updatePassword("b4", "pw", "pw"));
-            String usergroup = sys.login("b4", "pw").getUserGroup();
+            String usergroup = sys.login("b4", "pw").getProfile().getBirthDate().toString();
             System.out.println(usergroup);
             for (Book book : sys.getBooks(1, 5, Book.BOOKS_IN_STOCK_COLNAME, true).getBooks()) {
                 System.out.println(book.getBookTitle() + "\t" + book.getISBN() + "\t" + book.getCategory() + "\t" + book.getPublisherName() + "\t" + book.getBooksInStock() + "\t" + Arrays.toString(book.getAuthors().toArray()));
@@ -85,6 +86,12 @@ public class BackendServices {
             userUpdates.put(BookstoreUser.UserProfile.LAST_NAME_COLNAME, "Walid");
             sys.updateUser("Barry", userUpdates);
 
+
+            System.out.println("Book Orders: ");
+            for (BookOrder order : sys.getOrders(1, 5)) {
+                System.out.println(order.getOrderNo() + "\t" + order.getISBN() + "\t" + order.getPublisherName() + "\t" + order.getQuantity());
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -99,7 +106,10 @@ public class BackendServices {
         curUser.getProfile().setLastName(rs.getString(BookstoreUser.UserProfile.LAST_NAME_COLNAME));
         curUser.getProfile().setPhoneNumber(rs.getString(BookstoreUser.UserProfile.PHONE_NUMBER_COLNAME));
         curUser.getProfile().setShippingAddress(rs.getString(BookstoreUser.UserProfile.SHIPPING_ADDRESS_COLNAME));
-        curUser.getProfile().setBirthDate(rs.getDate(BookstoreUser.UserProfile.BIRTH_DATE_COLNAME));
+        Calendar gmt = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+        java.sql.Date birthDate = rs.getDate(BookstoreUser.UserProfile.BIRTH_DATE_COLNAME, gmt);
+
+        curUser.getProfile().setBirthDate(birthDate == null ? null : birthDate.toLocalDate());
         return curUser;
 
     }
@@ -176,7 +186,10 @@ public class BackendServices {
             curBook.setBookTitle(rs.getString(Book.BOOK_TITLE_COLNAME));
             curBook.setCategory(rs.getString(Book.CATEGORY_COLNAME));
             curBook.setPrice(rs.getDouble(Book.PRICE_COLNAME));
-            curBook.setPublicationYear(rs.getDate(Book.PUBLICATION_YEAR_COLNAME));
+
+            Calendar gmt = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+            java.sql.Date publicationYear = rs.getDate(Book.PUBLICATION_YEAR_COLNAME, gmt);
+            curBook.setPublicationYear(publicationYear == null ? null : publicationYear.toLocalDate());
             curBook.setImagePath(rs.getString(Book.IMAGE_PATH_COLNAME));
             curBook.setRating(rs.getDouble(Book.RATING_COLNAME));
         }
@@ -229,14 +242,29 @@ public class BackendServices {
     private void buildQueryCondition(StringBuilder sqlQuery,
                                      LinkedHashMap<String, ArrayList<String>> colValues) {
         int cnt = 0;
+        String  bookTitleSuffix = Book.BOOK_TITLE_COLNAME + "`";
+        String  bookPublisherSuffix = Book.PUBLISHER_NAME_COLNAME + "`";
+        String  bookAuthorSuffix = BookAuthor.AUTHOR_NAME_COLNAME + "`";
         for (String colName : colValues.keySet()) {
             cnt++;
             sqlQuery.append(colName);
-            sqlQuery.append(" = ?");
+            if (colName.endsWith(bookTitleSuffix)
+                    || colName.endsWith(bookPublisherSuffix)
+                    || colName.endsWith(bookAuthorSuffix)) {
+                sqlQuery.append(" LIKE ?");
+            } else {
+                sqlQuery.append(" = ?");
+            }
             for (int i = 0; i < colValues.get(colName).size() - 1; i++) {
                 sqlQuery.append(" OR ");
                 sqlQuery.append(colName);
-                sqlQuery.append(" = ?");
+                if (colName.endsWith(bookTitleSuffix)
+                        || colName.endsWith(bookPublisherSuffix)
+                        || colName.endsWith(bookAuthorSuffix)) {
+                    sqlQuery.append(" LIKE ?");
+                } else {
+                    sqlQuery.append(" = ?");
+                }
             }
             if (cnt != colValues.size()) {
                 sqlQuery.append(" OR ");
@@ -292,11 +320,21 @@ public class BackendServices {
             buildQueryCondition(sqlQuery, authorConditions);
         }
 
+        String  bookTitleSuffix = Book.BOOK_TITLE_COLNAME + "`";
+        String  bookPublisherSuffix = Book.PUBLISHER_NAME_COLNAME + "`";
+        String  bookAuthorSuffix = BookAuthor.AUTHOR_NAME_COLNAME + "`";
+
         PreparedStatement preparedStatement = DBConnection.prepareStatement(sqlQuery.toString());
         int i = 1;
         for (String colName : bookConditions.keySet()) {
             for (int j = 0; j < bookConditions.get(colName).size(); i++, j++) {
-                preparedStatement.setString(i, bookConditions.get(colName).get(j));
+                if (colName.endsWith(bookTitleSuffix)
+                        || colName.endsWith(bookPublisherSuffix)
+                        || colName.endsWith(bookAuthorSuffix)) {
+                    preparedStatement.setString(i,  "%" + bookConditions.get(colName).get(j) + "%");
+                } else {
+                    preparedStatement.setString(i, bookConditions.get(colName).get(j));
+                }
             }
         }
 
@@ -305,7 +343,14 @@ public class BackendServices {
 
         for (String colName : authorConditions.keySet()) {
             for (int j = 0; j < authorConditions.get(colName).size(); i++, j++) {
-                preparedStatement.setString(i, authorConditions.get(colName).get(j));
+
+                if (colName.endsWith(bookTitleSuffix)
+                        || colName.endsWith(bookPublisherSuffix)
+                        || colName.endsWith(bookAuthorSuffix)) {
+                    preparedStatement.setString(i,  "%" + authorConditions.get(colName).get(j) + "%");
+                } else {
+                    preparedStatement.setString(i, authorConditions.get(colName).get(j));
+                }
             }
         }
 
@@ -710,6 +755,35 @@ public class BackendServices {
         int updateCount = preparedStatement.executeUpdate();
 
         return updateCount > 0;
+    }
+
+    public Collection<BookOrder> getOrders(int pageNumber, int pageSize) throws SQLException {
+        String sqlQuery = "SELECT * FROM BOOK_ORDERS ORDER BY BOOK_ORDERS.`" + BookOrder.ORDER_NO_COLNAME
+                            + "` DESC LIMIT ? OFFSET ?";
+
+        PreparedStatement preparedStatement = DBConnection.prepareStatement(sqlQuery);
+
+        preparedStatement.setInt(1, pageSize);
+        preparedStatement.setInt(2, (pageNumber - 1) * pageSize);
+
+        ResultSet rs = preparedStatement.executeQuery();
+
+        System.out.println(preparedStatement);
+
+        Collection<BookOrder> orders = new ArrayList<>();
+
+        while (rs.next()) {
+            BookOrder curOrder = new BookOrder();
+
+            curOrder.setISBN(rs.getString(BookOrder.ISBN_COLNAME));
+            curOrder.setOrderNo(rs.getInt(BookOrder.ORDER_NO_COLNAME));
+            curOrder.setPublisherName(rs.getString(BookOrder.PUBLISHER_NAME_COLNAME));
+            curOrder.setQuantity(rs.getInt(BookOrder.QUANTITY_COLNAME));
+
+            orders.add(curOrder);
+        }
+
+        return orders;
     }
 
     public boolean printJasperReport(String jasperFile, String outputFile, String reportTitle) {
