@@ -107,10 +107,9 @@ public class Profile {
     private void initFields() {
         this.firstName.setText(this.mainController.getCurrentUser().getProfile().getFirstName());
         this.lastName.setText(this.mainController.getCurrentUser().getProfile().getLastName());
-        Date date = this.mainController.getCurrentUser().getProfile().getBirthDate();
-        System.out.println(date.toString());
-        if (date != null) {
-            LocalDate localDate = Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate localDate = this.mainController.getCurrentUser().getProfile().getBirthDate();
+        System.out.println(localDate.toString());
+        if (localDate != null) {
             this.birthdate.setValue(localDate);
         }
         this.phoneNumber.setText(this.mainController.getCurrentUser().getProfile().getPhoneNumber());
