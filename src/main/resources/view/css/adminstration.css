@@ -1,0 +1,33 @@
+* {
+    -fx-primary : #2A2E37;
+    -fx-secondary : #FFFF8D;
+    -fx-primarytext : #B2B2B2;
+    -fx-blue: #1976D2;
+    -fx-red: #FF0000;
+    -fx-green:#2E7D32;
+}
+
+.tab{
+    -fx-background-color: -fx-primary;
+    -fx-pref-width : 350;
+    -fx-pref-height : 60;
+}
+
+.tab-header-background{
+    -fx-background-color: -fx-primary;
+}
+
+.jfx-text-field {
+    -fx-prompt-text-fill: #989898;
+}
+
+.jfx-combo-box {
+    -fx-prompt-text-fill: #989898;
+}
+
+/*
+.jfx-tab-pane .tab-selected-line
+{
+    -fx-border-color:  -fx-red;
+}
+*/

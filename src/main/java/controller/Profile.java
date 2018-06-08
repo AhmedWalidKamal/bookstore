@@ -115,5 +115,11 @@ public class Profile {
         }
         this.phoneNumber.setText(this.mainController.getCurrentUser().getProfile().getPhoneNumber());
         this.shippingAddress.setText(this.mainController.getCurrentUser().getProfile().getShippingAddress());
+
+        /// TODO: Load avatar from DB if there was one.
+    }
+
+    @FXML
+    private void handleUpdateAvatarButton(ActionEvent actionEvent) {
     }
 }

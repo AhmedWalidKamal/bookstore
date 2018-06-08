@@ -1,20 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.gluonhq.charm.glisten.control.Avatar?>
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXDatePicker?>
 <?import com.jfoenix.controls.JFXPasswordField?>
 <?import com.jfoenix.controls.JFXTextField?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="rootPane" prefHeight="560.0" prefWidth="1076.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Profile">
+<AnchorPane fx:id="rootPane" prefHeight="609.0" prefWidth="1076.0" stylesheets="@css/profile.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Profile">
    <children>
-      <VBox alignment="TOP_CENTER" layoutX="339.0" layoutY="80.0" prefHeight="445.0" prefWidth="417.0" spacing="20.0">
+      <VBox alignment="TOP_CENTER" layoutX="338.0" layoutY="25.0" prefHeight="559.0" prefWidth="417.0" spacing="20.0">
          <children>
+            <HBox prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Avatar radius="36.0">
+                     <image>
+                        <Image url="@images/user(1).png" />
+                     </image>
+                     <HBox.margin>
+                        <Insets left="130.0" top="15.0" />
+                     </HBox.margin></Avatar>
+                  <JFXButton fx:id="updateAvatar" buttonType="RAISED" onAction="#handleUpdateAvatarButton" prefHeight="32.0" prefWidth="77.0" ripplerFill="#2929290d" style="-fx-background-color: #01466f;" text="Upload" textFill="WHITE">
+                     <HBox.margin>
+                        <Insets left="10.0" top="38.0" />
+                     </HBox.margin>
+                  </JFXButton>
+               </children>
+            </HBox>
             <HBox prefHeight="50.0" prefWidth="417.0" spacing="30.0">
                <children>
                   <VBox prefHeight="100.0" prefWidth="187.0">
