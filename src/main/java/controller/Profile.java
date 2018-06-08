@@ -43,23 +43,31 @@ public class Profile {
 
     @FXML
     private void handleUpdateProfileAction(ActionEvent actionEvent) {
-        LinkedHashMap<String, String> colsValues = new LinkedHashMap<>();
-        colsValues.put(BookstoreUser.UserProfile.FIRST_NAME_COLNAME, firstName.getText().trim());
-        colsValues.put(BookstoreUser.UserProfile.LAST_NAME_COLNAME, lastName.getText().trim());
-        colsValues.put(BookstoreUser.UserProfile.PHONE_NUMBER_COLNAME, phoneNumber.getText().trim());
-        colsValues.put(BookstoreUser.UserProfile.SHIPPING_ADDRESS_COLNAME, shippingAddress.getText().trim());
-        colsValues.put(BookstoreUser.UserProfile.BIRTH_DATE_COLNAME, birthdate.getValue().toString());
-        try {
-            this.mainController.getBackendService().updateUser(this.mainController.getCurrentUser().getUserName(), colsValues);
-            updateProfileErrorLabel.setVisible(false);
-            JFXSnackbar bar = new JFXSnackbar(rootPane);
-            bar.enqueue(new JFXSnackbar.SnackbarEvent("Profile Update Successfully"));
-        } catch (SQLException e) {
-            e.printStackTrace();
-            updateProfileErrorLabel.setText("Could not update profile!");
+        if (validPhoneNumber()) {
+            LinkedHashMap<String, String> colsValues = new LinkedHashMap<>();
+            colsValues.put(BookstoreUser.UserProfile.FIRST_NAME_COLNAME, firstName.getText().trim());
+            colsValues.put(BookstoreUser.UserProfile.LAST_NAME_COLNAME, lastName.getText().trim());
+            colsValues.put(BookstoreUser.UserProfile.SHIPPING_ADDRESS_COLNAME, shippingAddress.getText().trim());
+            colsValues.put(BookstoreUser.UserProfile.BIRTH_DATE_COLNAME, birthdate.getValue().toString());
+            colsValues.put(BookstoreUser.UserProfile.PHONE_NUMBER_COLNAME, phoneNumber.getText().trim());
+            try {
+                this.mainController.getBackendService().updateUser(this.mainController.getCurrentUser().getUserName(), colsValues);
+                updateProfileErrorLabel.setVisible(false);
+                JFXSnackbar bar = new JFXSnackbar(rootPane);
+                bar.enqueue(new JFXSnackbar.SnackbarEvent("Profile Updated Successfully"));
+            } catch (SQLException e) {
+                e.printStackTrace();
+                updateProfileErrorLabel.setText("Could not update profile!");
+                updateProfileErrorLabel.setVisible(true);
+            }
+        } else {
+            updateProfileErrorLabel.setText("Invalid Phone Number!");
             updateProfileErrorLabel.setVisible(true);
         }
+    }
 
+    private boolean validPhoneNumber() {
+        return phoneNumber.getText().matches("[0-9]+") && phoneNumber.getText().length() == 11;
     }
 
     @FXML
@@ -100,6 +108,7 @@ public class Profile {
         this.firstName.setText(this.mainController.getCurrentUser().getProfile().getFirstName());
         this.lastName.setText(this.mainController.getCurrentUser().getProfile().getLastName());
         Date date = this.mainController.getCurrentUser().getProfile().getBirthDate();
+        System.out.println(date.toString());
         if (date != null) {
             LocalDate localDate = Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
             this.birthdate.setValue(localDate);
