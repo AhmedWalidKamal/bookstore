@@ -91,7 +91,7 @@ class SignIn {
                                             userNameTextField.getText().trim(), passwordField.getText());
             if (user == null) {
                 // Sign in failed.
-                clearInputFields();
+                passwordField.clear();
                 loginErrorLabel.setVisible(true);
             } else {
                 // Sign in succeeded.
@@ -103,12 +103,14 @@ class SignIn {
                 MainController.getInstance().loadProfileScene(); // Should be changed to load home when home is ready.
             }
         } catch (SQLException e) {
-            clearInputFields();
+            passwordField.clear();
             loginErrorLabel.setVisible(true);
         }
     }
 
     private void handleSignUpButtonAction() {
+        clearInputFields();
+        loginErrorLabel.setVisible(false);
         MainController.getInstance().loadSignUpScene();
     }
 

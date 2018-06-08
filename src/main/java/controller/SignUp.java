@@ -90,12 +90,14 @@ public class SignUp {
             }
         } catch (SQLException e) {
             passwordField.clear();
-            registrationErrorLabel.setText("Registration Error!");
+            registrationErrorLabel.setText("Username already exists!");
             registrationErrorLabel.setVisible(true);
         }
     }
 
     private void handleSignInButtonAction() {
+        clearInputFields();
+        registrationErrorLabel.setVisible(false);
         goToSignIn(false);
     }
 
