@@ -2,11 +2,14 @@ package controller;
 
 import com.gluonhq.charm.glisten.control.Avatar;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseEvent;
 
-public class NavigationPanel {
+import java.io.IOException;
+
+class NavigationPanel {
 
     @FXML
     private Avatar userAvatar;
@@ -17,42 +20,53 @@ public class NavigationPanel {
     @FXML
     private Label userEmail;
 
-    private MainController mainController;
+    private Parent parent;
 
-    public NavigationPanel () {
-
+    NavigationPanel () {
+        if (parent == null) {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/navigationPanel.fxml"));
+            fxmlLoader.setController(this);
+            try {
+                parent = fxmlLoader.load();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        initNavPanel();
     }
 
-    public Image getUserAvatar() {
-        return this.userAvatar.getImage();
+    private void initNavPanel() {
+        setUserAvatar(MainController.getInstance().getCurrentUser().getProfile().getUserAvatarPath());
+        setUserName(MainController.getInstance().getCurrentUser().getUserName());
+        setUserEmail(MainController.getInstance().getCurrentUser().getEmail());
     }
 
-    public void setUserAvatar(Image image) {
-        this.userAvatar.setImage(image);
+    Image getUserAvatar() {
+        return userAvatar.getImage();
     }
 
-    public String getUserName() {
-        return this.userName.getText();
+    void setUserAvatar(Image userImage) {
+        userAvatar.setImage(userImage);
     }
 
-    public void setUserName(String userName) {
+    void setUserAvatar(String userImagePath) {
+        Image image = new Image(userImagePath);
+        userAvatar.setImage(image);
+    }
+
+    String getUserName() {
+        return userName.getText();
+    }
+
+    void setUserName(String userName) {
         this.userName.setText(userName);
     }
 
-    public String getUserEmail() {
-        return this.userEmail.getText();
+    String getUserEmail() {
+        return userEmail.getText();
     }
 
-    public void setUserEmail(String userName) {
-        this.userEmail.setText(userName);
-    }
-
-    public void setMainController(MainController mainController) {
-        this.mainController = mainController;
-    }
-
-    public void navigateToHome(MouseEvent mouseEvent) {
-        mouseEvent.consume();
-        // TODO: Navigate To home screen.
+    void setUserEmail(String userEmail) {
+        this.userEmail.setText(userEmail);
     }
 }

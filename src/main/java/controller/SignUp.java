@@ -16,7 +16,7 @@ import java.sql.SQLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class SignUp {
+class SignUp {
 
     @FXML
     private JFXButton signUpButton;
@@ -63,7 +63,7 @@ public class SignUp {
     }
 
     Parent getParent() {
-        return this.parent;
+        return parent;
     }
 
     private void initSignUpButton() {

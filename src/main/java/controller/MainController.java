@@ -44,15 +44,15 @@ public class MainController {
     }
 
     BookstoreUser getCurrentUser() {
-        return this.currentUser;
+        return currentUser;
     }
 
-    void setCurrentUser(BookstoreUser user) {
-        currentUser = user;
+    void setCurrentUser(BookstoreUser currentUser) {
+        this.currentUser = currentUser;
     }
 
     Stage getPrimaryStage() {
-        return this.primaryStage;
+        return primaryStage;
     }
 
     public void setPrimaryStage(Stage primaryStage) {
@@ -60,7 +60,7 @@ public class MainController {
     }
 
     BackendServices getBackendService() {
-        return this.backendServices;
+        return backendServices;
     }
 
     void setBackendServices(BackendServices backendServices) {
@@ -114,7 +114,4 @@ public class MainController {
             e.printStackTrace();
         }
     }
-
-
-
 }

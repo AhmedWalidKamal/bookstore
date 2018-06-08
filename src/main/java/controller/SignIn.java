@@ -15,7 +15,6 @@ import model.BookstoreUser;
 import java.io.IOException;
 import java.sql.SQLException;
 
-
 class SignIn {
 
     @FXML
@@ -56,7 +55,7 @@ class SignIn {
     }
 
     Parent getParent() {
-        return this.parent;
+        return parent;
     }
 
     private void initSignInButton() {
