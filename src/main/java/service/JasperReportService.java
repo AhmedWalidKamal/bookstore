@@ -30,7 +30,7 @@ class JasperReportService {
         viewer.show();
     }
 
-    public static void printReport(Connection DBConnection, String reportTitle, String jasperFileName, String outputFile) {
+    public static boolean printReport(Connection DBConnection, String reportTitle, String jasperFileName, String outputFile) {
 
 
         //------------------Jasper testing is here.--------------------------------------------
@@ -48,9 +48,10 @@ class JasperReportService {
             JasperExportManager.exportReportToPdfFile(jasperPrint, outputFile);
 
             System.out.println("Done exporting reports to pdf.");
-
+            return true;
         } catch (Exception e) {
-            System.out.print("Exception" + e);
+            e.printStackTrace();
+            return false;
         }
         //--------------------------------------------------------------------------------------------
     }

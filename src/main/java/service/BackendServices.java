@@ -13,7 +13,6 @@ import java.util.Date;
 
 public class BackendServices {
     private Connection DBConnection;
-    private ResourceBundle resourceBundle;
     private String jasperPath;
 
     /**
@@ -22,7 +21,7 @@ public class BackendServices {
      * @throws SQLException If the connection to the database failed.
      */
     public BackendServices() throws SQLException {
-        resourceBundle = ResourceBundle.getBundle("services.dbuser");
+        final ResourceBundle resourceBundle = ResourceBundle.getBundle("services.dbuser");
         String user = resourceBundle.getString("user");
         String password = resourceBundle.getString("password");
         String connectionUrl = "jdbc:mysql://localhost:3306/BOOKSTORE?useUnicode=true&" +
@@ -49,6 +48,48 @@ public class BackendServices {
         System.out.println(jasperPath);
     }
 
+    public static void main(String[] args) {
+        try {
+            BackendServices sys = new BackendServices();
+//            sys.register("Barry", "barry@bmail.bom", "bassword", "manager");
+//            sys.register("b4", "b2@a.c", "pw", "customer");
+            String firstName = sys.login("Barry", "bassword").getProfile().getFirstName();
+            System.out.println(firstName);
+
+            System.out.println(sys.updatePassword("b4", "pw", "pw"));
+            String usergroup = sys.login("b4", "pw").getUserGroup();
+            System.out.println(usergroup);
+            for (Book book : sys.getBooks(1, 5, Book.BOOKS_IN_STOCK_COLNAME, true).getBooks()) {
+                System.out.println(book.getBookTitle() + "\t" + book.getISBN() + "\t" + book.getCategory() + "\t" + book.getPublisherName() + "\t" + book.getBooksInStock() + "\t" + Arrays.toString(book.getAuthors().toArray()));
+            }
+            System.out.println("" + sys.getNumberOfBooks() + " " + sys.getNumberOfPages(3));
+            System.out.println("\n" + sys.buyBook("b4", "1234567890126", 500) + "\n");
+            System.out.println(sys.confirmOrder(sys.orderBook("1234567890126", "Ahmed Walid", 5000)));
+
+            for (Book book : sys.findBooks(1, 5, Book.PUBLISHER_NAME_COLNAME, "Ahmed Walid", Book.ISBN_COLNAME, false).getBooks()) {
+                System.out.println(book.getBookTitle() + "\t" + book.getISBN() + "\t" + book.getCategory() + "\t" + book.getPublisherName() + "\t" + book.getBooksInStock() + "\t" + Arrays.toString(book.getAuthors().toArray()));
+            }
+
+            LinkedHashMap<String, ArrayList<String>> colValues = new LinkedHashMap<>();
+            colValues.put("ISBN", new ArrayList<>(Arrays.asList("1234567890123", "1234567890127")));
+            colValues.put("BOOKS_IN_STOCK", new ArrayList<>(Arrays.asList("0")));
+            colValues.put(BookAuthor.AUTHOR_NAME_COLNAME, new ArrayList<>(Arrays.asList("A", "B")));
+            for (Book book : sys.findBooks(1, 5, colValues, Book.ISBN_COLNAME, true).getBooks()) {
+                System.out.println(book.getBookTitle() + "\t" + book.getISBN() + "\t" + book.getCategory() + "\t" + book.getPublisherName() + "\t" + book.getBooksInStock() + "\t" + Arrays.toString(book.getAuthors().toArray()));
+            }
+            Book book = sys.getBook("1234567890125");
+            System.out.println(book.getBookTitle() + "\t" + book.getISBN() + "\t" + book.getCategory() + "\t" + book.getPublisherName() + "\t" + book.getBooksInStock() + "\t" + Arrays.toString(book.getAuthors().toArray()));
+
+            LinkedHashMap<String, String> userUpdates = new LinkedHashMap<>();
+            userUpdates.put(BookstoreUser.UserProfile.FIRST_NAME_COLNAME, "Ahmed");
+            userUpdates.put(BookstoreUser.UserProfile.LAST_NAME_COLNAME, "Walid");
+            sys.updateUser("Barry", userUpdates);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     private BookstoreUser getUser(ResultSet rs) throws SQLException {
         BookstoreUser curUser = new BookstoreUser();
         curUser.setUserName(rs.getString(BookstoreUser.USER_NAME_COLNAME));
@@ -72,7 +113,7 @@ public class BackendServices {
         preparedStatement.setString(1, userName);
         ResultSet rs = preparedStatement.executeQuery();
 
-        while (rs.next()) {
+        if (rs.next()) {
             String userPassword = rs.getString(BookstoreUser.PASSWORD_COLNAME);
             if (!userPassword.equals(password)) {
                 return null;
@@ -92,7 +133,7 @@ public class BackendServices {
         preparedStatement.setString(1, userName);
         ResultSet rs = preparedStatement.executeQuery();
 
-        while (rs.next()) {
+        if (rs.next()) {
             String userPassword = rs.getString(BookstoreUser.PASSWORD_COLNAME);
             return getUser(rs);
         }
@@ -164,7 +205,7 @@ public class BackendServices {
 
         sqlQuery += " LIMIT ? OFFSET ?) AS T" +
                 " LEFT OUTER JOIN BOOK_AUTHORS ON BOOK_AUTHORS."
-                + BookAuthor.ISBN_COLNAME  + " = T." + Book.ISBN_COLNAME;
+                + BookAuthor.ISBN_COLNAME + " = T." + Book.ISBN_COLNAME;
 
         PreparedStatement preparedStatement = DBConnection.prepareStatement(sqlQuery);
         preparedStatement.setInt(1, pageSize);
@@ -192,7 +233,7 @@ public class BackendServices {
             cnt++;
             sqlQuery.append(colName);
             sqlQuery.append(" = ?");
-            for (int i = 0 ; i < colValues.get(colName).size() - 1 ; i++) {
+            for (int i = 0; i < colValues.get(colName).size() - 1; i++) {
                 sqlQuery.append(" OR ");
                 sqlQuery.append(colName);
                 sqlQuery.append(" = ?");
@@ -205,8 +246,8 @@ public class BackendServices {
     }
 
     public BookList findBooks(int pageNumber, int pageSize,
-                                     LinkedHashMap<String, ArrayList<String>> colValues,
-                                     String orderCol, boolean ascending) throws SQLException {
+                              LinkedHashMap<String, ArrayList<String>> colValues,
+                              String orderCol, boolean ascending) throws SQLException {
         LinkedHashMap<String, ArrayList<String>> authorConditions = new LinkedHashMap<>();
         LinkedHashMap<String, ArrayList<String>> bookConditions = new LinkedHashMap<>();
 
@@ -235,7 +276,7 @@ public class BackendServices {
             buildQueryCondition(sqlQuery, bookConditions);
         }
 
-        sqlQuery.append(" ORDER BY BOOK.`" + orderCol + "`");
+        sqlQuery.append(" ORDER BY BOOK.`").append(orderCol).append("`");
         if (ascending) {
             sqlQuery.append(" ASC");
         } else {
@@ -244,7 +285,7 @@ public class BackendServices {
         sqlQuery.append(" LIMIT ? OFFSET ?");
         sqlQuery.append(" ) AS " + alias
                 + " LEFT OUTER JOIN BOOK_AUTHORS ON BOOK_AUTHORS.`"
-                + BookAuthor.ISBN_COLNAME  + "` = " + alias + ".`" + Book.ISBN_COLNAME + "`");
+                + BookAuthor.ISBN_COLNAME + "` = " + alias + ".`" + Book.ISBN_COLNAME + "`");
 
         if (!authorConditions.isEmpty()) {
             sqlQuery.append(" WHERE ");
@@ -254,7 +295,7 @@ public class BackendServices {
         PreparedStatement preparedStatement = DBConnection.prepareStatement(sqlQuery.toString());
         int i = 1;
         for (String colName : bookConditions.keySet()) {
-            for (int j = 0; j < bookConditions.get(colName).size() ; i++, j++) {
+            for (int j = 0; j < bookConditions.get(colName).size(); i++, j++) {
                 preparedStatement.setString(i, bookConditions.get(colName).get(j));
             }
         }
@@ -263,7 +304,7 @@ public class BackendServices {
         preparedStatement.setInt(i++, (pageNumber - 1) * pageSize);
 
         for (String colName : authorConditions.keySet()) {
-            for (int j = 0; j < authorConditions.get(colName).size() ; i++, j++) {
+            for (int j = 0; j < authorConditions.get(colName).size(); i++, j++) {
                 preparedStatement.setString(i, authorConditions.get(colName).get(j));
             }
         }
@@ -291,13 +332,12 @@ public class BackendServices {
     }
 
     public BookList findBooks(int pageNumber, int pageSize,
-                                     String colName, String value,
+                              String colName, String value,
                               String orderCol, boolean ascending) throws SQLException {
         ArrayList<String> values = new ArrayList<>();
         values.add(value);
         return findBooks(pageNumber, pageSize, colName, values, orderCol, ascending);
     }
-
 
     public Book getBook(String ISBN) throws SQLException {
         BookList books = findBooks(1, 1, Book.ISBN_COLNAME, ISBN,
@@ -353,7 +393,7 @@ public class BackendServices {
                 StringBuilder authorInsertQuery = new StringBuilder();
                 authorInsertQuery.append("INSERT INTO BOOK_AUTHORS VALUES ");
 
-                for (int i = 0; i < bookAuthors.size() ; i++) {
+                for (int i = 0; i < bookAuthors.size(); i++) {
                     authorInsertQuery.append("(?, ?)");
 
                     if (i < bookAuthors.size() - 1) {
@@ -435,7 +475,6 @@ public class BackendServices {
 
         return updateCount > 0;
     }
-
 
     public boolean modifyBook(String ISBN, String colName, String newValue) throws SQLException {
         LinkedHashMap<String, String> colValues = new LinkedHashMap<>();
@@ -553,8 +592,8 @@ public class BackendServices {
     }
 
     public boolean buyBooks(String userName,
-                           Map<String, Integer> bookQuantities,
-                           Date purchaseDate) throws SQLException {
+                            Map<String, Integer> bookQuantities,
+                            Date purchaseDate) throws SQLException {
         String sqlQuery = "{CALL MAKE_PURCHASE(?, ?, ?, ?, ?, ?, ?, ?)}";
         Collection<Statement> statements = new ArrayList<>();
 
@@ -644,12 +683,12 @@ public class BackendServices {
             return -1;
         }
         String sqlQuery = "INSERT INTO BOOK_ORDERS (" +
-                BookOrder.ISBN_COLNAME +  ", " +
+                BookOrder.ISBN_COLNAME + ", " +
                 BookOrder.PUBLISHER_NAME_COLNAME + ", " +
                 BookOrder.QUANTITY_COLNAME + ") VALUES(?, ?, ?)";
 
         PreparedStatement preparedStatement = DBConnection.prepareStatement(sqlQuery,
-                                                Statement.RETURN_GENERATED_KEYS);
+                Statement.RETURN_GENERATED_KEYS);
         preparedStatement.setString(1, ISBN);
         preparedStatement.setString(2, publisherName);
         preparedStatement.setInt(3, quantity);
@@ -663,7 +702,7 @@ public class BackendServices {
 
     public boolean confirmOrder(int orderNo) throws SQLException {
         String sqlQuery = "DELETE FROM BOOK_ORDERS WHERE " +
-                BookOrder.ORDER_NO_COLNAME +  " = ?";
+                BookOrder.ORDER_NO_COLNAME + " = ?";
 
         PreparedStatement preparedStatement = DBConnection.prepareStatement(sqlQuery);
         preparedStatement.setInt(1, orderNo);
@@ -685,9 +724,8 @@ public class BackendServices {
 
         jasperFile = jasperPath + File.separator + jasperFile + JasperReportService.JASPER_EXTENSION;
 
-        JasperReportService.printReport(DBConnection, reportTitle,
+        return JasperReportService.printReport(DBConnection, reportTitle,
                 jasperFile, outputFile);
-        return false;
     }
 
     public boolean printLastMonthReport(String outputFile) {
@@ -712,7 +750,7 @@ public class BackendServices {
     }
 
     private void showJasperReport(Stage primaryStage, String reportTitle,
-                                        String inputFile) {
+                                  String inputFile) {
         HashMap<String, Object> parametersMap = new HashMap<>();
         parametersMap.put("Report Title", reportTitle);
 
@@ -740,48 +778,5 @@ public class BackendServices {
         String reportTitle = "Top Five Users in The Past Three Months";
 
         showJasperReport(primaryStage, reportTitle, reportInputFile);
-    }
-
-
-    public static void main(String[] args) {
-        try {
-            BackendServices sys = new BackendServices();
-//            sys.register("Barry", "barry@bmail.bom", "bassword", "manager");
-//            sys.register("b4", "b2@a.c", "pw", "customer");
-            String firstName = sys.login("Barry", "bassword").getProfile().getFirstName();
-            System.out.println(firstName);
-
-            System.out.println(sys.updatePassword("b4", "pw", "pw"));
-            String usergroup = sys.login("b4", "pw").getUserGroup();
-            System.out.println(usergroup);
-            for (Book book : sys.getBooks(1, 5, Book.BOOKS_IN_STOCK_COLNAME, true).getBooks()) {
-                System.out.println(book.getBookTitle() + "\t" + book.getISBN() + "\t" + book.getCategory() + "\t" + book.getPublisherName() + "\t" + book.getBooksInStock() + "\t" + Arrays.toString(book.getAuthors().toArray()));
-            }
-            System.out.println("" + sys.getNumberOfBooks() + " " + sys.getNumberOfPages(3));
-            System.out.println("\n" + sys.buyBook("b4","1234567890126", 500) + "\n");
-            System.out.println(sys.confirmOrder(sys.orderBook("1234567890126", "Ahmed Walid", 5000)));
-
-            for (Book book : sys.findBooks(1, 5, Book.PUBLISHER_NAME_COLNAME, "Ahmed Walid", Book.ISBN_COLNAME, false).getBooks()) {
-                System.out.println(book.getBookTitle() + "\t" + book.getISBN() + "\t" + book.getCategory() + "\t" + book.getPublisherName() + "\t" + book.getBooksInStock() + "\t" + Arrays.toString(book.getAuthors().toArray()));
-            }
-
-            LinkedHashMap<String, ArrayList<String>> colValues = new LinkedHashMap<>();
-            colValues.put("ISBN", new ArrayList<>(Arrays.asList("1234567890123", "1234567890127")));
-            colValues.put("BOOKS_IN_STOCK", new ArrayList<>(Arrays.asList("0")));
-            colValues.put(BookAuthor.AUTHOR_NAME_COLNAME, new ArrayList<>(Arrays.asList("A", "B")));
-            for (Book book : sys.findBooks(1, 5, colValues, Book.ISBN_COLNAME, true).getBooks()) {
-                System.out.println(book.getBookTitle() + "\t" + book.getISBN() + "\t" + book.getCategory() + "\t" + book.getPublisherName() + "\t" + book.getBooksInStock() + "\t" + Arrays.toString(book.getAuthors().toArray()));
-            }
-            Book book = sys.getBook("1234567890125");
-            System.out.println(book.getBookTitle() + "\t" + book.getISBN() + "\t" + book.getCategory() + "\t" + book.getPublisherName() + "\t" + book.getBooksInStock() + "\t" + Arrays.toString(book.getAuthors().toArray()));
-
-            LinkedHashMap<String, String> userUpdates = new LinkedHashMap<>();
-            userUpdates.put(BookstoreUser.UserProfile.FIRST_NAME_COLNAME, "Ahmed");
-            userUpdates.put(BookstoreUser.UserProfile.LAST_NAME_COLNAME, "Walid");
-            sys.updateUser("Barry", userUpdates);
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 }
