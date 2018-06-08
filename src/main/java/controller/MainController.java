@@ -19,6 +19,7 @@ public class MainController {
 
     private SignIn signIn;
     private SignUp signUp;
+    private Profile profile;
     private NavigationPanel navigationPanel;
 
     private MainController() {
@@ -100,21 +101,17 @@ public class MainController {
         primaryStage.show();
     }
 
-    public void loadProfileScene() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/profile.fxml"));
-            Scene scene = new Scene(loader.load());
-            scene.getStylesheets().add(getClass().getResource("/view/css/profile.css").toExternalForm());
-            primaryStage.setScene(scene);
-            primaryStage.setTitle("Manage Profile");
-//            primaryStage.setMaximized(true);
-            primaryStage.show();
-//            initProfileController(loader.getController());
-        } catch (IOException e) {
-            e.printStackTrace();
+    void loadProfileScene() {
+        if (profile == null) {
+            profile = new Profile();
         }
+        if (primaryStage.getScene() == null) {
+            Scene scene = new Scene(profile.getParent());
+            primaryStage.setScene(scene);
+        } else {
+            primaryStage.getScene().setRoot(profile.getParent());
+        }
+        primaryStage.setTitle("Library Bookstores | Manage Profile");
+        primaryStage.show();
     }
-
-
-
 }

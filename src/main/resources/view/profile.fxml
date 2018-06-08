@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="rootPane" prefHeight="609.0" prefWidth="1076.0" stylesheets="@css/profile.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Profile">
+<AnchorPane fx:id="rootPane" prefHeight="609.0" prefWidth="1076.0" stylesheets="@css/profile.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <VBox alignment="TOP_CENTER" layoutX="338.0" layoutY="25.0" prefHeight="559.0" prefWidth="417.0" spacing="20.0">
          <children>
@@ -26,7 +26,7 @@
                      <HBox.margin>
                         <Insets left="130.0" top="15.0" />
                      </HBox.margin></Avatar>
-                  <JFXButton fx:id="updateAvatar" buttonType="RAISED" onAction="#handleUpdateAvatarButton" prefHeight="32.0" prefWidth="77.0" ripplerFill="#2929290d" style="-fx-background-color: #01466f;" text="Upload" textFill="WHITE">
+                  <JFXButton fx:id="upload" buttonType="RAISED" prefHeight="32.0" prefWidth="77.0" ripplerFill="#2929290d" style="-fx-background-color: #01466f;" text="Upload" textFill="WHITE">
                      <HBox.margin>
                         <Insets left="10.0" top="38.0" />
                      </HBox.margin>
@@ -80,7 +80,7 @@
                   <Font size="15.0" />
                </font>
             </Label>
-            <JFXButton fx:id="updateProfile" buttonType="RAISED" onAction="#handleUpdateProfileAction" prefHeight="37.0" prefWidth="138.0" ripplerFill="#2929290d" style="-fx-background-color: #01466f;" text="Update Profile" textFill="WHITE" />
+            <JFXButton fx:id="updateProfile" buttonType="RAISED" prefHeight="37.0" prefWidth="138.0" ripplerFill="#2929290d" style="-fx-background-color: #01466f;" text="Update Profile" textFill="WHITE" />
             <HBox layoutX="10.0" layoutY="80.0" prefHeight="50.0" prefWidth="417.0" spacing="30.0">
                <children>
                   <VBox prefHeight="100.0" prefWidth="187.0">
@@ -102,7 +102,7 @@
                   <Font size="15.0" />
                </font>
             </Label>
-            <JFXButton fx:id="changePassword" buttonType="RAISED" layoutX="158.0" layoutY="280.0" onAction="#handleChangePasswordAction" prefHeight="37.0" prefWidth="138.0" ripplerFill="#2929290d" style="-fx-background-color: #01466f;" text="Change Password" textFill="WHITE" />
+            <JFXButton fx:id="changePassword" buttonType="RAISED" layoutX="158.0" layoutY="280.0" prefHeight="37.0" prefWidth="138.0" ripplerFill="#2929290d" style="-fx-background-color: #01466f;" text="Change Password" textFill="WHITE" />
          </children>
       </VBox>
    </children>

@@ -4,7 +4,6 @@
 <?import com.jfoenix.controls.JFXComboBox?>
 <?import com.jfoenix.controls.JFXTabPane?>
 <?import com.jfoenix.controls.JFXTextField?>
-<?import com.jfoenix.controls.JFXTreeTableView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tab?>
@@ -58,10 +57,7 @@
       </Tab>
       <Tab text="Orders">
          <content>
-            <AnchorPane prefHeight="200.0" prefWidth="200.0">
-               <children>
-                  <JFXTreeTableView prefHeight="740.0" prefWidth="1280.0" />
-               </children></AnchorPane>
+            <AnchorPane prefHeight="200.0" prefWidth="200.0" />
          </content></Tab>
       <Tab text="Modify Book">
          <content>

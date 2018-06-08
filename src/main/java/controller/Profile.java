@@ -1,20 +1,22 @@
 package controller;
 
-import com.jfoenix.controls.JFXDatePicker;
-import com.jfoenix.controls.JFXPasswordField;
-import com.jfoenix.controls.JFXSnackbar;
-import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.controls.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import model.BookstoreUser;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
 
 public class Profile {
+
+    private Parent parent;
 
     @FXML
     private JFXTextField firstName, lastName, phoneNumber, shippingAddress;
@@ -31,16 +33,51 @@ public class Profile {
     @FXML
     private Label passwordErrorLabel, updateProfileErrorLabel;
 
-    private MainController mainController;
+    @FXML
+    private JFXButton updateProfile, changePassword, upload;
 
+    public Profile() {
+        if (parent == null) {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/profile.fxml"));
+            fxmlLoader.setController(this);
+            try {
+                parent = fxmlLoader.load();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        initButtons();
+        initFields();
+    }
+
+    private void initButtons() {
+        initUpdateProfileButton();
+        initChangePasswordButton();
+        initUpdateAvatarButton();
+    }
+
+    private void initUpdateAvatarButton() {
+        upload.setOnMouseClicked(mouseEvent -> handleUpdateAvatarButton());
+    }
+
+    private void initChangePasswordButton() {
+        changePassword.setOnMouseClicked(mouseEvent -> handleChangePasswordAction());
+    }
+
+    private void initUpdateProfileButton() {
+        updateProfile.setOnMouseClicked(mouseEvent -> handleUpdateProfileAction());
+    }
+
+    Parent getParent() {
+        return this.parent;
+    }
 
     private void clearPasswordFields() {
         oldPassword.clear();
         newPassword.clear();
     }
 
-    @FXML
-    private void handleUpdateProfileAction(ActionEvent actionEvent) {
+    private void handleUpdateProfileAction() {
         if (validPhoneNumber()) {
             LinkedHashMap<String, String> colsValues = new LinkedHashMap<>();
             colsValues.put(BookstoreUser.UserProfile.FIRST_NAME_COLNAME, firstName.getText().trim());
@@ -49,7 +86,7 @@ public class Profile {
             colsValues.put(BookstoreUser.UserProfile.BIRTH_DATE_COLNAME, birthdate.getValue().toString());
             colsValues.put(BookstoreUser.UserProfile.PHONE_NUMBER_COLNAME, phoneNumber.getText().trim());
             try {
-                this.mainController.getBackendService().updateUser(this.mainController.getCurrentUser().getUserName(), colsValues);
+                MainController.getInstance().getBackendService().updateUser(MainController.getInstance().getCurrentUser().getUserName(), colsValues);
                 updateProfileErrorLabel.setVisible(false);
                 JFXSnackbar bar = new JFXSnackbar(rootPane);
                 bar.enqueue(new JFXSnackbar.SnackbarEvent("Profile Updated Successfully"));
@@ -68,8 +105,7 @@ public class Profile {
         return phoneNumber.getText().matches("[0-9]+") && phoneNumber.getText().length() == 11;
     }
 
-    @FXML
-    private void handleChangePasswordAction(ActionEvent actionEvent) {
+    private void handleChangePasswordAction() {
         if (oldPassword.getText().length() < 6 ) {
             passwordErrorLabel.setText("Old Password is too short!");
             passwordErrorLabel.setVisible(true);
@@ -78,7 +114,8 @@ public class Profile {
             passwordErrorLabel.setVisible(true);
         } else {
             try {
-                boolean success = this.mainController.getBackendService().updatePassword(mainController.getCurrentUser().
+                boolean success = MainController.getInstance().getBackendService().updatePassword(MainController.getInstance()
+                        .getCurrentUser().
                         getUserName(), oldPassword.getText().trim(), newPassword.getText().trim());
                 if (success) {
                     passwordErrorLabel.setVisible(false);
@@ -97,26 +134,26 @@ public class Profile {
         clearPasswordFields();
     }
 
-    public void initProfile(MainController mainController) {
-        this.mainController = mainController;
-        initFields();
-    }
-
     private void initFields() {
-        this.firstName.setText(this.mainController.getCurrentUser().getProfile().getFirstName());
-        this.lastName.setText(this.mainController.getCurrentUser().getProfile().getLastName());
-        LocalDate localDate = this.mainController.getCurrentUser().getProfile().getBirthDate();
+        System.out.println(this.firstName.getText());
+        this.firstName.setText(MainController.getInstance()
+                .getCurrentUser().getProfile().getFirstName());
+        this.lastName.setText(MainController.getInstance()
+                .getCurrentUser().getProfile().getLastName());
+        LocalDate localDate = MainController.getInstance()
+                .getCurrentUser().getProfile().getBirthDate();
         if (localDate != null) {
             System.out.println(localDate.toString());
             this.birthdate.setValue(localDate);
         }
-        this.phoneNumber.setText(this.mainController.getCurrentUser().getProfile().getPhoneNumber());
-        this.shippingAddress.setText(this.mainController.getCurrentUser().getProfile().getShippingAddress());
+        this.phoneNumber.setText(MainController.getInstance()
+                .getCurrentUser().getProfile().getPhoneNumber());
+        this.shippingAddress.setText(MainController.getInstance()
+                .getCurrentUser().getProfile().getShippingAddress());
 
         /// TODO: Load avatar from DB if there was one.
     }
 
-    @FXML
-    private void handleUpdateAvatarButton(ActionEvent actionEvent) {
+    private void handleUpdateAvatarButton() {
     }
 }
