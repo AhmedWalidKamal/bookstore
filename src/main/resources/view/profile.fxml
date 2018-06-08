@@ -36,7 +36,7 @@
                   <VBox prefHeight="100.0" prefWidth="187.0">
                      <children>
                         <Label prefHeight="21.0" prefWidth="80.0" text="Birthdate" />
-                        <JFXDatePicker fx:id="birthdate" />
+                        <JFXDatePicker fx:id="birthdate" defaultColor="#01466f" />
                      </children>
                   </VBox>
                   <VBox layoutX="10.0" layoutY="10.0" prefHeight="100.0" prefWidth="187.0">

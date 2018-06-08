@@ -11,6 +11,8 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import service.BackendServices;
 import java.sql.SQLException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SignUp {
     @FXML
@@ -37,22 +39,58 @@ public class SignUp {
     private BackendServices sys;
     private MainController mainController;
 
+    private static final Pattern VALID_EMAIL_ADDRESS_REGEX =
+            Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+
     @FXML
     private void handleSignUpButtonAction(ActionEvent event) {
         try {
-            sys.register(userNameTextField.getText().trim(), emailTextField.getText().trim(),
-                    passwordField.getText(), "customer");
-            // Successfuly registration
-            clearInputFields();
-            goToSignIn(true);
+            if (validateFields()) {
+                sys.register(userNameTextField.getText().trim(), emailTextField.getText().trim(),
+                        passwordField.getText(), "customer");
+                // Successfuly registration
+                registrationErrorLabel.setVisible(false);
+                clearInputFields();
+                goToSignIn(true);
+            } else {
+                passwordField.clear();
+                registrationErrorLabel.setVisible(true);
+            }
         } catch (SQLException e) {
 //            e.printStackTrace();
-            // Log error instead of printing to console
-            clearInputFields();
+            passwordField.clear();
+            registrationErrorLabel.setText("Registration Error!");
             registrationErrorLabel.setVisible(true);
-            System.out.println("Registration error!");
         }
     }
+
+    private boolean validateFields() {
+        if (!validateEmail()) {
+            registrationErrorLabel.setText("Invalid Email!");
+            return false;
+        } else if (!validateUsername()) {
+            registrationErrorLabel.setText("Invalid Username!");
+            return false;
+        } else if (!validatePassword()) {
+            registrationErrorLabel.setText("Invalid Password!");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validateUsername() {
+        return !userNameTextField.getText().isEmpty();
+    }
+
+    private boolean validatePassword() {
+        return passwordField.getText().length() >= 6;
+    }
+
+    private boolean validateEmail() {
+        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX .matcher(emailTextField.getText());
+        return matcher.find();
+    }
+
     @FXML
     private void handleSignInButtonAction(ActionEvent event) {
         goToSignIn(false);

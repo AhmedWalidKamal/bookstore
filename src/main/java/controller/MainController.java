@@ -48,8 +48,7 @@ public class MainController {
     }
 
     private void initProfileController(Profile profile) {
-        profile.setBackEndService(sys);
-        profile.setMainController(this);
+        profile.initProfile(this);
     }
 
     private void initSignUpController(SignUp signUp) {
@@ -108,5 +107,9 @@ public class MainController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public BackendServices getBackendService() {
+        return this.sys;
     }
 }
