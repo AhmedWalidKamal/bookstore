@@ -108,7 +108,7 @@ public class Profile {
         this.firstName.setText(this.mainController.getCurrentUser().getProfile().getFirstName());
         this.lastName.setText(this.mainController.getCurrentUser().getProfile().getLastName());
         Date date = this.mainController.getCurrentUser().getProfile().getBirthDate();
-        System.out.println(date.toString());
+//        System.out.println(date.toString());
         if (date != null) {
             LocalDate localDate = Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
             this.birthdate.setValue(localDate);

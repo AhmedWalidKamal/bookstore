@@ -2,19 +2,22 @@ package controller;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPasswordField;
-import com.jfoenix.controls.JFXSnackbar;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.validation.RequiredFieldValidator;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
-import service.BackendServices;
+
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SignUp {
+
     @FXML
     private JFXButton signUpButton;
 
@@ -36,19 +39,48 @@ public class SignUp {
     @FXML
     private AnchorPane rootPane;
 
-    private BackendServices sys;
-    private MainController mainController;
+    private Parent parent;
 
     private static final Pattern VALID_EMAIL_ADDRESS_REGEX =
             Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
-    @FXML
-    private void handleSignUpButtonAction(ActionEvent event) {
+    SignUp() {
+        if (parent == null) {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/signUp.fxml"));
+            fxmlLoader.setController(this);
+            try {
+                parent = fxmlLoader.load();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        initSignUpButton();
+        initSignInButton();
+
+        initEmailTextField();
+        initUserNameTextField();
+        initPassTextField();
+    }
+
+    Parent getParent() {
+        return this.parent;
+    }
+
+    private void initSignUpButton() {
+        signUpButton.setOnMouseClicked(mouseEvent -> handleSignUpButtonAction());
+    }
+
+    private void initSignInButton() {
+        signInButton.setOnMouseClicked(mouseEvent -> handleSignInButtonAction());
+    }
+
+    private void handleSignUpButtonAction() {
         try {
             if (validateFields()) {
-                sys.register(userNameTextField.getText().trim(), emailTextField.getText().trim(),
+                MainController.getInstance().getBackendService().register(userNameTextField.getText().trim()
+                                                                                    , emailTextField.getText().trim(),
                         passwordField.getText(), "customer");
-                // Successfuly registration
+                // Successfully registration
                 registrationErrorLabel.setVisible(false);
                 clearInputFields();
                 goToSignIn(true);
@@ -57,11 +89,14 @@ public class SignUp {
                 registrationErrorLabel.setVisible(true);
             }
         } catch (SQLException e) {
-//            e.printStackTrace();
             passwordField.clear();
             registrationErrorLabel.setText("Registration Error!");
             registrationErrorLabel.setVisible(true);
         }
+    }
+
+    private void handleSignInButtonAction() {
+        goToSignIn(false);
     }
 
     private boolean validateFields() {
@@ -91,25 +126,19 @@ public class SignUp {
         return matcher.find();
     }
 
-    @FXML
-    private void handleSignInButtonAction(ActionEvent event) {
-        goToSignIn(false);
-    }
-
-    private void clearInputFields() {
+    void clearInputFields() {
         emailTextField.clear();
         userNameTextField.clear();
         passwordField.clear();
     }
 
-    private void goToSignIn(boolean dispRegistrationMessage) {
-        mainController.loadSignInScene(dispRegistrationMessage);
+    private void goToSignIn(boolean displayRegistrationMessage) {
+        MainController.getInstance().loadSignInScene(displayRegistrationMessage);
     }
 
     private void initEmailTextField() {
         RequiredFieldValidator validator = new RequiredFieldValidator();
         validator.setMessage("Email Required");
-//            validator.setAwsomeIcon(new Icon(AwesomeIcon.WARNING,"2em",";","error"));
         emailTextField.getValidators().add(validator);
         emailTextField.focusedProperty().addListener((o,oldVal,newVal)->{
             if(!newVal) emailTextField.validate();
@@ -119,7 +148,6 @@ public class SignUp {
     private void initUserNameTextField() {
         RequiredFieldValidator validator = new RequiredFieldValidator();
         validator.setMessage("User Name Required");
-//            validator.setAwsomeIcon(new Icon(AwesomeIcon.WARNING,"2em",";","error"));
         userNameTextField.getValidators().add(validator);
         userNameTextField.focusedProperty().addListener((o,oldVal,newVal)->{
             if(!newVal) userNameTextField.validate();
@@ -129,25 +157,9 @@ public class SignUp {
     private void initPassTextField() {
         RequiredFieldValidator validator = new RequiredFieldValidator();
         validator.setMessage("Password Required");
-//        validator.setAwsomeIcon(new Icon(AwesomeIcon.WARNING,"2em",";","error"));
         passwordField.getValidators().add(validator);
         passwordField.focusedProperty().addListener((o,oldVal,newVal)->{
             if(!newVal) passwordField.validate();
         });
-    }
-
-    @FXML
-    public void initialize() {
-        initEmailTextField();
-        initUserNameTextField();
-        initPassTextField();
-    }
-
-    public void setBackEndService(BackendServices sys) {
-        this.sys = sys;
-    }
-
-    public void setMainController(MainController mainController) {
-        this.mainController = mainController;
     }
 }

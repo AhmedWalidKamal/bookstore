@@ -12,8 +12,9 @@ import static javafx.application.Application.launch;
 public class Main extends Application {
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
-        new MainController(primaryStage);
+    public void start(Stage primaryStage) {
+        MainController.getInstance().setPrimaryStage(primaryStage);
+        MainController.getInstance().init();
     }
 
     public static void main(String[] args) {
