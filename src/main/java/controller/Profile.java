@@ -1,19 +1,17 @@
 package controller;
 
-import com.jfoenix.controls.*;
+import com.jfoenix.controls.JFXDatePicker;
+import com.jfoenix.controls.JFXPasswordField;
+import com.jfoenix.controls.JFXSnackbar;
+import com.jfoenix.controls.JFXTextField;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
-
-import javafx.event.ActionEvent;
 import model.BookstoreUser;
 
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.LinkedHashMap;
 
 public class Profile {
@@ -107,10 +105,9 @@ public class Profile {
     private void initFields() {
         this.firstName.setText(this.mainController.getCurrentUser().getProfile().getFirstName());
         this.lastName.setText(this.mainController.getCurrentUser().getProfile().getLastName());
-        Date date = this.mainController.getCurrentUser().getProfile().getBirthDate();
-//        System.out.println(date.toString());
-        if (date != null) {
-            LocalDate localDate = Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate localDate = this.mainController.getCurrentUser().getProfile().getBirthDate();
+        if (localDate != null) {
+            System.out.println(localDate.toString());
             this.birthdate.setValue(localDate);
         }
         this.phoneNumber.setText(this.mainController.getCurrentUser().getProfile().getPhoneNumber());

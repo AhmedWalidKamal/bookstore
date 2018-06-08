@@ -99,6 +99,10 @@ public class SignUp {
         goToSignIn(false);
     }
 
+    private void goToSignIn(boolean displayRegistrationMessage) {
+        MainController.getInstance().loadSignInScene(displayRegistrationMessage);
+    }
+
     private boolean validateFields() {
         if (!validateEmail()) {
             registrationErrorLabel.setText("Invalid Email!");
@@ -130,10 +134,6 @@ public class SignUp {
         emailTextField.clear();
         userNameTextField.clear();
         passwordField.clear();
-    }
-
-    private void goToSignIn(boolean displayRegistrationMessage) {
-        MainController.getInstance().loadSignInScene(displayRegistrationMessage);
     }
 
     private void initEmailTextField() {

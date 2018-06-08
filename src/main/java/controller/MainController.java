@@ -19,7 +19,7 @@ public class MainController {
 
     private SignIn signIn;
     private SignUp signUp;
-    private NavigationPanel navigationPanelط;
+    private NavigationPanel navigationPanel;
 
     private MainController() {
         primaryStage = null;
@@ -30,7 +30,6 @@ public class MainController {
             e.printStackTrace();
             System.out.println("Couldn't establish connection");
         }
-
     }
 
     public static MainController getInstance() {
