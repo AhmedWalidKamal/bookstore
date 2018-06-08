@@ -5,6 +5,9 @@ import java.util.*;
 public class BookList {
     private Map<String, Book> books;
 
+    private boolean hasNext;
+    private boolean hasPrev;
+
     public BookList() {
         books = new LinkedHashMap<>();
     }
@@ -28,4 +31,21 @@ public class BookList {
     public int size() {
         return books.size();
     }
+
+    public boolean hasPrev() {
+        return  hasPrev;
+    }
+
+    public boolean hasNext() {
+        return hasNext;
+    }
+
+    public void setPrev(boolean prev) {
+        hasPrev = prev;
+    }
+
+    public void setNext(boolean next) {
+        hasNext = next;
+    }
+
 }
