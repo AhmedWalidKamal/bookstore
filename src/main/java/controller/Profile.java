@@ -108,8 +108,8 @@ public class Profile {
         this.firstName.setText(this.mainController.getCurrentUser().getProfile().getFirstName());
         this.lastName.setText(this.mainController.getCurrentUser().getProfile().getLastName());
         LocalDate localDate = this.mainController.getCurrentUser().getProfile().getBirthDate();
-        System.out.println(localDate.toString());
         if (localDate != null) {
+            System.out.println(localDate.toString());
             this.birthdate.setValue(localDate);
         }
         this.phoneNumber.setText(this.mainController.getCurrentUser().getProfile().getPhoneNumber());
