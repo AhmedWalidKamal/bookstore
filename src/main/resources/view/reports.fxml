@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="controller.Reports"
-            prefHeight="400.0" prefWidth="600.0">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Reports">
+
+    <VBox />
+
+     <JFXButton fx:id="topTenBooksButton" buttonType="RAISED" layoutX="202.0" layoutY="240.0" prefHeight="37.0" prefWidth="197.0" ripplerFill="#2929290d" style="-fx-background-color: #01466f;" text="Best Selling Books Report" textFill="WHITE" />
+
+     <JFXButton fx:id="topFiveUsersButton" buttonType="RAISED" layoutX="202.0" layoutY="163.0" prefHeight="37.0" prefWidth="197.0" ripplerFill="#2929290d" style="-fx-background-color: #01466f;" text="Top Users Report" textFill="WHITE" />
+
+     <JFXButton fx:id="lastMonthSalesButton" buttonType="RAISED" layoutX="202.0" layoutY="89.0" prefHeight="37.0" prefWidth="197.0" ripplerFill="#2929290d" style="-fx-background-color: #01466f;" text="Last Month Sales Report" textFill="WHITE" />
+
+
 
 </AnchorPane>
