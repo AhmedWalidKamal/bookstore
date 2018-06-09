@@ -58,12 +58,49 @@ class SignIn {
         return parent;
     }
 
+    void clearInputFields() {
+        userNameTextField.clear();
+        passwordField.clear();
+    }
+
+    void displayRegMessage() {
+        JFXSnackbar bar = new JFXSnackbar(rootPane);
+        bar.enqueue(new JFXSnackbar.SnackbarEvent("Registration Successful!"));
+    }
+
     private void initSignInButton() {
         signInButton.setOnMouseClicked(mouseEvent -> handleSignInButtonAction());
     }
 
     private void initSignUpButton() {
         signUpButton.setOnMouseClicked(mouseEvent -> handleSignUpButtonAction());
+    }
+
+    private void handleSignInButtonAction() {
+        try {
+            BookstoreUser user = MainController.getInstance().getBackendService().login(
+                    userNameTextField.getText().trim(), passwordField.getText());
+            if (user == null) {
+                // Sign in failed.
+                clearInputFields();
+                loginErrorLabel.setVisible(true);
+            } else {
+                // Sign in succeeded.
+                JFXSnackbar bar = new JFXSnackbar(rootPane);
+                bar.enqueue(new JFXSnackbar.SnackbarEvent("Login Successful!"));
+                clearInputFields();
+                loginErrorLabel.setVisible(false);
+                MainController.getInstance().setCurrentUser(user);
+                MainController.getInstance().loadNavigationPanelScene(); // Should be changed to load home when home is ready.
+            }
+        } catch (SQLException e) {
+            clearInputFields();
+            loginErrorLabel.setVisible(true);
+        }
+    }
+
+    private void handleSignUpButtonAction() {
+        MainController.getInstance().loadSignUpScene();
     }
 
     private void initUserNameTextField() {
@@ -82,42 +119,5 @@ class SignIn {
         passwordField.focusedProperty().addListener((o, oldVal, newVal) -> {
             if (!newVal) passwordField.validate();
         });
-    }
-
-    private void handleSignInButtonAction() {
-        try {
-            BookstoreUser user = MainController.getInstance().getBackendService().login(
-                                            userNameTextField.getText().trim(), passwordField.getText());
-            if (user == null) {
-                // Sign in failed.
-                clearInputFields();
-                loginErrorLabel.setVisible(true);
-            } else {
-                // Sign in succeeded.
-                JFXSnackbar bar = new JFXSnackbar(rootPane);
-                bar.enqueue(new JFXSnackbar.SnackbarEvent("Login Successful!"));
-                clearInputFields();
-                loginErrorLabel.setVisible(false);
-                MainController.getInstance().setCurrentUser(user);
-                MainController.getInstance().loadProfileScene(); // Should be changed to load home when home is ready.
-            }
-        } catch (SQLException e) {
-            clearInputFields();
-            loginErrorLabel.setVisible(true);
-        }
-    }
-
-    private void handleSignUpButtonAction() {
-        MainController.getInstance().loadSignUpScene();
-    }
-
-    void clearInputFields() {
-        userNameTextField.clear();
-        passwordField.clear();
-    }
-
-    void displayRegMessage() {
-        JFXSnackbar bar = new JFXSnackbar(rootPane);
-        bar.enqueue(new JFXSnackbar.SnackbarEvent("Registration Successful!"));
     }
 }

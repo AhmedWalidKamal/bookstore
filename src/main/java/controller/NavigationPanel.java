@@ -22,6 +22,11 @@ class NavigationPanel {
 
     private Parent parent;
 
+    private Home home;
+    private ShoppingCart shoppingCart;
+    private Profile profile;
+    private Administration administration;
+
     NavigationPanel () {
         if (parent == null) {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/navigationPanel.fxml"));
@@ -32,25 +37,18 @@ class NavigationPanel {
                 e.printStackTrace();
             }
         }
-        initNavPanel();
     }
 
-    private void initNavPanel() {
-        setUserAvatar(MainController.getInstance().getCurrentUser().getProfile().getUserAvatarPath());
-        setUserName(MainController.getInstance().getCurrentUser().getUserName());
-        setUserEmail(MainController.getInstance().getCurrentUser().getEmail());
-    }
-
-    Image getUserAvatar() {
+    Image getUserPhoto() {
         return userAvatar.getImage();
     }
 
-    void setUserAvatar(Image userImage) {
-        userAvatar.setImage(userImage);
-    }
-
-    void setUserAvatar(String userImagePath) {
-        Image image = new Image(userImagePath);
+    void setUserAvatar(String userPhotoPath) {
+        if (userPhotoPath == null) {
+            userPhotoPath = getClass().getResource("/view/images/user/user-default-photo.png").toExternalForm();
+            System.out.println(userPhotoPath);
+        }
+        Image image = new Image(userPhotoPath);
         userAvatar.setImage(image);
     }
 
@@ -68,5 +66,31 @@ class NavigationPanel {
 
     void setUserEmail(String userEmail) {
         this.userEmail.setText(userEmail);
+    }
+
+    void setUserInfo(String userName, String userEmail,  String userPhotoPath) {
+        setUserName(userName);
+        setUserEmail(userEmail);
+        setUserAvatar(userPhotoPath);
+    }
+
+    Parent getParent() {
+        return parent;
+    }
+
+    Home getHomeController() {
+        return home;
+    }
+
+    ShoppingCart getShoppingCartController() {
+        return shoppingCart;
+    }
+
+    Profile getProfileController() {
+        return profile;
+    }
+
+    Administration getAdministrationController() {
+        return administration;
     }
 }

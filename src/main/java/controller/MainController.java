@@ -11,6 +11,9 @@ import java.sql.SQLException;
 
 public class MainController {
 
+    private static final int SCENE_WIDTH = 1000;
+    private static final int SCENE_HEIGHT= 600;
+
     private static MainController instance;
 
     private Stage primaryStage;
@@ -39,7 +42,8 @@ public class MainController {
         return instance;
     }
 
-    public void init () {
+    public void init (Stage primaryStage) {
+        this.primaryStage = primaryStage;
         loadSignInScene(false);
     }
 
@@ -51,20 +55,8 @@ public class MainController {
         this.currentUser = currentUser;
     }
 
-    Stage getPrimaryStage() {
-        return primaryStage;
-    }
-
-    public void setPrimaryStage(Stage primaryStage) {
-        this.primaryStage = primaryStage;
-    }
-
     BackendServices getBackendService() {
         return backendServices;
-    }
-
-    void setBackendServices(BackendServices backendServices) {
-        this.backendServices = backendServices;
     }
 
     void loadSignInScene(boolean displayRegistrationMessage) {
@@ -73,7 +65,7 @@ public class MainController {
         }
         signIn.clearInputFields();
         if (primaryStage.getScene() == null) {
-            Scene scene = new Scene(signIn.getParent());
+            Scene scene = new Scene(signIn.getParent(), SCENE_WIDTH, SCENE_HEIGHT);
             primaryStage.setScene(scene);
         } else {
             primaryStage.getScene().setRoot(signIn.getParent());
@@ -91,7 +83,7 @@ public class MainController {
         }
         signUp.clearInputFields();
         if (primaryStage.getScene() == null) {
-            Scene scene = new Scene(signUp.getParent());
+            Scene scene = new Scene(signUp.getParent(), SCENE_WIDTH, SCENE_HEIGHT);
             primaryStage.setScene(scene);
         } else {
             primaryStage.getScene().setRoot(signUp.getParent());
@@ -100,7 +92,24 @@ public class MainController {
         primaryStage.show();
     }
 
-    public void loadProfileScene() {
+    void loadNavigationPanelScene() {
+        if (navigationPanel == null) {
+            navigationPanel = new NavigationPanel();
+        }
+        navigationPanel.setUserInfo(getCurrentUser().getUserName(), getCurrentUser().getEmail()
+                                                    , getCurrentUser().getProfile().getUserPhotoPath());
+        // TODO: Set the default scene to home on loading the navigation panel.
+        if (primaryStage.getScene() == null) {
+            Scene scene = new Scene(navigationPanel.getParent(), SCENE_WIDTH, SCENE_HEIGHT);
+            primaryStage.setScene(scene);
+        } else {
+            primaryStage.getScene().setRoot(navigationPanel.getParent());
+        }
+        primaryStage.setTitle("Library Bookstores");
+        primaryStage.show();
+    }
+
+    void loadProfileScene() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/profile.fxml"));
             Scene scene = new Scene(loader.load());

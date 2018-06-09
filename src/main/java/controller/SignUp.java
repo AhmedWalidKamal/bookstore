@@ -4,7 +4,6 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.validation.RequiredFieldValidator;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -64,6 +63,12 @@ class SignUp {
 
     Parent getParent() {
         return parent;
+    }
+
+    void clearInputFields() {
+        emailTextField.clear();
+        userNameTextField.clear();
+        passwordField.clear();
     }
 
     private void initSignUpButton() {
@@ -130,17 +135,11 @@ class SignUp {
         return matcher.find();
     }
 
-    void clearInputFields() {
-        emailTextField.clear();
-        userNameTextField.clear();
-        passwordField.clear();
-    }
-
     private void initEmailTextField() {
         RequiredFieldValidator validator = new RequiredFieldValidator();
         validator.setMessage("Email Required");
         emailTextField.getValidators().add(validator);
-        emailTextField.focusedProperty().addListener((o,oldVal,newVal)->{
+        emailTextField.focusedProperty().addListener((o, oldVal, newVal) -> {
             if(!newVal) emailTextField.validate();
         });
     }
@@ -149,7 +148,7 @@ class SignUp {
         RequiredFieldValidator validator = new RequiredFieldValidator();
         validator.setMessage("User Name Required");
         userNameTextField.getValidators().add(validator);
-        userNameTextField.focusedProperty().addListener((o,oldVal,newVal)->{
+        userNameTextField.focusedProperty().addListener((o, oldVal, newVal) -> {
             if(!newVal) userNameTextField.validate();
         });
     }
@@ -158,7 +157,7 @@ class SignUp {
         RequiredFieldValidator validator = new RequiredFieldValidator();
         validator.setMessage("Password Required");
         passwordField.getValidators().add(validator);
-        passwordField.focusedProperty().addListener((o,oldVal,newVal)->{
+        passwordField.focusedProperty().addListener((o, oldVal, newVal) -> {
             if(!newVal) passwordField.validate();
         });
     }

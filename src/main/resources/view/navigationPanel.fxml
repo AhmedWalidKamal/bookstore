@@ -6,20 +6,21 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane styleClass="BorderPane" stylesheets="@css/navigationPanel.css" xmlns="http://javafx.com/javafx/8.0.162-ea">
+<BorderPane styleClass="BorderPane" stylesheets="@css/navigationPanel.css"
+    xmlns="http://javafx.com/javafx/8.0.162-ea" xmlns:fx="http://javafx.com/fxml/1">
    <left>
        <VBox styleClass="nav-panel">
            <VBox styleClass="user-info">
-               <Avatar radius="27.0">
+               <Avatar fx:id="userAvatar" styleClass="user-info-avatar">
                <VBox.margin>
                   <Insets bottom="20.0" />
                </VBox.margin></Avatar>
-               <Label styleClass="user-info-username" text="Ahmed Walid">
+               <Label fx:id="userName" styleClass="user-info-username" text="Ahmed Walid">
                <VBox.margin>
                   <Insets bottom="15.0" />
                </VBox.margin>
                </Label>
-               <Label styleClass="user-info-email" text="ahmed3walid96@gmail.com" />
+               <Label fx:id="userEmail" styleClass="user-info-email" text="ahmed3walid96@gmail.com" />
            </VBox>
          <Separator styleClass="Separator">
             <VBox.margin>

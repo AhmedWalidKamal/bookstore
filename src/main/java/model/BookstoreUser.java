@@ -76,14 +76,14 @@ public class BookstoreUser {
         public static final String BIRTH_DATE_COLNAME = "BIRTH_DATE";
         public static final String PHONE_NUMBER_COLNAME = "PHONE_NUMBER";
         public static final String SHIPPING_ADDRESS_COLNAME = "SHIPPING_ADDRESS";
-        public static final String USER_AVATAR_PATH_COLNAME = "USER_AVATAR_PATH";
+        public static final String USER_PHOTO_PATH_COLNAME = "USER_PHOTO_PATH";
 
         private String firstName;
         private String lastName;
         private LocalDate birthDate;
         private String phoneNumber;
         private String shippingAddress;
-        private String userAvatarPath;
+        private String userPhotoPath;
 
 
         public UserProfile() {
@@ -130,12 +130,12 @@ public class BookstoreUser {
             this.shippingAddress = shippingAddress;
         }
 
-        public String getUserAvatarPath() {
-            return userAvatarPath;
+        public String getUserPhotoPath() {
+            return userPhotoPath;
         }
 
-        public void setUserAvatarPath(String userAvatarPath) {
-            this.userAvatarPath = userAvatarPath;
+        public void setUserAvatarPath(String userPhotoPath) {
+            this.userPhotoPath = userPhotoPath;
         }
     }
 }

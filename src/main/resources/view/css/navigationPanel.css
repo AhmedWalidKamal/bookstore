@@ -20,6 +20,9 @@
     -fx-alignment: "CENTER";
     -fx-padding: 10.0px;
 }
+.user-info-avatar {
+    -charm-radius: 27.0px;
+}
 .user-info-username {
     -fx-font-family: "Cantarell Regular";
     -fx-font-size: 13.0px;
