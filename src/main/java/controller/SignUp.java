@@ -89,17 +89,19 @@ class SignUp {
             }
         } catch (SQLException e) {
             passwordField.clear();
-            registrationErrorLabel.setText("Registration Error!");
+            registrationErrorLabel.setText("Username already exists!");
             registrationErrorLabel.setVisible(true);
         }
     }
 
     private void handleSignInButtonAction() {
+        clearInputFields();
+        registrationErrorLabel.setVisible(false);
         goToSignIn(false);
     }
 
     private void goToSignIn(boolean displayRegistrationMessage) {
-        MainController.getInstance().loadSignInScene(displayRegistrationMessage);
+        MainController.getInstance().loadSignIn(displayRegistrationMessage);
     }
 
     private boolean validateFields() {

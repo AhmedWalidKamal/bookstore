@@ -113,49 +113,53 @@ class NavigationPanel {
     }
 
     private void init() {
-        homeButton.setOnMouseClicked(mouseEvent -> handleHomeButtonAction());
-        shoppingCartButton.setOnMouseClicked(mouseEvent -> handleShoppingCartButtonAction());
-        profileButton.setOnMouseClicked(mouseEvent -> handleProfileButtonAction());
-        administrationButton.setOnMouseClicked(mouseEvent -> handleAdministrationButtonAction());
-        signOutButton.setOnMouseClicked(mouseEvent -> handleSignOutButtonAction());
+        homeButton.setOnMouseClicked(mouseEvent -> loadHome());
+        shoppingCartButton.setOnMouseClicked(mouseEvent -> loadShoppingCart());
+        profileButton.setOnMouseClicked(mouseEvent -> loadProfile());
+        administrationButton.setOnMouseClicked(mouseEvent -> loadAdministration());
+        signOutButton.setOnMouseClicked(mouseEvent -> signOut());
     }
 
-    private void handleHomeButtonAction() {
+    private void loadHome() {
         if (home == null) {
             home = new Home();
         }
         rootPane.getChildren().remove(rootPane.getCenter());
         rootPane.setCenter(home.getNode());
+        MainController.getInstance().getPrimaryStage().setTitle("Library Bookstores | Home");
     }
 
-    private void handleShoppingCartButtonAction() {
+    private void loadShoppingCart() {
         if (shoppingCart == null) {
             shoppingCart = new ShoppingCart();
         }
         // TODO: Make sure to keep the current state of the shopping cart for each user (session).
         rootPane.getChildren().remove(rootPane.getCenter());
         rootPane.setCenter(shoppingCart.getNode());
+        MainController.getInstance().getPrimaryStage().setTitle("Library Bookstores | Shopping Cart");
     }
 
-    private void handleProfileButtonAction() {
+    private void loadProfile() {
         if (profile == null) {
             profile = new Profile();
         }
         // TODO: Makes sure once the user sign in his available data fill the profile fields.
         rootPane.getChildren().remove(rootPane.getCenter());
-//        rootPane.setCenter(profile.getNode());
+        rootPane.setCenter(profile.getNode());
+        MainController.getInstance().getPrimaryStage().setTitle("Library Bookstores | Profile");
     }
 
-    private void handleAdministrationButtonAction() {
+    private void loadAdministration() {
         if (administration == null) {
             administration = new Administration();
         }
         rootPane.getChildren().remove(rootPane.getCenter());
         rootPane.setCenter(administration.getNode());
+        MainController.getInstance().getPrimaryStage().setTitle("Library Bookstores | Administration");
     }
 
-    private void handleSignOutButtonAction() {
+    private void signOut() {
         // TODO: I can clear the status of the current session.
-        MainController.getInstance().loadSignInScene(false);
+        MainController.getInstance().loadSignIn(false);
     }
 }

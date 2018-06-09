@@ -1,10 +1,6 @@
 package controller;
 
-import com.jfoenix.controls.JFXDatePicker;
-import com.jfoenix.controls.JFXPasswordField;
-import com.jfoenix.controls.JFXSnackbar;
-import com.jfoenix.controls.JFXTextField;
-import javafx.event.ActionEvent;
+import com.jfoenix.controls.*;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -17,7 +13,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
 
-public class Profile {
+class Profile {
 
     @FXML
     private JFXTextField firstName, lastName, phoneNumber, shippingAddress;
@@ -34,13 +30,55 @@ public class Profile {
     @FXML
     private Label passwordErrorLabel, updateProfileErrorLabel;
 
-    private void clearPasswordFields() {
-        oldPassword.clear();
-        newPassword.clear();
+    @FXML
+    private JFXButton updateProfile, changePassword, upload;
+
+    private Node node;
+
+    Profile() {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/profile.fxml"));
+        fxmlLoader.setController(this);
+        try {
+            node = fxmlLoader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        init();
     }
 
-    @FXML
-    private void handleUpdateProfileAction(ActionEvent actionEvent) {
+    Node getNode() {
+        return node;
+    }
+
+    private void init() {
+        upload.setOnMouseClicked(mouseEvent -> handleUpdateAvatarButton());
+        changePassword.setOnMouseClicked(mouseEvent -> handleChangePasswordAction());
+        updateProfile.setOnMouseClicked(mouseEvent -> handleUpdateProfileAction());
+
+        initFields();
+    }
+
+    private void initFields() {
+        System.out.println(this.firstName.getText());
+        this.firstName.setText(MainController.getInstance()
+                .getCurrentUser().getProfile().getFirstName());
+        this.lastName.setText(MainController.getInstance()
+                .getCurrentUser().getProfile().getLastName());
+        LocalDate localDate = MainController.getInstance()
+                .getCurrentUser().getProfile().getBirthDate();
+        if (localDate != null) {
+            System.out.println(localDate.toString());
+            this.birthDate.setValue(localDate);
+        }
+        this.phoneNumber.setText(MainController.getInstance()
+                .getCurrentUser().getProfile().getPhoneNumber());
+        this.shippingAddress.setText(MainController.getInstance()
+                .getCurrentUser().getProfile().getShippingAddress());
+
+        /// TODO: Load avatar from DB if there was one.
+    }
+
+    private void handleUpdateProfileAction() {
         if (validPhoneNumber()) {
             LinkedHashMap<String, String> colsValues = new LinkedHashMap<>();
             colsValues.put(BookstoreUser.UserProfile.FIRST_NAME_COLNAME, firstName.getText().trim());
@@ -50,7 +88,7 @@ public class Profile {
             colsValues.put(BookstoreUser.UserProfile.PHONE_NUMBER_COLNAME, phoneNumber.getText().trim());
             try {
                 MainController.getInstance().getBackendService().updateUser(
-                                    MainController.getInstance().getCurrentUser().getUserName(), colsValues);
+                        MainController.getInstance().getCurrentUser().getUserName(), colsValues);
                 updateProfileErrorLabel.setVisible(false);
                 JFXSnackbar bar = new JFXSnackbar(rootPane);
                 bar.enqueue(new JFXSnackbar.SnackbarEvent("Profile Updated Successfully"));
@@ -65,12 +103,7 @@ public class Profile {
         }
     }
 
-    private boolean validPhoneNumber() {
-        return phoneNumber.getText().matches("[0-9]+") && phoneNumber.getText().length() == 11;
-    }
-
-    @FXML
-    private void handleChangePasswordAction(ActionEvent actionEvent) {
+    private void handleChangePasswordAction() {
         if (oldPassword.getText().length() < 6 ) {
             passwordErrorLabel.setText("Old Password is too short!");
             passwordErrorLabel.setVisible(true);
@@ -99,25 +132,16 @@ public class Profile {
         clearPasswordFields();
     }
 
-    public void initProfile() {
-        initFields();
+    private void handleUpdateAvatarButton() {
+
     }
 
-    private void initFields() {
-        this.firstName.setText(MainController.getInstance().getCurrentUser().getProfile().getFirstName());
-        this.lastName.setText(MainController.getInstance().getCurrentUser().getProfile().getLastName());
-        LocalDate localDate = MainController.getInstance().getCurrentUser().getProfile().getBirthDate();
-        if (localDate != null) {
-            System.out.println(localDate.toString());
-            this.birthDate.setValue(localDate);
-        }
-        this.phoneNumber.setText(MainController.getInstance().getCurrentUser().getProfile().getPhoneNumber());
-        this.shippingAddress.setText(MainController.getInstance().getCurrentUser().getProfile().getShippingAddress());
-
-        /// TODO: Load avatar from DB if there was one.
+    private void clearPasswordFields() {
+        oldPassword.clear();
+        newPassword.clear();
     }
 
-    @FXML
-    private void handleUpdateAvatarButton(ActionEvent actionEvent) {
+    private boolean validPhoneNumber() {
+        return phoneNumber.getText().matches("[0-9]+") && phoneNumber.getText().length() == 11;
     }
 }

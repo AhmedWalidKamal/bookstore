@@ -1,12 +1,10 @@
 package controller;
 
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import model.BookstoreUser;
 import service.BackendServices;
 
-import java.io.IOException;
 import java.sql.SQLException;
 
 public class MainController {
@@ -44,7 +42,7 @@ public class MainController {
 
     public void init (Stage primaryStage) {
         this.primaryStage = primaryStage;
-        loadSignInScene(false);
+        loadSignIn(false);
     }
 
     BookstoreUser getCurrentUser() {
@@ -59,7 +57,11 @@ public class MainController {
         return backendServices;
     }
 
-    void loadSignInScene(boolean displayRegistrationMessage) {
+    Stage getPrimaryStage() {
+        return primaryStage;
+    }
+
+    void loadSignIn(boolean displayRegistrationMessage) {
         if (signIn == null) {
             signIn = new SignIn();
         }
@@ -77,7 +79,7 @@ public class MainController {
         }
     }
 
-    void loadSignUpScene() {
+    void loadSignUp() {
         if (signUp == null) {
             signUp = new SignUp();
         }
@@ -92,7 +94,7 @@ public class MainController {
         primaryStage.show();
     }
 
-    void loadNavigationPanelScene() {
+    void loadNavigationPanel() {
         if (navigationPanel == null) {
             navigationPanel = new NavigationPanel();
         }
@@ -105,22 +107,6 @@ public class MainController {
         } else {
             primaryStage.getScene().setRoot(navigationPanel.getParent());
         }
-        primaryStage.setTitle("Library Bookstores");
         primaryStage.show();
-    }
-
-    void loadProfileScene() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/profile.fxml"));
-            Scene scene = new Scene(loader.load());
-            scene.getStylesheets().add(getClass().getResource("/view/css/profile.css").toExternalForm());
-            primaryStage.setScene(scene);
-            primaryStage.setTitle("Manage Profile");
-//            primaryStage.setMaximized(true);
-            primaryStage.show();
-//            initProfileController(loader.getController());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }

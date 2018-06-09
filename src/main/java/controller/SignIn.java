@@ -76,7 +76,7 @@ class SignIn {
                     userNameTextField.getText().trim(), passwordField.getText());
             if (user == null) {
                 // Sign in failed.
-                clearInputFields();
+                passwordField.clear();
                 loginErrorLabel.setVisible(true);
             } else {
                 // Sign in succeeded.
@@ -85,16 +85,18 @@ class SignIn {
                 clearInputFields();
                 loginErrorLabel.setVisible(false);
                 MainController.getInstance().setCurrentUser(user);
-                MainController.getInstance().loadNavigationPanelScene(); // Should be changed to load home when home is ready.
+                MainController.getInstance().loadNavigationPanel(); // Should be changed to load home when home is ready.
             }
         } catch (SQLException e) {
-            clearInputFields();
+            passwordField.clear();
             loginErrorLabel.setVisible(true);
         }
     }
 
     private void handleSignUpButtonAction() {
-        MainController.getInstance().loadSignUpScene();
+        clearInputFields();
+        loginErrorLabel.setVisible(false);
+        MainController.getInstance().loadSignUp();
     }
 
     private void initUserNameTextField() {
