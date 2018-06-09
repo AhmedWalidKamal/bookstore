@@ -1,0 +1,9 @@
+.tree-table-cell {
+    -fx-alignment: center ;
+}
+
+.jfx-button {
+    -fx-background-color:  #01466f;
+    -fx-text-fill: white;
+    -jfx-button-type: RAISED;
+}

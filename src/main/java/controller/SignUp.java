@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 
 import java.io.IOException;
@@ -138,6 +139,11 @@ class SignUp {
         emailTextField.focusedProperty().addListener((o, oldVal, newVal) -> {
             if(!newVal) emailTextField.validate();
         });
+        emailTextField.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.ENTER) {
+                userNameTextField.requestFocus();
+            }
+        });
     }
 
     private void initUserNameTextField() {
@@ -147,6 +153,11 @@ class SignUp {
         userNameTextField.focusedProperty().addListener((o, oldVal, newVal) -> {
             if(!newVal) userNameTextField.validate();
         });
+        userNameTextField.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.ENTER) {
+                passwordField.requestFocus();
+            }
+        });
     }
 
     private void initPassTextField() {
@@ -155,6 +166,11 @@ class SignUp {
         passwordField.getValidators().add(validator);
         passwordField.focusedProperty().addListener((o, oldVal, newVal) -> {
             if(!newVal) passwordField.validate();
+        });
+        passwordField.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.ENTER) {
+                handleSignUpButtonAction();
+            }
         });
     }
 }
