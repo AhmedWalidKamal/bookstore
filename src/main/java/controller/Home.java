@@ -1,13 +1,79 @@
 package controller;
 
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXSnackbar;
+import com.jfoenix.controls.JFXTextField;
+import javafx.application.Application;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.*;
+import model.Book;
+import model.BookList;
 
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 
 class Home {
 
+    private int pageSize;
+    private int pageNumber;
+    private String orderCol;
+    private boolean ascending;
+
+    @FXML
+    private AnchorPane homeRootPane;
+
+    @FXML
+    private JFXTextField searchTextField;
+    @FXML
+    private JFXButton searchButton;
+
+    @FXML
+    private JFXButton sortISBNButton;
+    @FXML
+    private JFXButton sortTitleButton;
+    @FXML
+    private JFXButton sortPriceButton;
+
+    @FXML
+    private JFXButton refreshButton;
+
+
+    @FXML
+    private JFXButton prevPageButton;
+    @FXML
+    private Label pageNumberLabel;
+    @FXML
+    private JFXButton nextPageButton;
+
+    private String sortAscImage;
+
+    private String sortDescImage;
+
+    private String sortArrowsImage;
+
+    private String searchImage;
+
+    private String resetSearchImage;
+
+    private boolean isSearching;
+
+    private LinkedHashMap<String, ArrayList<String>> condition;
+
+    private JFXSnackbar snackBar;
+
     private Node node;
+
+    private String buttonStyleFormat = "-fx-background-image: url('%s'); " +
+            "-fx-background-position: center center; " +
+            "-fx-background-repeat: stretch;";
 
     Home() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/home.fxml"));
@@ -17,9 +83,193 @@ class Home {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        pageSize = 10;
+        pageNumber = 1;
+
+        orderCol = Book.BOOK_TITLE_COLNAME;
+        ascending = true;
+
+        sortAscImage = getClass().getResource("/view/images/sort-arrow-asc-icon.png").toExternalForm();
+        sortDescImage = getClass().getResource("/view/images/sort-arrow-desc-icon.png").toExternalForm();
+        sortArrowsImage = getClass().getResource("/view/images/sort-arrows-icon.png").toExternalForm();
+
+        searchImage = getClass().getResource("/view/images/search-icon.png").toExternalForm();
+        resetSearchImage = getClass().getResource("/view/images/reset-search-icon.png").toExternalForm();
+
+        condition = null;
+        isSearching = false;
+
+        snackBar = new JFXSnackbar(homeRootPane);
+
+        initButtons();
+        initHome();
     }
 
     Node getNode() {
         return node;
+    }
+
+    private void populateBookView(BookList books) {
+
+    }
+
+    private void fetchPage(int pageNumber, int pageSize) {
+        try {
+            BookList books;
+
+            if (isSearching && condition != null) {
+                books = MainController.getInstance().getBackendService().findBooks(pageNumber, pageSize,
+                        condition, orderCol, ascending);
+            } else {
+                books = MainController.getInstance().getBackendService().getBooks(pageNumber,
+                        pageSize, orderCol, ascending);
+            }
+
+
+            if (books == null) {
+                snackBar.enqueue(new JFXSnackbar.SnackbarEvent("Failed to retrieve books."));
+                return;
+            }
+
+            populateBookView(books);
+
+            prevPageButton.setDisable(!books.hasPrev());
+            nextPageButton.setDisable(!books.hasNext());
+
+            pageNumberLabel.setText(Integer.toString(pageNumber));
+        } catch (SQLException e) {
+            snackBar.enqueue(new JFXSnackbar.SnackbarEvent("Failed to retrieve books."));
+        }
+    }
+
+    private void setBackGroundImage(JFXButton button, String imagePath) {
+        button.setStyle(String.format(buttonStyleFormat, imagePath));
+    }
+
+    private void handleSortOrderChange(String newOrderCol, boolean ascending, JFXButton buttonClicked) {
+        switch(orderCol) {
+            case Book.ISBN_COLNAME:
+                setBackGroundImage(sortISBNButton, sortArrowsImage);
+                break;
+            case Book.BOOK_TITLE_COLNAME:
+                setBackGroundImage(sortTitleButton, sortArrowsImage);
+                break;
+            case Book.PRICE_COLNAME:
+                setBackGroundImage(sortPriceButton, sortArrowsImage);
+                break;
+            default:
+                break;
+        }
+
+        if (ascending) {
+            setBackGroundImage(buttonClicked, sortAscImage);
+        } else {
+            setBackGroundImage(buttonClicked, sortDescImage);
+        }
+
+        orderCol = newOrderCol;
+        this.ascending = ascending;
+        pageNumber = 1;
+        fetchPage(pageNumber, pageSize);
+
+    }
+
+    private void handlePageSizeChange(int newSize) {
+        // Or we could simply return to page 1
+        int firstElement = pageSize * (pageNumber - 1) + 1; // First element in the current page
+        pageSize = newSize;
+        pageNumber = (firstElement - 1) / pageSize + 1;
+        fetchPage(pageNumber, pageSize);
+    }
+
+    private void handleRefresh() {
+        fetchPage(pageNumber, pageSize);
+    }
+
+    private void handlePrevPage() {
+        fetchPage(--pageNumber, pageSize);
+    }
+
+    private void handleNextPage() {
+        fetchPage(++pageNumber, pageSize);
+    }
+
+    private LinkedHashMap<String, ArrayList<String>> parseCondition() {
+        if (searchTextField.getText().trim().isEmpty()) {
+            return null;
+        }
+        LinkedHashMap<String, ArrayList<String>> cond = new LinkedHashMap<>();
+        cond.put(Book.BOOK_TITLE_COLNAME, new ArrayList<>(Arrays.asList(searchTextField.getText())));
+        return cond;
+    }
+
+    private void handleSearch() {
+        if (!isSearching) {
+            condition = parseCondition();
+            if (condition != null) {
+                setBackGroundImage(searchButton, resetSearchImage);
+                isSearching = true;
+                pageNumber = 1;
+                fetchPage(pageNumber, pageSize);
+            } else {
+                snackBar.enqueue(new JFXSnackbar.SnackbarEvent("Invalid search query!"));
+            }
+
+        } else {
+            setBackGroundImage(searchButton, searchImage);
+            searchTextField.clear();
+            isSearching = false;
+            condition = null;
+            pageNumber = 1;
+        }
+    }
+
+    private void initButtons() {
+
+        refreshButton.setOnAction(actionEvent -> handleRefresh());
+        prevPageButton.setOnAction(actionEvent -> handlePrevPage());
+        nextPageButton.setOnAction(actionEvent -> handleNextPage());
+
+        sortISBNButton.setOnAction(actionEvent -> {
+            boolean ascending = true;
+            if (this.orderCol.equals(Book.ISBN_COLNAME)) {
+                ascending = !this.ascending;
+            }
+
+            handleSortOrderChange(Book.ISBN_COLNAME, ascending, sortISBNButton);
+        });
+
+        sortTitleButton.setOnAction(actionEvent -> {
+            boolean ascending = true;
+            if (this.orderCol.equals(Book.BOOK_TITLE_COLNAME)) {
+                ascending = !this.ascending;
+            }
+
+            handleSortOrderChange(Book.BOOK_TITLE_COLNAME, ascending, sortTitleButton);
+        });
+
+        sortPriceButton.setOnAction(actionEvent -> {
+            boolean ascending = true;
+            if (this.orderCol.equals(Book.PRICE_COLNAME)) {
+                ascending = !this.ascending;
+            }
+
+            handleSortOrderChange(Book.PRICE_COLNAME, ascending, sortPriceButton);
+        });
+
+        setBackGroundImage(sortTitleButton, sortAscImage);
+
+        searchTextField.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.ENTER) {
+                handleSearch();
+            }
+        });
+
+        searchButton.setOnAction(actionEvent -> handleSearch());
+    }
+
+    private void initHome() {
+        fetchPage(pageNumber, pageSize);
     }
 }

@@ -5,11 +5,11 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Reports">
+<AnchorPane prefHeight="600" prefWidth="800" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Reports">
    <StackPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <children>
       
-          <VBox fillWidth="false" StackPane.alignment="CENTER">
+          <VBox alignment="CENTER" fillWidth="false" spacing="25" StackPane.alignment="CENTER">
             <children>
             
                  <JFXButton fx:id="topTenBooksButton" buttonType="RAISED" prefHeight="37.0" prefWidth="197.0" ripplerFill="#2929290d" style="-fx-background-color: #01466f;" text="Best Selling Books Report" textFill="WHITE" />
