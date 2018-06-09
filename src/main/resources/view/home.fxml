@@ -19,7 +19,7 @@
             <JFXButton fx:id="searchButton" prefHeight="32.0" prefWidth="40.0" styleClass="search-btn" text=" " />
          </children>
       </HBox>
-      <HBox alignment="CENTER_LEFT" layoutX="25.0" layoutY="178.0" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="25.0">
+      <HBox alignment="CENTER_LEFT" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="85">
          <children>
             <HBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
                <children>
@@ -74,7 +74,7 @@
             </HBox>
          </children>
       </HBox>
-      <VBox layoutX="35.0" layoutY="217.0" prefHeight="332.0" prefWidth="500.0" AnchorPane.bottomAnchor="61.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="207.0">
+      <VBox prefHeight="332.0" prefWidth="500.0" AnchorPane.bottomAnchor="61.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="120.0">
          <children>
             <JFXScrollPane prefHeight="316.0" prefWidth="487.0" VBox.vgrow="ALWAYS">
                <children>
