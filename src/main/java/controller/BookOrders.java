@@ -11,20 +11,19 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
-import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableCell;
-import javafx.scene.control.TreeTableColumn;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.Node;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
 import javafx.util.Callback;
+import model.Book;
 import model.BookOrder;
 
 import java.sql.SQLException;
 
 public class BookOrders {
+
+    private static final int MAX_ORDERS_PER_PAGE = 5;
 
     @FXML
     private AnchorPane ordersRootPane;
@@ -35,10 +34,12 @@ public class BookOrders {
     @FXML
     private JFXButton placeOrder;
 
+    @FXML
+    private Pagination pagination;
+
     private JFXTreeTableColumn<TableBookOrder, String> publisher, isbn;
     private JFXTreeTableColumn<TableBookOrder, Number> quantity, orderNumber;
     private JFXTreeTableColumn<TableBookOrder, Boolean> confirm;
-
     private ObservableList<TableBookOrder> orders;
 
     @FXML
@@ -46,12 +47,32 @@ public class BookOrders {
         this.orders = FXCollections.observableArrayList();
         initColumns();
         try {
-            loadOrders();
+            initPagination();
         } catch (SQLException e) {
             e.printStackTrace();
-            System.out.println("Failed to load orders");
+        }
+//        buildTable();
+    }
+
+    private void initPagination() throws SQLException {
+        pagination.setPageCount(MainController.getInstance().getBackendService().getOrdersPageCount(MAX_ORDERS_PER_PAGE));
+        pagination.setPageFactory(this::createPage);
+    }
+
+    private Node createPage(int pageIndex) {
+        System.out.println("Creating PAGE #" + (pageIndex + 1));
+        try {
+            loadOrders(pageIndex);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Failed to load orders from database");
+        }
+        System.out.println("Loaded orders are: ");
+        for (TableBookOrder order: orders) {
+            System.out.println("Orders #" + order.getOrderNo());
         }
         buildTable();
+        return ordersTable;
     }
 
     private void buildTable() {
@@ -62,8 +83,9 @@ public class BookOrders {
         ordersTable.setShowRoot(false);
     }
 
-    private void loadOrders() throws SQLException {
-        for (BookOrder bookOrder : MainController.getInstance().getBackendService().getOrders(1, Integer.MAX_VALUE)) {
+    private void loadOrders(int pageIndex) throws SQLException {
+        this.orders.clear();
+        for (BookOrder bookOrder : MainController.getInstance().getBackendService().getOrders(pageIndex + 1, BookOrders.MAX_ORDERS_PER_PAGE)) {
             this.orders.add(new TableBookOrder(bookOrder));
         }
     }
@@ -167,9 +189,7 @@ public class BookOrders {
     }
 
     private class ConfirmButtonCell extends JFXTreeTableCell<TableBookOrder, Boolean> {
-        // a button for adding a new person.
         final JFXButton confirmButton = new JFXButton("Confirm");
-        // pads and centers the add button in the cell.
         final StackPane paddedButton = new StackPane();
 
         ConfirmButtonCell() {
@@ -200,7 +220,7 @@ public class BookOrders {
             });
         }
 
-        /** places an add button in the row only if the row is not empty. */
+        // Places confirm button if field isn't empty
         @Override protected void updateItem(Boolean item, boolean empty) {
             super.updateItem(item, empty);
             if (!empty) {
