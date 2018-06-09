@@ -15,6 +15,7 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import model.Book;
 import model.BookOrder;
@@ -28,7 +29,6 @@ public class BookOrders {
     @FXML
     private AnchorPane ordersRootPane;
 
-    @FXML
     private JFXTreeTableView<TableBookOrder> ordersTable;
 
     @FXML
@@ -45,13 +45,20 @@ public class BookOrders {
     @FXML
     public void initialize() {
         this.orders = FXCollections.observableArrayList();
-        initColumns();
+        initTable();
         try {
             initPagination();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-//        buildTable();
+    }
+
+    private void initTable() {
+        this.ordersTable = new JFXTreeTableView<>();
+        initColumns();
+        ordersTable.getColumns().setAll(orderNumber, isbn, publisher, quantity, confirm);
+        ordersTable.setColumnResizePolicy(JFXTreeTableView.CONSTRAINED_RESIZE_POLICY);
+        ordersTable.setShowRoot(false);
     }
 
     private void initPagination() throws SQLException {
@@ -60,16 +67,12 @@ public class BookOrders {
     }
 
     private Node createPage(int pageIndex) {
-        System.out.println("Creating PAGE #" + (pageIndex + 1));
         try {
             loadOrders(pageIndex);
+            pagination.setPageCount(MainController.getInstance().getBackendService().getOrdersPageCount(MAX_ORDERS_PER_PAGE));
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.println("Failed to load orders from database");
-        }
-        System.out.println("Loaded orders are: ");
-        for (TableBookOrder order: orders) {
-            System.out.println("Orders #" + order.getOrderNo());
         }
         buildTable();
         return ordersTable;
@@ -77,10 +80,7 @@ public class BookOrders {
 
     private void buildTable() {
         final TreeItem<TableBookOrder> root = new RecursiveTreeItem<>(this.orders, RecursiveTreeObject::getChildren);
-        ordersTable.getColumns().setAll(orderNumber, isbn, publisher, quantity, confirm);
-        ordersTable.setColumnResizePolicy(JFXTreeTableView.CONSTRAINED_RESIZE_POLICY);
         ordersTable.setRoot(root);
-        ordersTable.setShowRoot(false);
     }
 
     private void loadOrders(int pageIndex) throws SQLException {
@@ -204,6 +204,7 @@ public class BookOrders {
                         if (success) {
                             TreeItem<TableBookOrder> item = getTreeTableRow().getTreeItem();
                             item.getParent().getChildren().remove(item);
+                            pagination.setPageCount(MainController.getInstance().getBackendService().getOrdersPageCount(MAX_ORDERS_PER_PAGE));
                             JFXSnackbar bar = new JFXSnackbar(ordersRootPane);
                             bar.enqueue(new JFXSnackbar.SnackbarEvent("Order #" + getTreeTableRow().
                                     getTreeItem().getValue().getOrderNo() + " confirmed successfully"));
