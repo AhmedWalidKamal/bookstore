@@ -32,7 +32,7 @@ public class BookOrders {
     private JFXTreeTableView<TableBookOrder> ordersTable;
 
     @FXML
-    private JFXButton placeOrder;
+    private JFXButton placeOrder, refresh;
 
     @FXML
     private Pagination pagination;
@@ -53,6 +53,16 @@ public class BookOrders {
         }
     }
 
+    @FXML
+    private void refreshAction() {
+        loadPage(pagination.getCurrentPageIndex());
+    }
+
+    @FXML
+    private void placeOrderAction() {
+
+    }
+
     private void initTable() {
         this.ordersTable = new JFXTreeTableView<>();
         initColumns();
@@ -67,6 +77,11 @@ public class BookOrders {
     }
 
     private Node createPage(int pageIndex) {
+        loadPage(pageIndex);
+        return ordersTable;
+    }
+
+    private void loadPage(int pageIndex) {
         try {
             loadOrders(pageIndex);
             pagination.setPageCount(MainController.getInstance().getBackendService().getOrdersPageCount(MAX_ORDERS_PER_PAGE));
@@ -75,7 +90,6 @@ public class BookOrders {
             System.out.println("Failed to load orders from database");
         }
         buildTable();
-        return ordersTable;
     }
 
     private void buildTable() {

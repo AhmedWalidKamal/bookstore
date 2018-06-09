@@ -2,10 +2,16 @@
     -fx-alignment: center ;
 }
 
-.jfx-button {
+.placeOrder-btn {
     -fx-background-color:  #01466f;
     -fx-text-fill: white;
     -jfx-button-type: RAISED;
+}
+
+.refresh-btn {
+    -fx-background-image: url('../images/refresh-icon.png');
+    -fx-background-position: center;
+    -fx-background-repeat: stretch;
 }
 
 /* Remove spacing */

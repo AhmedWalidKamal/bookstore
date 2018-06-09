@@ -11,9 +11,10 @@
       <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <Pagination fx:id="pagination" prefHeight="637.0" prefWidth="1280.0" />
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="50.0">
                <children>
-                  <JFXButton fx:id="placeOrder" alignment="CENTER" buttonType="RAISED" contentDisplay="CENTER" prefHeight="36.0" prefWidth="107.0" ripplerFill="BLACK" style="-fx-background-color: #01466f;" text="Place Order" textFill="WHITE" />
+                  <JFXButton fx:id="placeOrder" alignment="CENTER" buttonType="RAISED" contentDisplay="CENTER" onAction="#placeOrderAction" prefHeight="36.0" prefWidth="107.0" ripplerFill="BLACK" style="-fx-background-color: #01466f;" styleClass="placeOrder-btn" text="Place Order" textFill="WHITE" />
+                  <JFXButton fx:id="refresh" onAction="#refreshAction" styleClass="refresh-btn" text=" " />
                </children>
             </HBox>
          </children>
