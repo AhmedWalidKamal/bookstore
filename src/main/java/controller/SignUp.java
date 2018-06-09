@@ -44,21 +44,14 @@ class SignUp {
             Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
     SignUp() {
-        if (parent == null) {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/signUp.fxml"));
-            fxmlLoader.setController(this);
-            try {
-                parent = fxmlLoader.load();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/signUp.fxml"));
+        fxmlLoader.setController(this);
+        try {
+            parent = fxmlLoader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        initSignUpButton();
-        initSignInButton();
-
-        initEmailTextField();
-        initUserNameTextField();
-        initPassTextField();
+        init();
     }
 
     Parent getParent() {
@@ -71,12 +64,13 @@ class SignUp {
         passwordField.clear();
     }
 
-    private void initSignUpButton() {
+    private void init() {
         signUpButton.setOnMouseClicked(mouseEvent -> handleSignUpButtonAction());
-    }
-
-    private void initSignInButton() {
         signInButton.setOnMouseClicked(mouseEvent -> handleSignInButtonAction());
+
+        initEmailTextField();
+        initUserNameTextField();
+        initPassTextField();
     }
 
     private void handleSignUpButtonAction() {

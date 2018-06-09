@@ -6,10 +6,13 @@ import com.jfoenix.controls.JFXSnackbar;
 import com.jfoenix.controls.JFXTextField;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import model.BookstoreUser;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
@@ -23,16 +26,13 @@ public class Profile {
     private JFXPasswordField oldPassword, newPassword;
 
     @FXML
-    private JFXDatePicker birthdate;
+    private JFXDatePicker birthDate;
 
     @FXML
     private AnchorPane rootPane;
 
     @FXML
     private Label passwordErrorLabel, updateProfileErrorLabel;
-
-    private MainController mainController;
-
 
     private void clearPasswordFields() {
         oldPassword.clear();
@@ -46,10 +46,11 @@ public class Profile {
             colsValues.put(BookstoreUser.UserProfile.FIRST_NAME_COLNAME, firstName.getText().trim());
             colsValues.put(BookstoreUser.UserProfile.LAST_NAME_COLNAME, lastName.getText().trim());
             colsValues.put(BookstoreUser.UserProfile.SHIPPING_ADDRESS_COLNAME, shippingAddress.getText().trim());
-            colsValues.put(BookstoreUser.UserProfile.BIRTH_DATE_COLNAME, birthdate.getValue().toString());
+            colsValues.put(BookstoreUser.UserProfile.BIRTH_DATE_COLNAME, birthDate.getValue().toString());
             colsValues.put(BookstoreUser.UserProfile.PHONE_NUMBER_COLNAME, phoneNumber.getText().trim());
             try {
-                this.mainController.getBackendService().updateUser(this.mainController.getCurrentUser().getUserName(), colsValues);
+                MainController.getInstance().getBackendService().updateUser(
+                                    MainController.getInstance().getCurrentUser().getUserName(), colsValues);
                 updateProfileErrorLabel.setVisible(false);
                 JFXSnackbar bar = new JFXSnackbar(rootPane);
                 bar.enqueue(new JFXSnackbar.SnackbarEvent("Profile Updated Successfully"));
@@ -78,8 +79,9 @@ public class Profile {
             passwordErrorLabel.setVisible(true);
         } else {
             try {
-                boolean success = this.mainController.getBackendService().updatePassword(mainController.getCurrentUser().
-                        getUserName(), oldPassword.getText().trim(), newPassword.getText().trim());
+                boolean success = MainController.getInstance().getBackendService().updatePassword(
+                        MainController.getInstance().getCurrentUser().getUserName()
+                        , oldPassword.getText().trim(), newPassword.getText().trim());
                 if (success) {
                     passwordErrorLabel.setVisible(false);
                     JFXSnackbar bar = new JFXSnackbar(rootPane);
@@ -97,21 +99,20 @@ public class Profile {
         clearPasswordFields();
     }
 
-    public void initProfile(MainController mainController) {
-        this.mainController = mainController;
+    public void initProfile() {
         initFields();
     }
 
     private void initFields() {
-        this.firstName.setText(this.mainController.getCurrentUser().getProfile().getFirstName());
-        this.lastName.setText(this.mainController.getCurrentUser().getProfile().getLastName());
-        LocalDate localDate = this.mainController.getCurrentUser().getProfile().getBirthDate();
+        this.firstName.setText(MainController.getInstance().getCurrentUser().getProfile().getFirstName());
+        this.lastName.setText(MainController.getInstance().getCurrentUser().getProfile().getLastName());
+        LocalDate localDate = MainController.getInstance().getCurrentUser().getProfile().getBirthDate();
         if (localDate != null) {
             System.out.println(localDate.toString());
-            this.birthdate.setValue(localDate);
+            this.birthDate.setValue(localDate);
         }
-        this.phoneNumber.setText(this.mainController.getCurrentUser().getProfile().getPhoneNumber());
-        this.shippingAddress.setText(this.mainController.getCurrentUser().getProfile().getShippingAddress());
+        this.phoneNumber.setText(MainController.getInstance().getCurrentUser().getProfile().getPhoneNumber());
+        this.shippingAddress.setText(MainController.getInstance().getCurrentUser().getProfile().getShippingAddress());
 
         /// TODO: Load avatar from DB if there was one.
     }

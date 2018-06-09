@@ -6,7 +6,7 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane styleClass="BorderPane" stylesheets="@css/navigationPanel.css"
+<BorderPane fx:id="rootPane" styleClass="BorderPane" stylesheets="@css/navigationPanel.css"
     xmlns="http://javafx.com/javafx/8.0.162-ea" xmlns:fx="http://javafx.com/fxml/1">
    <left>
        <VBox styleClass="nav-panel">
@@ -26,7 +26,7 @@
             <VBox.margin>
                <Insets left="27.0" right="27.0" />
             </VBox.margin></Separator>
-           <HBox styleClass="nav-entry">
+           <HBox fx:id="homeButton" styleClass="nav-entry">
                <ImageView fitHeight="17.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                    <Image url="@images/home-icon.png" />
                </ImageView>
@@ -36,7 +36,7 @@
                    </HBox.margin>
                </Label>
            </HBox>
-           <HBox styleClass="nav-entry">
+           <HBox fx:id="shoppingCartButton" styleClass="nav-entry">
                <ImageView fitHeight="17.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                    <Image url="@images/shopping-cart-icon.png" />
                </ImageView>
@@ -51,7 +51,7 @@
                </HBox.margin>
             </Label>
            </HBox>
-           <HBox styleClass="nav-entry">
+           <HBox fx:id="profileButton" styleClass="nav-entry">
                <ImageView fitHeight="17.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                    <Image url="@images/profile-icon.png" />
                </ImageView>
@@ -61,7 +61,7 @@
                    </HBox.margin>
                </Label>
            </HBox>
-           <HBox styleClass="nav-entry">
+           <HBox fx:id="administrationButton" styleClass="nav-entry">
                <ImageView fitHeight="17.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                    <Image url="@images/admin-icon.png" />
                </ImageView>
@@ -75,7 +75,7 @@
                <VBox.margin>
                    <Insets top="80.0" />
                </VBox.margin>
-               <HBox styleClass="sign-out-HBox">
+               <HBox fx:id="signOutButton" styleClass="sign-out-HBox">
                    <ImageView fitHeight="17.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                        <Image url="@images/sign-out-icon.png" />
                    </ImageView>

@@ -38,20 +38,14 @@ class SignIn {
     private Parent parent;
 
     SignIn() {
-        if (parent == null) {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/signIn.fxml"));
-            fxmlLoader.setController(this);
-            try {
-                parent = fxmlLoader.load();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/signIn.fxml"));
+        fxmlLoader.setController(this);
+        try {
+            parent = fxmlLoader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        initSignInButton();
-        initSignUpButton();
-
-        initUserNameTextField();
-        initPassTextField();
+        init();
     }
 
     Parent getParent() {
@@ -68,12 +62,12 @@ class SignIn {
         bar.enqueue(new JFXSnackbar.SnackbarEvent("Registration Successful!"));
     }
 
-    private void initSignInButton() {
+    private void init() {
         signInButton.setOnMouseClicked(mouseEvent -> handleSignInButtonAction());
-    }
-
-    private void initSignUpButton() {
         signUpButton.setOnMouseClicked(mouseEvent -> handleSignUpButtonAction());
+
+        initUserNameTextField();
+        initPassTextField();
     }
 
     private void handleSignInButtonAction() {
