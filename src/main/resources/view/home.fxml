@@ -85,7 +85,7 @@
       </VBox>
       <HBox alignment="CENTER" layoutX="35.0" layoutY="551.0" prefHeight="35.0" prefWidth="480.0" AnchorPane.bottomAnchor="16.5" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0">
          <children>
-            <JFXButton fx:id="prevPageButton" prefHeight="11.0" prefWidth="10.0" styleClass="prev-page-btn" text=" " />
+            <JFXButton fx:id="prevPageButton" styleClass="prev-page-btn" text=" " />
             <Label fx:id="pageNumberLabel" text="1">
                <HBox.margin>
                   <Insets left="10.0" right="10.0" />

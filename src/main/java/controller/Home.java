@@ -3,22 +3,19 @@ package controller;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXSnackbar;
 import com.jfoenix.controls.JFXTextField;
-import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import model.Book;
+import model.BookAuthor;
 import model.BookList;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
+import java.util.*;
 
 class Home {
 
@@ -65,6 +62,8 @@ class Home {
 
     private boolean isSearching;
 
+    private Map<String, String> searchColumns;
+
     private LinkedHashMap<String, ArrayList<String>> condition;
 
     private JFXSnackbar snackBar;
@@ -101,6 +100,13 @@ class Home {
         isSearching = false;
 
         snackBar = new JFXSnackbar(homeRootPane);
+
+        searchColumns = new HashMap<>();
+        searchColumns.put("isbn", Book.ISBN_COLNAME);
+        searchColumns.put("author", BookAuthor.AUTHOR_NAME_COLNAME);
+        searchColumns.put("title", Book.BOOK_TITLE_COLNAME);
+        searchColumns.put("category", Book.CATEGORY_COLNAME);
+        searchColumns.put("publisher", Book.PUBLISHER_NAME_COLNAME);
 
         initButtons();
         initHome();
@@ -200,7 +206,42 @@ class Home {
             return null;
         }
         LinkedHashMap<String, ArrayList<String>> cond = new LinkedHashMap<>();
-        cond.put(Book.BOOK_TITLE_COLNAME, new ArrayList<>(Arrays.asList(searchTextField.getText())));
+
+        String text = searchTextField.getText().trim();
+
+        String[] queries = text.split(",");
+
+        for (String query : queries) {
+            if (query.contains(":")) {
+                String[] components = query.split(":");
+                if (components.length != 2) {
+                    return null;
+                }
+                String key = components[0].trim();
+                String value = components[1].trim();
+
+                System.out.println(key + " " + value);
+
+                if (!searchColumns.containsKey(key.toLowerCase()) || value.isEmpty()) {
+                    return null;
+                }
+                String colName = searchColumns.get(key);
+                if (!cond.containsKey(colName)) {
+                    cond.put(colName, new ArrayList<>());
+                }
+                cond.get(colName).add(value);
+            } else {
+                if (query.trim().isEmpty()) {
+                    return null;
+                }
+
+                if (!cond.containsKey(Book.BOOK_TITLE_COLNAME)) {
+                    cond.put(Book.BOOK_TITLE_COLNAME, new ArrayList<>());
+                }
+                cond.get(Book.BOOK_TITLE_COLNAME).add(query.trim());
+            }
+        }
+
         return cond;
     }
 
@@ -212,16 +253,17 @@ class Home {
                 isSearching = true;
                 pageNumber = 1;
                 fetchPage(pageNumber, pageSize);
+                searchTextField.setDisable(true);
             } else {
                 snackBar.enqueue(new JFXSnackbar.SnackbarEvent("Invalid search query!"));
             }
-
         } else {
             setBackGroundImage(searchButton, searchImage);
             searchTextField.clear();
             isSearching = false;
             condition = null;
             pageNumber = 1;
+            searchTextField.setDisable(false);
         }
     }
 
