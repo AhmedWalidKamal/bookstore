@@ -8,6 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import model.BookstoreUser;
 
+import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -56,6 +57,11 @@ class Profile {
         updateProfile.setOnMouseClicked(mouseEvent -> handleUpdateProfileAction());
 
         initFields();
+    }
+
+    @FXML
+    private void handlePlaceOrder(ActionEvent event) {
+        
     }
 
     private void initFields() {
