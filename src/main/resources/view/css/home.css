@@ -12,3 +12,29 @@
     -fx-pref-height: 35.0px;
     -fx-pref-width: 400.0px;
 }
+
+.search-btn {
+    -fx-background-image: url('../images/search-icon.png');
+    -fx-background-position: center;
+    -fx-background-repeat: stretch;
+}
+.sort-btn {
+    -fx-background-image: url('../images/sort-arrows-icon.png');
+    -fx-background-position: center;
+    -fx-background-repeat: stretch;
+}
+.refresh-btn {
+    -fx-background-image: url('../images/refresh-icon.png');
+    -fx-background-position: center;
+    -fx-background-repeat: stretch;
+}
+.prev-page-btn {
+    -fx-background-image: url('../images/left-arrow-icon.png');
+    -fx-background-position: center;
+    -fx-background-repeat: stretch;
+}
+.next-page-btn {
+    -fx-background-image: url('../images/right-arrow-icon.png');
+    -fx-background-position: center;
+    -fx-background-repeat: stretch;
+}
