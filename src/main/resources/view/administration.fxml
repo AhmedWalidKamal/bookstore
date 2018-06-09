@@ -1,77 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.JFXButton?>
-<?import com.jfoenix.controls.JFXComboBox?>
 <?import com.jfoenix.controls.JFXTabPane?>
-<?import com.jfoenix.controls.JFXTextField?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
-
 
 <AnchorPane fx:id="rootPane" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <JFXTabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" stylesheets="@css/administration.css">
+      <JFXTabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" stylesheets="@css/administration.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <tabs>
             <Tab text="Add Book">
-              <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <children>
-                        <VBox alignment="CENTER" layoutX="178.0" prefHeight="740.0" prefWidth="880.0" spacing="25.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="200.0">
-                           <children>
-                              <Label text="Enter Book Attributes">
-                                 <VBox.margin>
-                                    <Insets />
-                                 </VBox.margin>
-                                 <font>
-                                    <Font name="System Bold" size="24.0" />
-                                 </font>
-                              </Label>
-                              <JFXTextField fx:id="isbn" prefHeight="26.0" prefWidth="1002.0" promptText="ISBN">
-                                 <VBox.margin>
-                                    <Insets top="50.0" />
-                                 </VBox.margin>
-                              </JFXTextField>
-                              <JFXTextField fx:id="title" layoutX="10.0" layoutY="140.0" prefHeight="26.0" prefWidth="1002.0" promptText="Title" unFocusColor="#4d4d4d" />
-                              <JFXTextField fx:id="authors" layoutX="10.0" layoutY="166.0" prefHeight="26.0" prefWidth="1002.0" promptText="Author(s)" />
-                              <JFXTextField fx:id="publisher" layoutX="10.0" layoutY="267.0" prefHeight="26.0" prefWidth="1002.0" promptText="Publisher" />
-                              <JFXTextField fx:id="price" layoutX="10.0" layoutY="318.0" prefHeight="26.0" prefWidth="1002.0" promptText="Price (in EGP)" />
-                              <JFXTextField fx:id="threshold" layoutX="10.0" layoutY="369.0" prefHeight="26.0" prefWidth="1002.0" promptText="Threshold" />
-                              <JFXTextField fx:id="publicationYear" promptText="Publication Year" />
-                              <HBox prefHeight="31.0" prefWidth="880.0" spacing="50.0">
-                                 <children>
-                                    <JFXComboBox fx:id="category" promptText="Category" />
-                                 </children>
-                              </HBox>
-                              <Label fx:id="failLabel" textFill="#ff0606" visible="false">
-                                 <font>
-                                    <Font size="15.0" />
-                                 </font>
-                              </Label>
-                              <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="40.0">
-                                 <children>
-                                    <JFXButton id="signUpButton" fx:id="addBookButton" prefHeight="36.0" prefWidth="92.0" style="-fx-background-color: #01466f;" text="Add Book" textFill="WHITE" />
-                                    <JFXButton id="signUpButton" fx:id="clearButton" prefHeight="36.0" prefWidth="92.0" style="-fx-background-color: #01466f;" text="Clear" textFill="WHITE" />
-                                 </children>
-                              </HBox>
-                           </children>
-                        </VBox>
-                     </children>
-                  </AnchorPane>
-              </content>
-            </Tab>
+               <content>
+                  <fx:include fx:id="addBookTab" source="addBook.fxml" />
+               </content></Tab>
             <Tab text="Orders">
                <content>
-                  <AnchorPane prefHeight="200.0" prefWidth="200.0" />
-               </content>
-            </Tab>
-            <Tab text="Modify Book">
-               <content>
-                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                  <fx:include fx:id="ordersTab" source="orders.fxml" />
                </content>
             </Tab>
             <Tab text="Promote User">

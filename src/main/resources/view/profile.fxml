@@ -15,16 +15,16 @@
 
 <AnchorPane fx:id="rootPane" prefHeight="609.0" prefWidth="1076.0" stylesheets="@css/profile.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <VBox alignment="TOP_CENTER" layoutX="338.0" layoutY="25.0" prefHeight="559.0" prefWidth="417.0" spacing="20.0">
+      <VBox alignment="CENTER" layoutX="338.0" layoutY="25.0" prefHeight="559.0" prefWidth="417.0" spacing="20.0" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="338.0" AnchorPane.rightAnchor="321.0" AnchorPane.topAnchor="25.0">
          <children>
-            <HBox prefHeight="100.0" prefWidth="200.0">
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                <children>
                   <Avatar radius="36.0">
                      <image>
                         <Image url="@images/user(1).png" />
                      </image>
                      <HBox.margin>
-                        <Insets left="130.0" top="15.0" />
+                        <Insets top="15.0" />
                      </HBox.margin></Avatar>
                   <JFXButton fx:id="upload" buttonType="RAISED" prefHeight="32.0" prefWidth="77.0" ripplerFill="#2929290d" style="-fx-background-color: #01466f;" text="Upload" textFill="WHITE">
                      <HBox.margin>
@@ -33,7 +33,7 @@
                   </JFXButton>
                </children>
             </HBox>
-            <HBox prefHeight="50.0" prefWidth="417.0" spacing="30.0">
+            <HBox alignment="CENTER" prefHeight="50.0" prefWidth="417.0" spacing="30.0">
                <children>
                   <VBox prefHeight="100.0" prefWidth="187.0">
                      <children>
@@ -49,7 +49,7 @@
                   </VBox>
                </children>
             </HBox>
-            <HBox layoutX="10.0" layoutY="10.0" prefHeight="50.0" prefWidth="417.0" spacing="30.0">
+            <HBox alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="50.0" prefWidth="417.0" spacing="30.0">
                <children>
                   <VBox prefHeight="100.0" prefWidth="187.0">
                      <children>
@@ -81,7 +81,7 @@
                </font>
             </Label>
             <JFXButton fx:id="updateProfile" buttonType="RAISED" prefHeight="37.0" prefWidth="138.0" ripplerFill="#2929290d" style="-fx-background-color: #01466f;" text="Update Profile" textFill="WHITE" />
-            <HBox layoutX="10.0" layoutY="80.0" prefHeight="50.0" prefWidth="417.0" spacing="30.0">
+            <HBox alignment="CENTER" layoutX="10.0" layoutY="80.0" prefHeight="50.0" prefWidth="417.0" spacing="30.0">
                <children>
                   <VBox prefHeight="100.0" prefWidth="187.0">
                      <children>
