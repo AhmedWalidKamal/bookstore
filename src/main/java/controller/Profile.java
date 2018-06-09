@@ -36,7 +36,7 @@ public class Profile {
     @FXML
     private JFXButton updateProfile, changePassword, upload;
 
-    public Profile() {
+    Profile() {
         if (parent == null) {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/profile.fxml"));
             fxmlLoader.setController(this);
