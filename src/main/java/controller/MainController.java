@@ -20,6 +20,7 @@ public class MainController {
     private SignIn signIn;
     private SignUp signUp;
     private Profile profile;
+    private Administration administration;
     private NavigationPanel navigationPanel;
 
     private MainController() {
@@ -41,7 +42,8 @@ public class MainController {
     }
 
     public void init () {
-        loadSignInScene(false);
+//        loadSignInScene(false);
+        loadAdministrationScene();
     }
 
     BookstoreUser getCurrentUser() {
@@ -112,6 +114,20 @@ public class MainController {
             primaryStage.getScene().setRoot(profile.getParent());
         }
         primaryStage.setTitle("Library Bookstores | Manage Profile");
+        primaryStage.show();
+    }
+
+    void loadAdministrationScene() {
+        if (administration == null) {
+            administration = new Administration();
+        }
+        if (primaryStage.getScene() == null) {
+            Scene scene = new Scene(administration.getParent());
+            primaryStage.setScene(scene);
+        } else {
+            primaryStage.getScene().setRoot(administration.getParent());
+        }
+        primaryStage.setTitle("Library Bookstores | Administration");
         primaryStage.show();
     }
 }

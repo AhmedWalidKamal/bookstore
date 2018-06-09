@@ -452,13 +452,13 @@ public class BackendServices {
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
             String yearStr = sdf.format(publicationYear);
+            System.out.println(yearStr);
             bookInsertStatement.setString(6, yearStr);
             bookInsertStatement.setDouble(7, price);
             bookInsertStatement.setString(8, category);
 
-            bookInsertStatement.executeUpdate();
             System.out.println(bookInsertStatement);
-
+            bookInsertStatement.executeUpdate();
 
             if (!bookAuthors.isEmpty()) {
                 StringBuilder authorInsertQuery = new StringBuilder();
@@ -481,9 +481,8 @@ public class BackendServices {
                     authorInsertStatement.setString(pos++, author);
                 }
 
-                authorInsertStatement.executeUpdate();
-
                 System.out.println(authorInsertStatement);
+                authorInsertStatement.executeUpdate();
             }
 
 
