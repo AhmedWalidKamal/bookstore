@@ -9,11 +9,11 @@
    <children>
       <JFXTreeTableView AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <columns>
-            <TreeTableColumn prefWidth="135.0" resizable="false" text="Order Number" />
-            <TreeTableColumn prefWidth="310.0" resizable="false" text="ISBN" />
-            <TreeTableColumn prefWidth="332.0" resizable="false" text="Publisher" />
-            <TreeTableColumn prefWidth="262.0" resizable="false" text="Quantity" />
-            <TreeTableColumn prefWidth="240.0" resizable="false" text="Confirm" />
+            <TreeTableColumn fx:id="orderNumberCol" prefWidth="135.0" resizable="false" text="Order Number" />
+            <TreeTableColumn fx:id="isbnCol" prefWidth="310.0" resizable="false" text="ISBN" />
+            <TreeTableColumn fx:id="publisherCol" prefWidth="332.0" resizable="false" text="Publisher" />
+            <TreeTableColumn fx:id="quantityCol" prefWidth="262.0" resizable="false" text="Quantity" />
+            <TreeTableColumn fx:id="confirmCol" prefWidth="240.0" resizable="false" text="Confirm" />
          </columns>
       </JFXTreeTableView>
    </children>

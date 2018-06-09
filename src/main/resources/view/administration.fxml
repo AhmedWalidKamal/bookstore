@@ -19,12 +19,12 @@
             </Tab>
             <Tab text="Promote User">
                <content>
-                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                  <fx:include fx:id="promoteTab" source="promoteUsers.fxml" />
                </content>
             </Tab>
             <Tab text="View Reports">
                <content>
-                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                  <fx:include fx:id="reportsTab" source="reports.fxml" />
                </content>
             </Tab>
          </tabs>
