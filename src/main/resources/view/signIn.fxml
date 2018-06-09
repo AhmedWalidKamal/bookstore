@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane stylesheets="/view/css/signIn.css" fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity"
+<AnchorPane stylesheets="@css/signIn.css" fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity"
             minHeight="-Infinity" minWidth="-Infinity" prefHeight="539.0" prefWidth="1076.0"
             style="-fx-background-color: #FFFFFF;" xmlns="http://javafx.com/javafx/8.0.121"
             xmlns:fx="http://javafx.com/fxml/1">

@@ -4,7 +4,6 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.validation.RequiredFieldValidator;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -16,7 +15,7 @@ import java.sql.SQLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class SignUp {
+class SignUp {
 
     @FXML
     private JFXButton signUpButton;
@@ -45,33 +44,33 @@ public class SignUp {
             Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
     SignUp() {
-        if (parent == null) {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/signUp.fxml"));
-            fxmlLoader.setController(this);
-            try {
-                parent = fxmlLoader.load();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/signUp.fxml"));
+        fxmlLoader.setController(this);
+        try {
+            parent = fxmlLoader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        initSignUpButton();
-        initSignInButton();
+        init();
+    }
+
+    Parent getParent() {
+        return parent;
+    }
+
+    void clearInputFields() {
+        emailTextField.clear();
+        userNameTextField.clear();
+        passwordField.clear();
+    }
+
+    private void init() {
+        signUpButton.setOnMouseClicked(mouseEvent -> handleSignUpButtonAction());
+        signInButton.setOnMouseClicked(mouseEvent -> handleSignInButtonAction());
 
         initEmailTextField();
         initUserNameTextField();
         initPassTextField();
-    }
-
-    Parent getParent() {
-        return this.parent;
-    }
-
-    private void initSignUpButton() {
-        signUpButton.setOnMouseClicked(mouseEvent -> handleSignUpButtonAction());
-    }
-
-    private void initSignInButton() {
-        signInButton.setOnMouseClicked(mouseEvent -> handleSignInButtonAction());
     }
 
     private void handleSignUpButtonAction() {
@@ -102,7 +101,7 @@ public class SignUp {
     }
 
     private void goToSignIn(boolean displayRegistrationMessage) {
-        MainController.getInstance().loadSignInScene(displayRegistrationMessage);
+        MainController.getInstance().loadSignIn(displayRegistrationMessage);
     }
 
     private boolean validateFields() {
@@ -132,17 +131,11 @@ public class SignUp {
         return matcher.find();
     }
 
-    void clearInputFields() {
-        emailTextField.clear();
-        userNameTextField.clear();
-        passwordField.clear();
-    }
-
     private void initEmailTextField() {
         RequiredFieldValidator validator = new RequiredFieldValidator();
         validator.setMessage("Email Required");
         emailTextField.getValidators().add(validator);
-        emailTextField.focusedProperty().addListener((o,oldVal,newVal)->{
+        emailTextField.focusedProperty().addListener((o, oldVal, newVal) -> {
             if(!newVal) emailTextField.validate();
         });
     }
@@ -151,7 +144,7 @@ public class SignUp {
         RequiredFieldValidator validator = new RequiredFieldValidator();
         validator.setMessage("User Name Required");
         userNameTextField.getValidators().add(validator);
-        userNameTextField.focusedProperty().addListener((o,oldVal,newVal)->{
+        userNameTextField.focusedProperty().addListener((o, oldVal, newVal) -> {
             if(!newVal) userNameTextField.validate();
         });
     }
@@ -160,7 +153,7 @@ public class SignUp {
         RequiredFieldValidator validator = new RequiredFieldValidator();
         validator.setMessage("Password Required");
         passwordField.getValidators().add(validator);
-        passwordField.focusedProperty().addListener((o,oldVal,newVal)->{
+        passwordField.focusedProperty().addListener((o, oldVal, newVal) -> {
             if(!newVal) passwordField.validate();
         });
     }

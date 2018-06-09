@@ -1,17 +1,25 @@
 package controller;
 
-import service.BackendServices;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 
-public class Home {
+import java.io.IOException;
 
-    private BackendServices sys;
-    private MainController mainController;
+class Home {
 
-    public void setBackEndService(BackendServices sys) {
-        this.sys = sys;
+    private Node node;
+
+    Home() {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/home.fxml"));
+        fxmlLoader.setController(this);
+        try {
+            node = fxmlLoader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void setMainController(MainController mainController) {
-        this.mainController = mainController;
+    Node getNode() {
+        return node;
     }
 }

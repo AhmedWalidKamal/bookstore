@@ -1,15 +1,16 @@
 package controller;
 
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import model.BookstoreUser;
 import service.BackendServices;
 
-import java.io.IOException;
 import java.sql.SQLException;
 
 public class MainController {
+
+    private static final int SCENE_WIDTH = 1000;
+    private static final int SCENE_HEIGHT= 600;
 
     private static MainController instance;
 
@@ -19,8 +20,6 @@ public class MainController {
 
     private SignIn signIn;
     private SignUp signUp;
-    private Profile profile;
-    private Administration administration;
     private NavigationPanel navigationPanel;
 
     private MainController() {
@@ -41,42 +40,34 @@ public class MainController {
         return instance;
     }
 
-    public void init () {
-//        loadSignInScene(false);
-        loadAdministrationScene();
+    public void init (Stage primaryStage) {
+        this.primaryStage = primaryStage;
+        loadSignIn(false);
     }
 
     BookstoreUser getCurrentUser() {
-        return this.currentUser;
+        return currentUser;
     }
 
-    void setCurrentUser(BookstoreUser user) {
-        currentUser = user;
-    }
-
-    Stage getPrimaryStage() {
-        return this.primaryStage;
-    }
-
-    public void setPrimaryStage(Stage primaryStage) {
-        this.primaryStage = primaryStage;
+    void setCurrentUser(BookstoreUser currentUser) {
+        this.currentUser = currentUser;
     }
 
     BackendServices getBackendService() {
-        return this.backendServices;
+        return backendServices;
     }
 
-    void setBackendServices(BackendServices backendServices) {
-        this.backendServices = backendServices;
+    Stage getPrimaryStage() {
+        return primaryStage;
     }
 
-    void loadSignInScene(boolean displayRegistrationMessage) {
+    void loadSignIn(boolean displayRegistrationMessage) {
         if (signIn == null) {
             signIn = new SignIn();
         }
         signIn.clearInputFields();
         if (primaryStage.getScene() == null) {
-            Scene scene = new Scene(signIn.getParent());
+            Scene scene = new Scene(signIn.getParent(), SCENE_WIDTH, SCENE_HEIGHT);
             primaryStage.setScene(scene);
         } else {
             primaryStage.getScene().setRoot(signIn.getParent());
@@ -88,13 +79,13 @@ public class MainController {
         }
     }
 
-    void loadSignUpScene() {
+    void loadSignUp() {
         if (signUp == null) {
             signUp = new SignUp();
         }
         signUp.clearInputFields();
         if (primaryStage.getScene() == null) {
-            Scene scene = new Scene(signUp.getParent());
+            Scene scene = new Scene(signUp.getParent(), SCENE_WIDTH, SCENE_HEIGHT);
             primaryStage.setScene(scene);
         } else {
             primaryStage.getScene().setRoot(signUp.getParent());
@@ -103,31 +94,19 @@ public class MainController {
         primaryStage.show();
     }
 
-    void loadProfileScene() {
-        if (profile == null) {
-            profile = new Profile();
+    void loadNavigationPanel() {
+        if (navigationPanel == null) {
+            navigationPanel = new NavigationPanel();
         }
+        navigationPanel.setUserInfo(getCurrentUser().getUserName(), getCurrentUser().getEmail()
+                                                    , getCurrentUser().getProfile().getUserPhotoPath());
+        // TODO: Set the default scene to home on loading the navigation panel.
         if (primaryStage.getScene() == null) {
-            Scene scene = new Scene(profile.getParent());
+            Scene scene = new Scene(navigationPanel.getParent(), SCENE_WIDTH, SCENE_HEIGHT);
             primaryStage.setScene(scene);
         } else {
-            primaryStage.getScene().setRoot(profile.getParent());
+            primaryStage.getScene().setRoot(navigationPanel.getParent());
         }
-        primaryStage.setTitle("Library Bookstores | Manage Profile");
-        primaryStage.show();
-    }
-
-    void loadAdministrationScene() {
-        if (administration == null) {
-            administration = new Administration();
-        }
-        if (primaryStage.getScene() == null) {
-            Scene scene = new Scene(administration.getParent());
-            primaryStage.setScene(scene);
-        } else {
-            primaryStage.getScene().setRoot(administration.getParent());
-        }
-        primaryStage.setTitle("Library Bookstores | Administration");
         primaryStage.show();
     }
 }

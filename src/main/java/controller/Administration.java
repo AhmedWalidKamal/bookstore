@@ -1,10 +1,13 @@
 package controller;
 
-import com.jfoenix.controls.*;
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXComboBox;
+import com.jfoenix.controls.JFXSnackbar;
+import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.validation.RequiredFieldValidator;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 
@@ -17,9 +20,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 
-public class Administration {
-
-    private Parent parent;
+class Administration {
 
     @FXML
     private AnchorPane rootPane;
@@ -28,20 +29,18 @@ public class Administration {
     private BookOrders bookOrdersController;
     private Reports reportsController;
     private UserPromotion userPromotionController;
+    private Node node;
 
     Administration() {
-        if (parent == null) {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/administration.fxml"));
-            fxmlLoader.setController(this);
-            try {
-                parent = fxmlLoader.load();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/administration.fxml"));
+        fxmlLoader.setController(this);
+        try {
+            node = fxmlLoader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
-
-    Parent getParent() {
-        return parent;
+    Node getNode() {
+        return node;
     }
 }

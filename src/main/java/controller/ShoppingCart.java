@@ -1,17 +1,25 @@
 package controller;
 
-import service.BackendServices;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 
-public class ShoppingCart {
+import java.io.IOException;
 
-    private BackendServices sys;
-    private MainController mainController;
+class ShoppingCart {
 
-    public void setBackEndService(BackendServices sys) {
-        this.sys = sys;
+    private Node node;
+
+    ShoppingCart() {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/shoppingCart.fxml"));
+        fxmlLoader.setController(this);
+        try {
+            node = fxmlLoader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void setMainController(MainController mainController) {
-        this.mainController = mainController;
+    Node getNode() {
+        return node;
     }
 }

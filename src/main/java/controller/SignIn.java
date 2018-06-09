@@ -15,7 +15,6 @@ import model.BookstoreUser;
 import java.io.IOException;
 import java.sql.SQLException;
 
-
 class SignIn {
 
     @FXML
@@ -39,32 +38,65 @@ class SignIn {
     private Parent parent;
 
     SignIn() {
-        if (parent == null) {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/signIn.fxml"));
-            fxmlLoader.setController(this);
-            try {
-                parent = fxmlLoader.load();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/signIn.fxml"));
+        fxmlLoader.setController(this);
+        try {
+            parent = fxmlLoader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        initSignInButton();
-        initSignUpButton();
+        init();
+    }
+
+    Parent getParent() {
+        return parent;
+    }
+
+    void clearInputFields() {
+        userNameTextField.clear();
+        passwordField.clear();
+    }
+
+    void displayRegMessage() {
+        JFXSnackbar bar = new JFXSnackbar(rootPane);
+        bar.enqueue(new JFXSnackbar.SnackbarEvent("Registration Successful!"));
+    }
+
+    private void init() {
+        signInButton.setOnMouseClicked(mouseEvent -> handleSignInButtonAction());
+        signUpButton.setOnMouseClicked(mouseEvent -> handleSignUpButtonAction());
 
         initUserNameTextField();
         initPassTextField();
     }
 
-    Parent getParent() {
-        return this.parent;
+    private void handleSignInButtonAction() {
+        try {
+            BookstoreUser user = MainController.getInstance().getBackendService().login(
+                    userNameTextField.getText().trim(), passwordField.getText());
+            if (user == null) {
+                // Sign in failed.
+                passwordField.clear();
+                loginErrorLabel.setVisible(true);
+            } else {
+                // Sign in succeeded.
+                JFXSnackbar bar = new JFXSnackbar(rootPane);
+                bar.enqueue(new JFXSnackbar.SnackbarEvent("Login Successful!"));
+                clearInputFields();
+                loginErrorLabel.setVisible(false);
+                MainController.getInstance().setCurrentUser(user);
+                MainController.getInstance().loadNavigationPanel(); // Should be changed to load home when home is ready.
+            }
+        } catch (SQLException e) {
+            passwordField.clear();
+            loginErrorLabel.setVisible(true);
+        }
     }
 
-    private void initSignInButton() {
-        signInButton.setOnMouseClicked(mouseEvent -> handleSignInButtonAction());
-    }
-
-    private void initSignUpButton() {
-        signUpButton.setOnMouseClicked(mouseEvent -> handleSignUpButtonAction());
+    private void handleSignUpButtonAction() {
+        clearInputFields();
+        loginErrorLabel.setVisible(false);
+        MainController.getInstance().loadSignUp();
     }
 
     private void initUserNameTextField() {
@@ -83,44 +115,5 @@ class SignIn {
         passwordField.focusedProperty().addListener((o, oldVal, newVal) -> {
             if (!newVal) passwordField.validate();
         });
-    }
-
-    private void handleSignInButtonAction() {
-        try {
-            BookstoreUser user = MainController.getInstance().getBackendService().login(
-                                            userNameTextField.getText().trim(), passwordField.getText());
-            if (user == null) {
-                // Sign in failed.
-                passwordField.clear();
-                loginErrorLabel.setVisible(true);
-            } else {
-                // Sign in succeeded.
-                JFXSnackbar bar = new JFXSnackbar(rootPane);
-                bar.enqueue(new JFXSnackbar.SnackbarEvent("Login Successful!"));
-                clearInputFields();
-                loginErrorLabel.setVisible(false);
-                MainController.getInstance().setCurrentUser(user);
-                MainController.getInstance().loadProfileScene(); // Should be changed to load home when home is ready.
-            }
-        } catch (SQLException e) {
-            passwordField.clear();
-            loginErrorLabel.setVisible(true);
-        }
-    }
-
-    private void handleSignUpButtonAction() {
-        clearInputFields();
-        loginErrorLabel.setVisible(false);
-        MainController.getInstance().loadSignUpScene();
-    }
-
-    void clearInputFields() {
-        userNameTextField.clear();
-        passwordField.clear();
-    }
-
-    void displayRegMessage() {
-        JFXSnackbar bar = new JFXSnackbar(rootPane);
-        bar.enqueue(new JFXSnackbar.SnackbarEvent("Registration Successful!"));
     }
 }
