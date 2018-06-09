@@ -55,7 +55,14 @@ public class BookOrders {
 
     @FXML
     private void refreshAction() {
-        loadPage(pagination.getCurrentPageIndex());
+        try {
+            loadPage(pagination.getCurrentPageIndex());
+            JFXSnackbar bar = new JFXSnackbar(ordersRootPane);
+            bar.enqueue(new JFXSnackbar.SnackbarEvent("Table refreshed successfully!"));
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Failed to load orders from database");
+        }
     }
 
     @FXML
@@ -77,18 +84,18 @@ public class BookOrders {
     }
 
     private Node createPage(int pageIndex) {
-        loadPage(pageIndex);
-        return ordersTable;
-    }
-
-    private void loadPage(int pageIndex) {
         try {
-            loadOrders(pageIndex);
-            pagination.setPageCount(MainController.getInstance().getBackendService().getOrdersPageCount(MAX_ORDERS_PER_PAGE));
+            loadPage(pageIndex);
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.println("Failed to load orders from database");
         }
+        return ordersTable;
+    }
+
+    private void loadPage(int pageIndex) throws SQLException {
+        loadOrders(pageIndex);
+        pagination.setPageCount(MainController.getInstance().getBackendService().getOrdersPageCount(MAX_ORDERS_PER_PAGE));
         buildTable();
     }
 
@@ -209,6 +216,7 @@ public class BookOrders {
         ConfirmButtonCell() {
             paddedButton.setPadding(new Insets(3));
             paddedButton.getChildren().add(confirmButton);
+            confirmButton.getStyleClass().add("confirm-btn");
             confirmButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override public void handle(ActionEvent actionEvent) {
                     System.out.println(getTreeTableRow().getTreeItem().getValue().getOrderNo());
@@ -218,7 +226,7 @@ public class BookOrders {
                         if (success) {
                             TreeItem<TableBookOrder> item = getTreeTableRow().getTreeItem();
                             item.getParent().getChildren().remove(item);
-                            pagination.setPageCount(MainController.getInstance().getBackendService().getOrdersPageCount(MAX_ORDERS_PER_PAGE));
+                            loadPage(pagination.getCurrentPageIndex());
                             JFXSnackbar bar = new JFXSnackbar(ordersRootPane);
                             bar.enqueue(new JFXSnackbar.SnackbarEvent("Order #" + getTreeTableRow().
                                     getTreeItem().getValue().getOrderNo() + " confirmed successfully"));

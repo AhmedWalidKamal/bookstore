@@ -3,7 +3,13 @@
 }
 
 .placeOrder-btn {
-    -fx-background-color:  #01466f;
+    -fx-background-color: #01466f;
+    -fx-text-fill: white;
+    -jfx-button-type: RAISED;
+}
+
+.confirm-btn {
+    -fx-background-color: #01466f;
     -fx-text-fill: white;
     -jfx-button-type: RAISED;
 }
