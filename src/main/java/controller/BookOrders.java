@@ -1,9 +1,6 @@
 package controller;
 
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXTreeTableColumn;
-import com.jfoenix.controls.JFXTreeTableView;
-import com.jfoenix.controls.RecursiveTreeItem;
+import com.jfoenix.controls.*;
 import com.jfoenix.controls.cells.editors.base.JFXTreeTableCell;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import javafx.beans.property.*;
@@ -137,6 +134,7 @@ public class BookOrders {
     class TableBookOrder extends RecursiveTreeObject<TableBookOrder> {
         private StringProperty ISBN;
         private StringProperty publisher;
+
         private IntegerProperty orderNo;
         private IntegerProperty quantity;
 
@@ -159,6 +157,10 @@ public class BookOrders {
             return orderNo;
         }
 
+        public int getOrderNo() {
+            return orderNo.get();
+        }
+
         IntegerProperty quantityProperty() {
             return quantity;
         }
@@ -175,7 +177,25 @@ public class BookOrders {
             paddedButton.getChildren().add(confirmButton);
             confirmButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override public void handle(ActionEvent actionEvent) {
-                    // Handle click on button
+                    System.out.println(getTreeTableRow().getTreeItem().getValue().getOrderNo());
+                    try {
+                        boolean success = MainController.getInstance().getBackendService().
+                                confirmOrder(getTreeTableRow().getTreeItem().getValue().getOrderNo());
+                        if (success) {
+                            TreeItem<TableBookOrder> item = getTreeTableRow().getTreeItem();
+                            item.getParent().getChildren().remove(item);
+                            JFXSnackbar bar = new JFXSnackbar(ordersRootPane);
+                            bar.enqueue(new JFXSnackbar.SnackbarEvent("Order #" + getTreeTableRow().
+                                    getTreeItem().getValue().getOrderNo() + " confirmed successfully"));
+                        } else {
+                            System.out.println("Couldn't confirm order number: " + getTreeTableRow().
+                                    getTreeItem().getValue().getOrderNo());
+                        }
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        System.out.println("Couldn't confirm order number: " + getTreeTableRow().getTreeItem().
+                                getValue().getOrderNo());
+                    }
                 }
             });
         }
