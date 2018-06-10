@@ -42,7 +42,7 @@
                   </HBox>
                   <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0">
                      <children>
-                        <Label text="by" translateX="15.0">
+                        <Label fx:id="byLabel" text="by" translateX="15.0">
                            <font>
                               <Font size="10.0" />
                            </font>
@@ -156,7 +156,7 @@
                               <Insets left="5.0" />
                            </HBox.margin>
                         </Label>
-                        <JFXButton prefHeight="5.0" prefWidth="23.0" styleClass="add-to-cart-btn" text=" ">
+                        <JFXButton fx:id="addToCartButton" prefHeight="5.0" prefWidth="23.0" styleClass="add-to-cart-btn" text=" ">
                            <HBox.margin>
                               <Insets left="15.0" right="15.0" />
                            </HBox.margin>

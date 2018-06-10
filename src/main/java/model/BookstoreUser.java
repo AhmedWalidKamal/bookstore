@@ -17,6 +17,8 @@ public class BookstoreUser {
     private String email;
     private String userGroup;
 
+    private Cart cart;
+
     private UserProfile profile;
 
     public BookstoreUser() {
@@ -53,6 +55,14 @@ public class BookstoreUser {
 
     public void setProfile(UserProfile profile) {
         this.profile = profile;
+    }
+
+    public Cart getCart() {
+        return cart;
+    }
+
+    public void setCart(Cart cart) {
+        this.cart = cart;
     }
 
     @Override
@@ -137,5 +147,7 @@ public class BookstoreUser {
         public void setUserAvatarPath(String userPhotoPath) {
             this.userPhotoPath = userPhotoPath;
         }
+
+
     }
 }
