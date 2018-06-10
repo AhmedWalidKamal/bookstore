@@ -13,6 +13,7 @@ import javafx.scene.paint.Paint;
 import model.Book;
 import model.BookAuthor;
 
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -54,6 +55,12 @@ class BookController {
 
     @FXML
     private JFXButton addToCartButton;
+
+    @FXML
+    private JFXButton deleteButton;
+
+    @FXML
+    private JFXButton editButton;
 
     private static final String BOOK_COVER_PATH = "/view" + File.separator
             + "images" + File.separator + "books" + File.separator;
@@ -158,5 +165,15 @@ class BookController {
                 star.setFill(Paint.valueOf("#cccccc"));
             }
         }
+    }
+
+    @FXML
+    private void deleteBookButtonAction(ActionEvent event) {
+        
+    }
+
+    @FXML
+    private void editBookButtonAction(ActionEvent event) {
+
     }
 }

@@ -3,3 +3,15 @@
     -fx-background-position: center;
     -fx-background-repeat: stretch;
 }
+
+.delete-btn {
+    -fx-background-image: url('../images/rubbish-bin.png');
+    -fx-background-position: center;
+    -fx-background-repeat: stretch;
+}
+
+.edit-btn {
+    -fx-background-image: url('../images/pencil-edit-button.png');
+    -fx-background-position: center;
+    -fx-background-repeat: stretch;
+}
