@@ -4,22 +4,15 @@ import com.jfoenix.controls.*;
 import com.jfoenix.controls.cells.editors.base.JFXTreeTableCell;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import javafx.beans.property.*;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
-import javafx.util.Callback;
 import model.BookOrder;
 
 import java.sql.SQLException;
@@ -54,7 +47,9 @@ public class BookOrders {
         buildTable();
     }
 
+    @SuppressWarnings("unchecked")
     private void buildTable() {
+
         final TreeItem<TableBookOrder> root = new RecursiveTreeItem<>(this.orders, RecursiveTreeObject::getChildren);
         ordersTable.getColumns().setAll(orderNumber, isbn, publisher, quantity, confirm);
         ordersTable.setColumnResizePolicy(JFXTreeTableView.CONSTRAINED_RESIZE_POLICY);
@@ -81,18 +76,10 @@ public class BookOrders {
         confirm.setPrefWidth(250);
         confirm.setSortable(false);
         // define a simple boolean cell value for the action column so that the column will only be shown for non-empty rows.
-        confirm.setCellValueFactory(new Callback<JFXTreeTableColumn.CellDataFeatures<TableBookOrder, Boolean>, ObservableValue<Boolean>>() {
-            @Override public ObservableValue<Boolean> call(JFXTreeTableColumn.CellDataFeatures<TableBookOrder, Boolean> features) {
-                return new SimpleBooleanProperty(features.getValue() != null);
-            }
-        });
+        confirm.setCellValueFactory(features -> new SimpleBooleanProperty(features.getValue() != null));
 
         // create a cell value factory with an add button for each row in the table.
-        confirm.setCellFactory(new Callback<TreeTableColumn<TableBookOrder, Boolean>, TreeTableCell<TableBookOrder, Boolean>>() {
-            @Override public JFXTreeTableCell<TableBookOrder, Boolean> call(TreeTableColumn<TableBookOrder, Boolean> personBooleanTableColumn) {
-                return new ConfirmButtonCell();
-            }
-        });
+        confirm.setCellFactory(personBooleanTableColumn -> new ConfirmButtonCell());
     }
 
     private void initPublisherCol() {
@@ -175,27 +162,25 @@ public class BookOrders {
         ConfirmButtonCell() {
             paddedButton.setPadding(new Insets(3));
             paddedButton.getChildren().add(confirmButton);
-            confirmButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override public void handle(ActionEvent actionEvent) {
-                    System.out.println(getTreeTableRow().getTreeItem().getValue().getOrderNo());
-                    try {
-                        boolean success = MainController.getInstance().getBackendService().
-                                confirmOrder(getTreeTableRow().getTreeItem().getValue().getOrderNo());
-                        if (success) {
-                            TreeItem<TableBookOrder> item = getTreeTableRow().getTreeItem();
-                            item.getParent().getChildren().remove(item);
-                            JFXSnackbar bar = new JFXSnackbar(ordersRootPane);
-                            bar.enqueue(new JFXSnackbar.SnackbarEvent("Order #" + getTreeTableRow().
-                                    getTreeItem().getValue().getOrderNo() + " confirmed successfully"));
-                        } else {
-                            System.out.println("Couldn't confirm order number: " + getTreeTableRow().
-                                    getTreeItem().getValue().getOrderNo());
-                        }
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                        System.out.println("Couldn't confirm order number: " + getTreeTableRow().getTreeItem().
-                                getValue().getOrderNo());
+            confirmButton.setOnAction(actionEvent -> {
+                System.out.println(getTreeTableRow().getTreeItem().getValue().getOrderNo());
+                try {
+                    boolean success = MainController.getInstance().getBackendService().
+                            confirmOrder(getTreeTableRow().getTreeItem().getValue().getOrderNo());
+                    if (success) {
+                        TreeItem<TableBookOrder> item = getTreeTableRow().getTreeItem();
+                        item.getParent().getChildren().remove(item);
+                        JFXSnackbar bar = new JFXSnackbar(ordersRootPane);
+                        bar.enqueue(new JFXSnackbar.SnackbarEvent("Order #" + getTreeTableRow().
+                                getTreeItem().getValue().getOrderNo() + " confirmed successfully"));
+                    } else {
+                        System.out.println("Couldn't confirm order number: " + getTreeTableRow().
+                                getTreeItem().getValue().getOrderNo());
                     }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    System.out.println("Couldn't confirm order number: " + getTreeTableRow().getTreeItem().
+                            getValue().getOrderNo());
                 }
             });
         }
