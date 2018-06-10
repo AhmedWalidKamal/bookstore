@@ -129,17 +129,25 @@ public class BookOrders {
     @FXML
     private void issueOrderAction() {
         if (validateFields()) {
-//            try {
-//                MainController.getInstance().getBackendService().orderBook(isbnTextField.getText(), Integer.parseInt(quantityTextField.getText()));
-                clearFields();
-                dialog.close();
-                errorLabel.setVisible(false);
-//                loadPage(pagination.getCurrentPageIndex());
-//            } catch (SQLException e) {
-//                e.printStackTrace();
-//                errorLabel.setText("Failed to issue order");
-//                errorLabel.setVisible(true);
-//            }
+            try {
+                System.out.println("Issuing order");
+                int orderNumber = MainController.getInstance().getBackendService().orderBook(isbnTextField.getText(), Integer.parseInt(quantityTextField.getText()));
+                if (orderNumber != -1) {
+                    clearFields();
+                    dialog.close();
+                    errorLabel.setVisible(false);
+                    loadPage(pagination.getCurrentPageIndex());
+                    JFXSnackbar bar = new JFXSnackbar(ordersRootPane);
+                    bar.enqueue(new JFXSnackbar.SnackbarEvent("Order placed successfully!"));
+                } else {
+                    errorLabel.setText("Failed to issue order");
+                    errorLabel.setVisible(true);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                errorLabel.setText("Failed to issue order");
+                errorLabel.setVisible(true);
+            }
         } else {
             errorLabel.setVisible(true);
         }
