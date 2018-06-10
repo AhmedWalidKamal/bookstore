@@ -125,10 +125,21 @@ public class BookOrders {
     @FXML
     private void issueOrderAction() {
         if (validateFields()) {
+//            try {
+//                // MainController.getInstance().getBackendService().orderBook(isbnTextField.getText(), Integer.parseInt(quantityTextField.getText()));
+//            } catch (SQLException e) {
+//                e.printStackTrace();
+//            }
+            clearFields();
             dialog.close();
         } else {
             errorLabel.setVisible(true);
         }
+    }
+
+    private void clearFields() {
+        isbnTextField.clear();
+        quantityTextField.clear();
     }
 
     private boolean validateFields() {
