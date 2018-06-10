@@ -9,7 +9,7 @@ import java.sql.SQLException;
 
 public class MainController {
 
-    private static final int SCENE_WIDTH = 800;
+    private static final int SCENE_WIDTH = 1024;
     private static final int SCENE_HEIGHT= 600;
 
     private static MainController instance;

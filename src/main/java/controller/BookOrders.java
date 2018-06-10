@@ -3,67 +3,218 @@ package controller;
 import com.jfoenix.controls.*;
 import com.jfoenix.controls.cells.editors.base.JFXTreeTableCell;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
+import com.jfoenix.validation.RequiredFieldValidator;
 import javafx.beans.property.*;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
+import javafx.scene.control.*;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.util.Callback;
+import model.Book;
+
 import model.BookOrder;
 
 import java.sql.SQLException;
 
 public class BookOrders {
 
-    @FXML
-    private AnchorPane ordersRootPane;
+    private static final int MAX_ORDERS_PER_PAGE = 5;
 
     @FXML
+    private StackPane ordersRootPane;
+
     private JFXTreeTableView<TableBookOrder> ordersTable;
 
     @FXML
-    private JFXButton placeOrder;
+    private JFXButton placeOrder, refresh, issueOrderBtn;
+
+    @FXML
+    private Pagination pagination;
+
+    @FXML
+    private JFXDialogLayout dialogLayout;
+
+    @FXML
+    private JFXDialog dialog;
+
+    @FXML
+    private JFXTextField quantityTextField, isbnTextField;
+
+    @FXML
+    private Label errorLabel;
 
     private JFXTreeTableColumn<TableBookOrder, String> publisher, isbn;
     private JFXTreeTableColumn<TableBookOrder, Number> quantity, orderNumber;
     private JFXTreeTableColumn<TableBookOrder, Boolean> confirm;
-
     private ObservableList<TableBookOrder> orders;
 
     @FXML
     public void initialize() {
         this.orders = FXCollections.observableArrayList();
-        initColumns();
+        initTable();
+        initDialog();
         try {
-            loadOrders();
+            initPagination();
         } catch (SQLException e) {
             e.printStackTrace();
-            System.out.println("Failed to load orders");
         }
-        buildTable();
     }
 
-    private void buildTable() {
-        final TreeItem<TableBookOrder> root = new RecursiveTreeItem<>(this.orders, RecursiveTreeObject::getChildren);
+    private void initDialog() {
+        dialog.setDialogContainer(ordersRootPane);
+        dialog.setContent(dialogLayout);
+        dialog.setTransitionType(JFXDialog.DialogTransition.CENTER);
+        dialog.onDialogClosedProperty();
+        dialogLayout.setPrefWidth(800);
+        dialogLayout.setPrefHeight(500);
+        initFields();
+        dialog.setOnDialogClosed(jfxDialogEvent -> {
+            errorLabel.setVisible(false);
+            clearFields();
+        });
+    }
+
+    private void initFields() {
+        initISBNField();
+        initQuantTextField();
+    }
+
+    private void initQuantTextField() {
+        RequiredFieldValidator validator = new RequiredFieldValidator();
+        validator.setMessage("Quantity Required");
+        quantityTextField.getValidators().add(validator);
+        quantityTextField.focusedProperty().addListener((o, oldVal, newVal) -> {
+            if (!newVal) quantityTextField.validate();
+        });
+    }
+
+    private void initISBNField() {
+        RequiredFieldValidator validator = new RequiredFieldValidator();
+        validator.setMessage("ISBN Required");
+        isbnTextField.getValidators().add(validator);
+        isbnTextField.focusedProperty().addListener((o, oldVal, newVal) -> {
+            if (!newVal) isbnTextField.validate();
+        });
+    }
+
+    @FXML
+    private void refreshAction() {
+        try {
+            loadPage(pagination.getCurrentPageIndex());
+            JFXSnackbar bar = new JFXSnackbar(ordersRootPane);
+            bar.enqueue(new JFXSnackbar.SnackbarEvent("Table refreshed successfully!"));
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Failed to load orders from database");
+        }
+    }
+
+    @FXML
+    private void placeOrderAction() {
+        dialog.show();
+    }
+
+    @FXML
+    private void issueOrderAction() {
+        if (validateFields()) {
+//            try {
+//                MainController.getInstance().getBackendService().orderBook(isbnTextField.getText(), Integer.parseInt(quantityTextField.getText()));
+                clearFields();
+                dialog.close();
+                errorLabel.setVisible(false);
+//                loadPage(pagination.getCurrentPageIndex());
+//            } catch (SQLException e) {
+//                e.printStackTrace();
+//                errorLabel.setText("Failed to issue order");
+//                errorLabel.setVisible(true);
+//            }
+        } else {
+            errorLabel.setVisible(true);
+        }
+    }
+
+    private void clearFields() {
+        isbnTextField.clear();
+        quantityTextField.clear();
+    }
+
+    private boolean validateFields() {
+        return validateISBN() && validateQuantity();
+    }
+
+    private boolean validateISBN() {
+        if (isbnTextField.getText().length() != 13 || !isbnTextField.getText().matches("[0-9]+")) {
+            errorLabel.setText("Invalid ISBN");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validateQuantity() {
+        if (quantityTextField.getText().isEmpty()) {
+            errorLabel.setText("Quantity Required");
+            return false;
+        }
+        try {
+            Integer.parseInt(quantityTextField.getText());
+        } catch (NumberFormatException e) {
+            errorLabel.setText("Invalid quantity");
+            return false;
+        }
+        return true;
+    }
+
+    private void initTable() {
+        this.ordersTable = new JFXTreeTableView<>();
+        initColumns();
         ordersTable.getColumns().setAll(orderNumber, isbn, publisher, quantity, confirm);
         ordersTable.setColumnResizePolicy(JFXTreeTableView.CONSTRAINED_RESIZE_POLICY);
-        ordersTable.setRoot(root);
         ordersTable.setShowRoot(false);
     }
 
-    private void loadOrders() throws SQLException {
-        for (BookOrder bookOrder : MainController.getInstance().getBackendService().getOrders(1, Integer.MAX_VALUE)) {
+    private void initPagination() throws SQLException {
+        pagination.setPageCount(MainController.getInstance().getBackendService().getOrdersPageCount(MAX_ORDERS_PER_PAGE));
+        pagination.setPageFactory(this::createPage);
+    }
+
+    private Node createPage(int pageIndex) {
+        try {
+            loadPage(pageIndex);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Failed to load orders from database");
+        }
+        return ordersTable;
+    }
+
+    private void loadPage(int pageIndex) throws SQLException {
+        loadOrders(pageIndex);
+        pagination.setPageCount(MainController.getInstance().getBackendService().getOrdersPageCount(MAX_ORDERS_PER_PAGE));
+        buildTable();
+    }
+
+    @SuppressWarnings("unchecked")
+    private void buildTable() {
+
+        final TreeItem<TableBookOrder> root = new RecursiveTreeItem<>(this.orders, RecursiveTreeObject::getChildren);
+        ordersTable.setRoot(root);
+    }
+
+    private void loadOrders(int pageIndex) throws SQLException {
+        this.orders.clear();
+        for (BookOrder bookOrder : MainController.getInstance().getBackendService().getOrders(pageIndex + 1, BookOrders.MAX_ORDERS_PER_PAGE)) {
             this.orders.add(new TableBookOrder(bookOrder));
         }
     }
@@ -81,18 +232,10 @@ public class BookOrders {
         confirm.setPrefWidth(250);
         confirm.setSortable(false);
         // define a simple boolean cell value for the action column so that the column will only be shown for non-empty rows.
-        confirm.setCellValueFactory(new Callback<JFXTreeTableColumn.CellDataFeatures<TableBookOrder, Boolean>, ObservableValue<Boolean>>() {
-            @Override public ObservableValue<Boolean> call(JFXTreeTableColumn.CellDataFeatures<TableBookOrder, Boolean> features) {
-                return new SimpleBooleanProperty(features.getValue() != null);
-            }
-        });
+        confirm.setCellValueFactory(features -> new SimpleBooleanProperty(features.getValue() != null));
 
         // create a cell value factory with an add button for each row in the table.
-        confirm.setCellFactory(new Callback<TreeTableColumn<TableBookOrder, Boolean>, TreeTableCell<TableBookOrder, Boolean>>() {
-            @Override public JFXTreeTableCell<TableBookOrder, Boolean> call(TreeTableColumn<TableBookOrder, Boolean> personBooleanTableColumn) {
-                return new ConfirmButtonCell();
-            }
-        });
+        confirm.setCellFactory(personBooleanTableColumn -> new ConfirmButtonCell());
     }
 
     private void initPublisherCol() {
@@ -157,7 +300,7 @@ public class BookOrders {
             return orderNo;
         }
 
-        public int getOrderNo() {
+        int getOrderNo() {
             return orderNo.get();
         }
 
@@ -167,16 +310,16 @@ public class BookOrders {
     }
 
     private class ConfirmButtonCell extends JFXTreeTableCell<TableBookOrder, Boolean> {
-        // a button for adding a new person.
         final JFXButton confirmButton = new JFXButton("Confirm");
-        // pads and centers the add button in the cell.
         final StackPane paddedButton = new StackPane();
 
         ConfirmButtonCell() {
             paddedButton.setPadding(new Insets(3));
             paddedButton.getChildren().add(confirmButton);
+            confirmButton.getStyleClass().add("blue-btn");
             confirmButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override public void handle(ActionEvent actionEvent) {
+                @Override
+                public void handle(ActionEvent actionEvent) {
                     System.out.println(getTreeTableRow().getTreeItem().getValue().getOrderNo());
                     try {
                         boolean success = MainController.getInstance().getBackendService().
@@ -184,6 +327,7 @@ public class BookOrders {
                         if (success) {
                             TreeItem<TableBookOrder> item = getTreeTableRow().getTreeItem();
                             item.getParent().getChildren().remove(item);
+                            loadPage(pagination.getCurrentPageIndex());
                             JFXSnackbar bar = new JFXSnackbar(ordersRootPane);
                             bar.enqueue(new JFXSnackbar.SnackbarEvent("Order #" + getTreeTableRow().
                                     getTreeItem().getValue().getOrderNo() + " confirmed successfully"));
@@ -195,12 +339,14 @@ public class BookOrders {
                         e.printStackTrace();
                         System.out.println("Couldn't confirm order number: " + getTreeTableRow().getTreeItem().
                                 getValue().getOrderNo());
+
                     }
+
                 }
             });
         }
 
-        /** places an add button in the row only if the row is not empty. */
+        // Places confirm button if field isn't empty
         @Override protected void updateItem(Boolean item, boolean empty) {
             super.updateItem(item, empty);
             if (!empty) {
