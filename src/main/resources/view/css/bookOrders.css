@@ -2,13 +2,7 @@
     -fx-alignment: center ;
 }
 
-.placeOrder-btn {
-    -fx-background-color: #01466f;
-    -fx-text-fill: white;
-    -jfx-button-type: RAISED;
-}
-
-.confirm-btn {
+.blue-btn {
     -fx-background-color: #01466f;
     -fx-text-fill: white;
     -jfx-button-type: RAISED;
@@ -18,6 +12,10 @@
     -fx-background-image: url('../images/refresh-icon.png');
     -fx-background-position: center;
     -fx-background-repeat: stretch;
+}
+
+.jfx-text-field {
+    -fx-prompt-text-fill: #989898;
 }
 
 /* Remove spacing */

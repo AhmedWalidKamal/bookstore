@@ -3,6 +3,7 @@ package controller;
 import com.jfoenix.controls.*;
 import com.jfoenix.controls.cells.editors.base.JFXTreeTableCell;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
+import com.jfoenix.validation.RequiredFieldValidator;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -14,8 +15,10 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.util.Callback;
 import model.Book;
 import model.BookOrder;
@@ -27,15 +30,27 @@ public class BookOrders {
     private static final int MAX_ORDERS_PER_PAGE = 5;
 
     @FXML
-    private AnchorPane ordersRootPane;
+    private StackPane ordersRootPane;
 
     private JFXTreeTableView<TableBookOrder> ordersTable;
 
     @FXML
-    private JFXButton placeOrder, refresh;
+    private JFXButton placeOrder, refresh, issueOrderBtn;
 
     @FXML
     private Pagination pagination;
+
+    @FXML
+    private JFXDialogLayout dialogLayout;
+
+    @FXML
+    private JFXDialog dialog;
+
+    @FXML
+    private JFXTextField quantityTextField, isbnTextField;
+
+    @FXML
+    private Label errorLabel;
 
     private JFXTreeTableColumn<TableBookOrder, String> publisher, isbn;
     private JFXTreeTableColumn<TableBookOrder, Number> quantity, orderNumber;
@@ -46,11 +61,45 @@ public class BookOrders {
     public void initialize() {
         this.orders = FXCollections.observableArrayList();
         initTable();
+        initDialog();
         try {
             initPagination();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    private void initDialog() {
+        dialog.setDialogContainer(ordersRootPane);
+        dialog.setContent(dialogLayout);
+        dialog.setTransitionType(JFXDialog.DialogTransition.CENTER);
+        dialog.onDialogClosedProperty()
+        dialogLayout.setPrefWidth(800);
+        dialogLayout.setPrefHeight(500);
+        initFields();
+    }
+
+    private void initFields() {
+        initISBNField();
+        initQuantTextField();
+    }
+
+    private void initQuantTextField() {
+        RequiredFieldValidator validator = new RequiredFieldValidator();
+        validator.setMessage("Quantity Required");
+        quantityTextField.getValidators().add(validator);
+        quantityTextField.focusedProperty().addListener((o, oldVal, newVal) -> {
+            if (!newVal) quantityTextField.validate();
+        });
+    }
+
+    private void initISBNField() {
+        RequiredFieldValidator validator = new RequiredFieldValidator();
+        validator.setMessage("ISBN Required");
+        isbnTextField.getValidators().add(validator);
+        isbnTextField.focusedProperty().addListener((o, oldVal, newVal) -> {
+            if (!newVal) isbnTextField.validate();
+        });
     }
 
     @FXML
@@ -67,7 +116,27 @@ public class BookOrders {
 
     @FXML
     private void placeOrderAction() {
+        dialog.show();
+    }
 
+    @FXML
+    private void issueOrderAction() {
+        if (validateFields()) {
+            dialog.close();
+        } else {
+            errorLabel.setVisible(true);
+        }
+    }
+
+    private boolean validateFields() {
+        if (isbnTextField.getText().isEmpty()) {
+            errorLabel.setText("ISBN Required");
+            return false;
+        } else if (quantityTextField.getText().isEmpty()) {
+            errorLabel.setText("Quantity Required");
+            return false;
+        }
+        return true;
     }
 
     private void initTable() {
@@ -216,7 +285,7 @@ public class BookOrders {
         ConfirmButtonCell() {
             paddedButton.setPadding(new Insets(3));
             paddedButton.getChildren().add(confirmButton);
-            confirmButton.getStyleClass().add("confirm-btn");
+            confirmButton.getStyleClass().add("blue-btn");
             confirmButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override public void handle(ActionEvent actionEvent) {
                     System.out.println(getTreeTableRow().getTreeItem().getValue().getOrderNo());
