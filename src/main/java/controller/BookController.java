@@ -8,7 +8,6 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.paint.Paint;
 import model.Book;
 import model.BookAuthor;
@@ -19,8 +18,6 @@ import java.util.List;
 
 class BookController {
 
-    @FXML
-    private AnchorPane rootPane;
     @FXML
     private ImageView bookCoverView;
     @FXML
@@ -126,7 +123,7 @@ class BookController {
         } else {
             imagePath = book.getImagePath();
         }
-        
+
         bookCoverView.setImage(new Image(imagePath));
     }
 
