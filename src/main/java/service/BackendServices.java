@@ -242,14 +242,12 @@ public class BackendServices {
         BookList books = new BookList();
         books.setPrev(pageNumber > 1);
 
-        int cnt = 0;
-
         while (rs.next()) {
-            if (cnt++ == pageSize) {
-                books.setNext(true);
-                break;
-            }
             String ISBN = rs.getString(Book.ISBN_COLNAME);
+            if (books.size() == pageSize && !books.contains(ISBN)) {
+                books.setNext(true);
+                continue;
+            }
             Book curBook = books.findBook(ISBN);
             curBook = getBook(curBook, rs);
             books.addBook(curBook);
@@ -379,14 +377,12 @@ public class BackendServices {
 
         books.setPrev(pageNumber > 1);
 
-        int cnt = 0;
-
         while (rs.next()) {
-            if (cnt++ == pageSize) {
-                books.setNext(true);
-                break;
-            }
             String ISBN = rs.getString(Book.ISBN_COLNAME);
+            if (books.size() == pageSize && !books.contains(ISBN)) {
+                books.setNext(true);
+                continue;
+            }
             Book curBook = books.findBook(ISBN);
             curBook = getBook(curBook, rs);
             books.addBook(curBook);
