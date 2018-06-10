@@ -33,7 +33,7 @@
                         </Text>
                         <JFXTextField fx:id="isbnTextField" promptText="ISBN" />
                         <JFXTextField fx:id="quantityTextField" promptText="Quantity" />
-                        <Label fx:id="errorLabel" />
+                        <Label fx:id="errorLabel" textFill="#ff0606" />
                         <HBox alignment="CENTER" prefHeight="100.0">
                            <children>
                               <JFXButton fx:id="issueOrderBtn" onAction="#issueOrderAction" prefHeight="36.0" prefWidth="94.0" styleClass="blue-btn" text="Issue Order" />

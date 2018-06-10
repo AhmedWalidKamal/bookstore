@@ -80,6 +80,10 @@ public class BookOrders {
         dialogLayout.setPrefWidth(800);
         dialogLayout.setPrefHeight(500);
         initFields();
+        dialog.setOnDialogClosed(jfxDialogEvent -> {
+            errorLabel.setVisible(false);
+            clearFields();
+        });
     }
 
     private void initFields() {
@@ -126,12 +130,16 @@ public class BookOrders {
     private void issueOrderAction() {
         if (validateFields()) {
 //            try {
-//                // MainController.getInstance().getBackendService().orderBook(isbnTextField.getText(), Integer.parseInt(quantityTextField.getText()));
+//                MainController.getInstance().getBackendService().orderBook(isbnTextField.getText(), Integer.parseInt(quantityTextField.getText()));
+                clearFields();
+                dialog.close();
+                errorLabel.setVisible(false);
+//                loadPage(pagination.getCurrentPageIndex());
 //            } catch (SQLException e) {
 //                e.printStackTrace();
+//                errorLabel.setText("Failed to issue order");
+//                errorLabel.setVisible(true);
 //            }
-            clearFields();
-            dialog.close();
         } else {
             errorLabel.setVisible(true);
         }
@@ -143,11 +151,26 @@ public class BookOrders {
     }
 
     private boolean validateFields() {
-        if (isbnTextField.getText().isEmpty()) {
-            errorLabel.setText("ISBN Required");
+        return validateISBN() && validateQuantity();
+    }
+
+    private boolean validateISBN() {
+        if (isbnTextField.getText().length() != 13 || !isbnTextField.getText().matches("[0-9]+")) {
+            errorLabel.setText("Invalid ISBN");
             return false;
-        } else if (quantityTextField.getText().isEmpty()) {
+        }
+        return true;
+    }
+
+    private boolean validateQuantity() {
+        if (quantityTextField.getText().isEmpty()) {
             errorLabel.setText("Quantity Required");
+            return false;
+        }
+        try {
+            Integer.parseInt(quantityTextField.getText());
+        } catch (NumberFormatException e) {
+            errorLabel.setText("Invalid quantity");
             return false;
         }
         return true;
@@ -277,7 +300,7 @@ public class BookOrders {
             return orderNo;
         }
 
-        public int getOrderNo() {
+        int getOrderNo() {
             return orderNo.get();
         }
 
