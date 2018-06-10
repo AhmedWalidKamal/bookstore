@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="539.0" prefWidth="1076.0" style="-fx-background-color: #FFFFFF;" stylesheets="@css/signIn.css" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="539.0" prefWidth="1076.0" style="-fx-background-color: #FFFFFF;" stylesheets="@css/signIn.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
    <StackPane alignment="TOP_LEFT" prefHeight="150.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <children>
          <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0" StackPane.alignment="TOP_LEFT">
@@ -26,26 +26,25 @@
                <VBox alignment="BASELINE_CENTER" spacing="20.0" HBox.hgrow="ALWAYS">
                   <children>
                      <Region VBox.vgrow="ALWAYS" />
-                     <Label prefHeight="36.0" prefWidth="101.0" text="Library">
-                        <font>
-                           <Font name="System Bold" size="24.0" />
-                        </font>
-                     </Label>
-                     <Region VBox.vgrow="ALWAYS" />
+                     <HBox alignment="CENTER" prefHeight="100.0" prefWidth="527.0">
+                        <children>
+                           <Label prefHeight="36.0" prefWidth="101.0" text="Library">
+                              <font>
+                                 <Font name="System Bold" size="24.0" />
+                              </font>
+                           </Label>
+                        </children>
+                     </HBox>
                      <HBox>
                         <children>
                            <StackPane HBox.hgrow="ALWAYS">
                               <children>
-                                 <JFXButton id="signUpButton" fx:id="signUpButton" buttonType="RAISED" prefHeight="36.0" ripplerFill="#2929290d" style="-fx-background-color: #01466f;" text="Sign Up" textFill="WHITE" StackPane.alignment="CENTER_RIGHT">
-                                    <StackPane.margin>
-                                       <Insets />
-                                    </StackPane.margin>
-                                 </JFXButton>
-                                 <Label prefHeight="25.0" prefWidth="101.0" text="Not a member?" textFill="#a0a2ab" StackPane.alignment="CENTER_LEFT">
-                                    <StackPane.margin>
-                                       <Insets />
-                                    </StackPane.margin>
-                                 </Label>
+                                 <HBox alignment="CENTER" prefHeight="29.0" prefWidth="507.0" spacing="20.0">
+                                    <children>
+                                       <Label prefHeight="25.0" prefWidth="101.0" text="Not a member?" textFill="#a0a2ab" />
+                                       <JFXButton id="signUpButton" fx:id="signUpButton" buttonType="RAISED" prefHeight="36.0" ripplerFill="#2929290d" style="-fx-background-color: #01466f;" text="Sign Up" textFill="WHITE" />
+                                    </children>
+                                 </HBox>
                               </children>
                            </StackPane>
                         </children>
@@ -56,33 +55,46 @@
                         <children>
                            <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                               <Image url="@images/user.png" />
+                              <HBox.margin>
+                                 <Insets top="5.0" />
+                              </HBox.margin>
                            </ImageView>
                            <JFXTextField fx:id="userNameTextField" prefHeight="36.0" promptText="Username" HBox.hgrow="ALWAYS" />
                         </children>
                         <VBox.margin>
                            <Insets right="20.0" />
                         </VBox.margin>
+                        <padding>
+                           <Insets left="30.0" right="30.0" />
+                        </padding>
                      </HBox>
                      <HBox spacing="20.0">
                         <children>
                             <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                                 <Image url="@images/padlock.png" />
+                              <HBox.margin>
+                                 <Insets top="5.0" />
+                              </HBox.margin>
                             </ImageView>
                            <JFXPasswordField fx:id="passwordField" prefHeight="36.0" promptText="Password" HBox.hgrow="ALWAYS" />
                         </children>
                         <VBox.margin>
                            <Insets right="20.0" />
                         </VBox.margin>
+                        <padding>
+                           <Insets left="30.0" right="30.0" />
+                        </padding>
                      </HBox>
                      <HBox>
                         <children>
                            <StackPane HBox.hgrow="ALWAYS">
                               <children>
-                                 <JFXCheckBox text="Remember Me" StackPane.alignment="CENTER_LEFT" />
-                                 <JFXButton id="signInButton" fx:id="signInButton" buttonType="RAISED" prefHeight="36.0" ripplerFill="BLACK" style="-fx-background-color: #01466f;" text="Sign In" textFill="WHITE" StackPane.alignment="CENTER_RIGHT">
-                                    <StackPane.margin>
-                                       <Insets />
-                                    </StackPane.margin></JFXButton>
+                                 <HBox alignment="CENTER" prefHeight="31.0" prefWidth="507.0" spacing="20.0">
+                                    <children>
+                                       <JFXCheckBox text="Remember Me" />
+                                       <JFXButton id="signInButton" fx:id="signInButton" buttonType="RAISED" prefHeight="36.0" ripplerFill="BLACK" style="-fx-background-color: #01466f;" text="Sign In" textFill="WHITE" />
+                                    </children>
+                                 </HBox>
                               </children>
                            </StackPane>
                         </children>
@@ -90,13 +102,14 @@
                            <Insets right="20.0" />
                         </padding>
                      </HBox>
-                     <Region VBox.vgrow="ALWAYS" />
                      <JFXButton ellipsisString="" prefHeight="25.0" prefWidth="135.0" text="Forgot Password?" underline="true" />
                      <Label fx:id="loginErrorLabel" text="Login Failed!" textFill="#ff0606" visible="false">
                         <font>
                            <Font size="15.0" />
                         </font>
                      </Label>
+                     <Region prefHeight="0.0" prefWidth="527.0" VBox.vgrow="ALWAYS" />
+                     <Region VBox.vgrow="ALWAYS" />
                   </children>
                </VBox>
             </children>
