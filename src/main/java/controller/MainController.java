@@ -3,6 +3,7 @@ package controller;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import model.BookstoreUser;
+import model.Cart;
 import service.BackendServices;
 
 import java.sql.SQLException;
@@ -51,6 +52,7 @@ public class MainController {
 
     void setCurrentUser(BookstoreUser currentUser) {
         this.currentUser = currentUser;
+        currentUser.setCart(new Cart());
     }
 
     BackendServices getBackendService() {
@@ -100,7 +102,7 @@ public class MainController {
         }
         navigationPanel.setUserInfo(getCurrentUser().getUserName(), getCurrentUser().getEmail()
                                                     , getCurrentUser().getProfile().getUserPhotoPath());
-        // TODO: Set the default scene to home on loading the navigation panel.
+
         if (primaryStage.getScene() == null) {
             Scene scene = new Scene(navigationPanel.getParent(), SCENE_WIDTH, SCENE_HEIGHT);
             primaryStage.setScene(scene);
@@ -108,5 +110,6 @@ public class MainController {
             primaryStage.getScene().setRoot(navigationPanel.getParent());
         }
         primaryStage.show();
+        navigationPanel.loadHome();
     }
 }
