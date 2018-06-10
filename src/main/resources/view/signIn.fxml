@@ -25,6 +25,7 @@
                 </ImageView>
                <VBox alignment="BASELINE_CENTER" spacing="20.0" HBox.hgrow="ALWAYS">
                   <children>
+                     <Region VBox.vgrow="ALWAYS" />
                      <Label prefHeight="36.0" prefWidth="101.0" text="Library">
                         <font>
                            <Font name="System Bold" size="24.0" />
@@ -35,12 +36,12 @@
                         <children>
                            <StackPane HBox.hgrow="ALWAYS">
                               <children>
-                                 <JFXButton id="signUpButton" fx:id="signUpButton" buttonType="RAISED" prefHeight="36.0" ripplerFill="#2929290d" style="-fx-background-color: #01466f;" text="Sign Up" textFill="WHITE" StackPane.alignment="CENTER_LEFT">
+                                 <JFXButton id="signUpButton" fx:id="signUpButton" buttonType="RAISED" prefHeight="36.0" ripplerFill="#2929290d" style="-fx-background-color: #01466f;" text="Sign Up" textFill="WHITE" StackPane.alignment="CENTER_RIGHT">
                                     <StackPane.margin>
                                        <Insets />
                                     </StackPane.margin>
                                  </JFXButton>
-                                 <Label prefHeight="25.0" prefWidth="101.0" text="Not a member?" textFill="#a0a2ab" StackPane.alignment="CENTER_RIGHT">
+                                 <Label prefHeight="25.0" prefWidth="101.0" text="Not a member?" textFill="#a0a2ab" StackPane.alignment="CENTER_LEFT">
                                     <StackPane.margin>
                                        <Insets />
                                     </StackPane.margin>
@@ -51,7 +52,6 @@
                         <padding>
                            <Insets right="20.0" />
                         </padding></HBox>
-                     <Region VBox.vgrow="ALWAYS" />
                      <HBox spacing="20.0">
                         <children>
                            <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
@@ -63,7 +63,6 @@
                            <Insets right="20.0" />
                         </VBox.margin>
                      </HBox>
-                     <Region VBox.vgrow="ALWAYS" />
                      <HBox spacing="20.0">
                         <children>
                             <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
@@ -75,7 +74,6 @@
                            <Insets right="20.0" />
                         </VBox.margin>
                      </HBox>
-                     <Region VBox.vgrow="ALWAYS" />
                      <HBox>
                         <children>
                            <StackPane HBox.hgrow="ALWAYS">
