@@ -176,6 +176,7 @@ public class BookOrders {
         return true;
     }
 
+    @SuppressWarnings("unchecked")
     private void initTable() {
         this.ordersTable = new JFXTreeTableView<>();
         initColumns();
