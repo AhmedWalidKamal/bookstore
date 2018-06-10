@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
@@ -79,6 +80,15 @@
                               <Font size="11.0" />
                            </font>
                         </Label>
+                        <HBox alignment="CENTER" prefHeight="16.0" prefWidth="78.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <FontAwesomeIcon fill="#f5b200" size="1.2em" text="" />
+                              <FontAwesomeIcon fill="#f5b200" layoutX="10.0" layoutY="23.0" size="1.2em" text="" />
+                              <FontAwesomeIcon fill="#f5b200" layoutX="25.0" layoutY="23.0" size="1.2em" text="" />
+                              <FontAwesomeIcon fill="#f5b200" layoutX="40.0" layoutY="23.0" size="1.2em" text="" />
+                              <FontAwesomeIcon fill="#f5b200" layoutX="55.0" layoutY="23.0" size="1.2em" text="" />
+                           </children>
+                        </HBox>
                      </children>
                      <padding>
                         <Insets bottom="7.0" left="7.0" right="7.0" top="7.0" />
@@ -146,19 +156,19 @@
                               <Insets left="5.0" />
                            </HBox.margin>
                         </Label>
+                        <JFXButton prefHeight="5.0" prefWidth="23.0" styleClass="add-to-cart-btn" text=" ">
+                           <HBox.margin>
+                              <Insets left="15.0" right="15.0" />
+                           </HBox.margin>
+                        </JFXButton>
                         <Label layoutX="87.0" layoutY="23.0" prefHeight="14.0" prefWidth="73.0" text="Out of Stock!" textFill="RED">
                            <font>
                               <Font size="11.0" />
                            </font>
                            <HBox.margin>
-                              <Insets left="15.0" right="15.0" />
-                           </HBox.margin>
-                        </Label>
-                        <JFXButton prefHeight="5.0" prefWidth="23.0" styleClass="add-to-cart-btn" text=" ">
-                           <HBox.margin>
                               <Insets />
                            </HBox.margin>
-                        </JFXButton>
+                        </Label>
                      </children>
                      <padding>
                         <Insets bottom="7.0" left="7.0" right="7.0" top="7.0" />
