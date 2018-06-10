@@ -1,5 +1,6 @@
 package controller;
 
+import com.gluonhq.charm.glisten.control.CardPane;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXSnackbar;
 import com.jfoenix.controls.JFXTextField;
@@ -42,6 +43,8 @@ class Home {
     @FXML
     private JFXButton refreshButton;
 
+    @FXML
+    private CardPane bookCardPane;
 
     @FXML
     private JFXButton prevPageButton;
@@ -110,6 +113,11 @@ class Home {
 
         initButtons();
         initHome();
+
+        // for book view testing purposes only.
+        bookCardPane.getCards().add(new controller.Book().getNode());
+        bookCardPane.getCards().add(new controller.Book().getNode());
+        bookCardPane.getCards().add(new controller.Book().getNode());
     }
 
     Node getNode() {

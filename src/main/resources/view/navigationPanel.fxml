@@ -22,7 +22,7 @@
                </Label>
                <Label fx:id="userEmail" styleClass="user-info-email" text="Email" />
            </VBox>
-         <Separator styleClass="Separator">
+         <Separator>
             <VBox.margin>
                <Insets left="27.0" right="27.0" />
             </VBox.margin></Separator>

@@ -34,7 +34,7 @@
     -fx-font-style: italic;
     -fx-text-fill: #bdbfcd;
 }
-.Separator {
+.separator {
     -fx-min-height: 1.0px;
     -fx-min-width: 150.0px;
     -fx-pref-height: 1.0px;

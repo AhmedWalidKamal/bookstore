@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<!--<AnchorPane prefHeight="600.0" prefWidth="550.0" xmlns="http://javafx.com/javafx/8.0.162-ea" xmlns:fx="http://javafx.com/fxml/1">-->
+   <!--<children>-->
+      <HBox alignment="CENTER_LEFT" layoutX="31.0" layoutY="121.0" minWidth="-Infinity" prefWidth="550.0" stylesheets="@css/book.css" AnchorPane.bottomAnchor="260.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="260.0">
+         <children>
+            <ImageView fitHeight="165.0" fitWidth="124.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@images/book_sample_2.jpg" />
+               </image>
+               <HBox.margin>
+                  <Insets right="7.0" />
+               </HBox.margin>
+            </ImageView>
+            <VBox HBox.hgrow="ALWAYS">
+               <children>
+                  <HBox alignment="CENTER_LEFT">
+                     <children>
+                        <Label text="End of Watch: A Novel (The Bill Hodges Trilogy)" textFill="#303bff">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets right="15.0" />
+                           </HBox.margin>
+                        </Label>
+                     </children>
+                     <padding>
+                        <Insets left="7.0" right="7.0" top="7.0" />
+                     </padding>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0">
+                     <children>
+                        <Label text="by" translateX="15.0">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets right="5.0" />
+                           </HBox.margin>
+                        </Label>
+                        <Label text="Stephen King" translateX="15.0">
+                           <font>
+                              <Font size="12.0" />
+                           </font></Label>
+                     </children>
+                     <padding>
+                        <Insets bottom="7.0" left="7.0" right="7.0" />
+                     </padding>
+                     <VBox.margin>
+                        <Insets top="5.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="47.0">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                     <children>
+                        <Label text="Category">
+                           <font>
+                              <Font size="11.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets right="5.0" />
+                           </HBox.margin>
+                        </Label>
+                        <Label layoutX="17.0" layoutY="17.0" text="Crime fiction  ">
+                           <font>
+                              <Font size="11.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <padding>
+                        <Insets bottom="7.0" left="7.0" right="7.0" top="7.0" />
+                     </padding>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" layoutX="17.0" layoutY="64.0" prefHeight="28.0" prefWidth="389.0">
+                     <children>
+                        <Label prefHeight="9.0" prefWidth="55.0" text="Published">
+                           <font>
+                              <Font size="11.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets right="5.0" />
+                           </HBox.margin>
+                        </Label>
+                        <Label layoutX="17.0" layoutY="17.0" text="June 16, 2017">
+                           <font>
+                              <Font size="11.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </Label>
+                        <Label text="by">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets left="10.0" right="5.0" />
+                           </HBox.margin>
+                        </Label>
+                        <Label text="Scribner">
+                           <font>
+                              <Font size="11.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <padding>
+                        <Insets bottom="7.0" left="7.0" right="7.0" top="7.0" />
+                     </padding>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" layoutX="17.0" layoutY="97.0" prefHeight="28.0" prefWidth="389.0">
+                     <children>
+                        <Label prefHeight="14.0" prefWidth="28.0" text="Price">
+                           <font>
+                              <Font size="11.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets right="5.0" />
+                           </HBox.margin>
+                        </Label>
+                        <Label text="151.5">
+                           <font>
+                              <Font size="11.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="17.0" layoutY="17.0" prefHeight="12.0" prefWidth="24.0" text="EGP">
+                           <font>
+                              <Font size="11.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets left="5.0" />
+                           </HBox.margin>
+                        </Label>
+                        <Label layoutX="87.0" layoutY="23.0" prefHeight="14.0" prefWidth="73.0" text="Out of Stock!" textFill="RED">
+                           <font>
+                              <Font size="11.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets left="15.0" right="15.0" />
+                           </HBox.margin>
+                        </Label>
+                        <JFXButton prefHeight="5.0" prefWidth="23.0" styleClass="add-to-cart-btn" text=" ">
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </JFXButton>
+                     </children>
+                     <padding>
+                        <Insets bottom="7.0" left="7.0" right="7.0" top="7.0" />
+                     </padding>
+                  </HBox>
+               </children>
+               <padding>
+                  <Insets bottom="7.0" left="7.0" right="7.0" top="7.0" />
+               </padding>
+            </VBox>
+         </children>
+         <padding>
+            <Insets bottom="7.0" left="7.0" right="7.0" top="7.0" />
+         </padding>
+      </HBox>
+   <!--</children>-->
+<!--</AnchorPane>-->
