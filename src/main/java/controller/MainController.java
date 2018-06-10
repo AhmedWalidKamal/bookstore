@@ -100,7 +100,7 @@ public class MainController {
         }
         navigationPanel.setUserInfo(getCurrentUser().getUserName(), getCurrentUser().getEmail()
                                                     , getCurrentUser().getProfile().getUserPhotoPath());
-        // TODO: Set the default scene to home on loading the navigation panel.
+
         if (primaryStage.getScene() == null) {
             Scene scene = new Scene(navigationPanel.getParent(), SCENE_WIDTH, SCENE_HEIGHT);
             primaryStage.setScene(scene);
@@ -108,5 +108,6 @@ public class MainController {
             primaryStage.getScene().setRoot(navigationPanel.getParent());
         }
         primaryStage.show();
+        navigationPanel.loadHome();
     }
 }

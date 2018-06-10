@@ -120,7 +120,7 @@ class NavigationPanel {
         signOutButton.setOnMouseClicked(mouseEvent -> signOut());
     }
 
-    private void loadHome() {
+    void loadHome() {
         if (home == null) {
             home = new Home();
         }
