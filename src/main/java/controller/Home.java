@@ -86,7 +86,7 @@ class Home {
             e.printStackTrace();
         }
 
-        pageSize = 2;
+        pageSize = 10;
         pageNumber = 1;
 
         orderCol = Book.BOOK_TITLE_COLNAME;

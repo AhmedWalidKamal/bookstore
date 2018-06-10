@@ -15,6 +15,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         primaryStage.getIcons().add(new Image(getClass().getResource("/app/icon.png").toExternalForm()));
+        primaryStage.setTitle("Bookstore");
         MainController.getInstance().init(primaryStage);
     }
 
