@@ -65,7 +65,7 @@ public class BackendServices {
             }
             System.out.println("" + sys.getNumberOfBooks() + " " + sys.getNumberOfPages(3));
             System.out.println("\n" + sys.buyBook("b4", "1234567890126", 500) + "\n");
-            System.out.println(sys.confirmOrder(sys.orderBook("1234567890126", "Ahmed Walid", 5000)));
+            System.out.println(sys.confirmOrder(sys.orderBook("1234567890126", 5000)));
 
             for (Book book : sys.findBooks(1, 5, Book.PUBLISHER_NAME_COLNAME, "Ahmed Walid", Book.ISBN_COLNAME, false).getBooks()) {
                 System.out.println(book.getBookTitle() + "\t" + book.getISBN() + "\t" + book.getCategory() + "\t" + book.getPublisherName() + "\t" + book.getBooksInStock() + "\t" + Arrays.toString(book.getAuthors().toArray()));
@@ -242,14 +242,12 @@ public class BackendServices {
         BookList books = new BookList();
         books.setPrev(pageNumber > 1);
 
-        int cnt = 0;
-
         while (rs.next()) {
-            if (cnt++ == pageSize) {
-                books.setNext(true);
-                break;
-            }
             String ISBN = rs.getString(Book.ISBN_COLNAME);
+            if (books.size() == pageSize && !books.contains(ISBN)) {
+                books.setNext(true);
+                continue;
+            }
             Book curBook = books.findBook(ISBN);
             curBook = getBook(curBook, rs);
             books.addBook(curBook);
@@ -379,14 +377,12 @@ public class BackendServices {
 
         books.setPrev(pageNumber > 1);
 
-        int cnt = 0;
-
         while (rs.next()) {
-            if (cnt++ == pageSize) {
-                books.setNext(true);
-                break;
-            }
             String ISBN = rs.getString(Book.ISBN_COLNAME);
+            if (books.size() == pageSize && !books.contains(ISBN)) {
+                books.setNext(true);
+                continue;
+            }
             Book curBook = books.findBook(ISBN);
             curBook = getBook(curBook, rs);
             books.addBook(curBook);
@@ -747,27 +743,64 @@ public class BackendServices {
         return buyBook(userName, bookQuantities);
     }
 
-    public int orderBook(String ISBN, String publisherName, int quantity) throws SQLException {
+    public int orderBook(String ISBN, int quantity) throws SQLException {
 
-        if (ISBN == null || publisherName == null || quantity <= 0) {
+        if (ISBN == null || quantity <= 0) {
             return -1;
         }
-        String sqlQuery = "INSERT INTO BOOK_ORDERS (" +
-                BookOrder.ISBN_COLNAME + ", " +
-                BookOrder.PUBLISHER_NAME_COLNAME + ", " +
-                BookOrder.QUANTITY_COLNAME + ") VALUES(?, ?, ?)";
 
-        PreparedStatement preparedStatement = DBConnection.prepareStatement(sqlQuery,
-                Statement.RETURN_GENERATED_KEYS);
-        preparedStatement.setString(1, ISBN);
-        preparedStatement.setString(2, publisherName);
-        preparedStatement.setInt(3, quantity);
+        DBConnection.setAutoCommit(false);
+        int orderNo = -1;
 
-        int updateCount = preparedStatement.executeUpdate();
+        PreparedStatement selectStatement = null;
+        PreparedStatement insertStatement = null;
 
-        ResultSet rs = preparedStatement.getGeneratedKeys();
-        rs.next();
-        return rs.getInt(1);
+        try {
+            String selectQuery = "SELECT "+ Book.PUBLISHER_NAME_COLNAME + " FROM BOOK WHERE " + Book.ISBN_COLNAME + " = ?";
+
+            selectStatement = DBConnection.prepareStatement(selectQuery);
+            selectStatement.setString(1, ISBN);
+
+            ResultSet selectResultSet = selectStatement.executeQuery();
+            System.out.println(selectStatement);
+
+            selectResultSet.next();
+            String publisherName = selectResultSet.getString(Book.PUBLISHER_NAME_COLNAME);
+
+            System.out.println("PUB: " + publisherName);
+
+            String sqlQuery = "INSERT INTO BOOK_ORDERS (" +
+                    BookOrder.ISBN_COLNAME + ", " +
+                    BookOrder.PUBLISHER_NAME_COLNAME + ", " +
+                    BookOrder.QUANTITY_COLNAME + ") VALUES(?, ?, ?)";
+
+            insertStatement = DBConnection.prepareStatement(sqlQuery,
+                    Statement.RETURN_GENERATED_KEYS);
+            insertStatement.setString(1, ISBN);
+            insertStatement.setString(2, publisherName);
+            insertStatement.setInt(3, quantity);
+
+            int updateCount = insertStatement.executeUpdate();
+
+            System.out.println(insertStatement);
+
+            ResultSet rs = insertStatement.getGeneratedKeys();
+            rs.next();
+            orderNo = rs.getInt(1);
+            DBConnection.commit();
+        } catch(SQLException e) {
+            orderNo = -1;
+            DBConnection.rollback();
+        } finally {
+            DBConnection.setAutoCommit(true);
+            if (selectStatement != null) {
+                selectStatement.close();
+            }
+            if (insertStatement != null) {
+                insertStatement.close();
+            }
+        }
+        return orderNo;
     }
 
     public boolean confirmOrder(int orderNo) throws SQLException {

@@ -86,7 +86,7 @@ class Home {
             e.printStackTrace();
         }
 
-        pageSize = 10;
+        pageSize = 2;
         pageNumber = 1;
 
         orderCol = Book.BOOK_TITLE_COLNAME;
@@ -114,10 +114,13 @@ class Home {
         initButtons();
         initHome();
 
-        // for book view testing purposes only.
-        bookCardPane.getCards().add(new controller.Book().getNode());
-        bookCardPane.getCards().add(new controller.Book().getNode());
-        bookCardPane.getCards().add(new controller.Book().getNode());
+//        Book test = new Book();
+//        test.setBookTitle("Testssss");
+//
+//        // for book view testing purposes only.
+//        bookCardPane.getCards().add(new BookController(test).getNode());
+//        bookCardPane.getCards().add(new BookController(test).getNode());
+//        bookCardPane.getCards().add(new BookController(test).getNode());
     }
 
     Node getNode() {
@@ -125,7 +128,21 @@ class Home {
     }
 
     private void populateBookView(BookList books) {
+        if (books == null) {
+            return;
+        }
+        for (Book book : books.getBooks()) {
+            if (book == null) {
+                System.out.println("Error: book was null");
+                continue;
+            }
+            BookController bookController = new BookController(book);
+            bookCardPane.getCards().add(bookController.getNode());
+        }
+    }
 
+    private void clearBooks() {
+        bookCardPane.getCards().clear();
     }
 
     private void fetchPage(int pageNumber, int pageSize) {
@@ -145,6 +162,8 @@ class Home {
                 snackBar.enqueue(new JFXSnackbar.SnackbarEvent("Failed to retrieve books."));
                 return;
             }
+
+            clearBooks();
 
             populateBookView(books);
 
@@ -260,8 +279,8 @@ class Home {
                 setBackGroundImage(searchButton, resetSearchImage);
                 isSearching = true;
                 pageNumber = 1;
-                fetchPage(pageNumber, pageSize);
                 searchTextField.setDisable(true);
+                fetchPage(pageNumber, pageSize);
             } else {
                 snackBar.enqueue(new JFXSnackbar.SnackbarEvent("Invalid search query!"));
             }
@@ -272,6 +291,7 @@ class Home {
             condition = null;
             pageNumber = 1;
             searchTextField.setDisable(false);
+            fetchPage(pageNumber, pageSize);
         }
     }
 
