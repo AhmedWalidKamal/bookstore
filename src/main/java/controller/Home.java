@@ -114,13 +114,6 @@ class Home {
         initButtons();
         initHome();
 
-//        Book test = new Book();
-//        test.setBookTitle("Testssss");
-//
-//        // for book view testing purposes only.
-//        bookCardPane.getCards().add(new BookController(test).getNode());
-//        bookCardPane.getCards().add(new BookController(test).getNode());
-//        bookCardPane.getCards().add(new BookController(test).getNode());
     }
 
     Node getNode() {
