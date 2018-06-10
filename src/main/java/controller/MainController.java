@@ -3,6 +3,7 @@ package controller;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import model.BookstoreUser;
+import model.Cart;
 import service.BackendServices;
 
 import java.sql.SQLException;
@@ -51,6 +52,7 @@ public class MainController {
 
     void setCurrentUser(BookstoreUser currentUser) {
         this.currentUser = currentUser;
+        currentUser.setCart(new Cart());
     }
 
     BackendServices getBackendService() {

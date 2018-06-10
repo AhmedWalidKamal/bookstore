@@ -1,5 +1,6 @@
 package controller;
 
+import com.jfoenix.controls.JFXButton;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -48,7 +49,11 @@ class BookController {
     private Label priceLabel;
     @FXML
     private Label outOfStockLabel;
+    @FXML
+    private Label byLabel;
 
+    @FXML
+    private JFXButton addToCartButton;
 
     private static final String BOOK_COVER_PATH = "/view" + File.separator
             + "images" + File.separator + "books" + File.separator;
@@ -68,6 +73,7 @@ class BookController {
         }
         this.book = book;
         stars = new FontAwesomeIcon[] {oneStarIcon, twoStarIcon, threeStarIcon, fourStarIcon, fiveStarIcon};
+        initButtons();
         initFields();
         initCoverImage();
         initRating();
@@ -75,6 +81,18 @@ class BookController {
 
     Node getNode() {
         return node;
+    }
+
+    private void initButtons() {
+        addToCartButton.setOnAction(actionEvent -> addToCart());
+    }
+
+    private void addToCart() {
+        int quantity = MainController.getInstance().getCurrentUser()
+                .getCart().getCart().getOrDefault(book.getISBN(), 0);
+        MainController.getInstance().getCurrentUser()
+                .getCart().getCart().put(book.getISBN(), quantity + 1);
+        System.out.println(quantity);
     }
 
     private void initFields() {
@@ -98,6 +116,10 @@ class BookController {
             }
         }
         authorsLabel.setText(sb.toString());
+        if (authorsLabel.getText().isEmpty()) {
+            authorsLabel.setVisible(false);
+            byLabel.setVisible(false);
+        }
         categoryLabel.setText(book.getCategory());
         String year = "";
         if (book.getPublicationYear() != null) {
@@ -106,11 +128,11 @@ class BookController {
         publicationYearLabel.setText(year);
         priceLabel.setText(Double.toString(book.getPrice()));
         publisherLabel.setText(book.getPublisherName());
-        outOfStockLabel.setVisible(book.getBooksInStock() > 0);
-
-
-
-
+        if (book.getBooksInStock() <= 0) {
+            addToCartButton.setVisible(false);
+        } else {
+            outOfStockLabel.setVisible(false);
+        }
     }
 
     private void initCoverImage() {
