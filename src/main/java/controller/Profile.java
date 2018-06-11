@@ -90,7 +90,7 @@ class Profile {
             colsValues.put(BookstoreUser.UserProfile.PHONE_NUMBER_COLNAME, phoneNumber.getText().trim());
             try {
                 MainController.getInstance().getBackendService().updateUser(
-                        MainController.getInstance().getCurrentUser().getUserName(), colsValues);
+                        MainController.getInstance().getCurrentUser().getUserID(), colsValues);
                 updateProfileErrorLabel.setVisible(false);
                 JFXSnackbar bar = new JFXSnackbar(rootPane);
                 bar.enqueue(new JFXSnackbar.SnackbarEvent("Profile Updated Successfully"));
@@ -115,7 +115,7 @@ class Profile {
         } else {
             try {
                 boolean success = MainController.getInstance().getBackendService().updatePassword(
-                        MainController.getInstance().getCurrentUser().getUserName()
+                        MainController.getInstance().getCurrentUser().getUserID()
                         , oldPassword.getText().trim(), newPassword.getText().trim());
                 if (success) {
                     passwordErrorLabel.setVisible(false);

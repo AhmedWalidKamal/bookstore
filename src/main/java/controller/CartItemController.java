@@ -123,8 +123,14 @@ class CartItemController {
 
         bookCoverView.setImage(new Image(imagePath));
     }
+
+    private void refreshQuantityField() {
+        quantityField.setText(Integer.toString(MainController.getInstance()
+                .getCurrentUser().getCart().getValue(book.getISBN())));
+    }
+
     private void initQuantityField() {
-        quantityField.setText("1");
+        refreshQuantityField();
         RequiredFieldValidator requiredFieldValidator = new RequiredFieldValidator();
         NumberValidator numberValidator = new NumberValidator();
 

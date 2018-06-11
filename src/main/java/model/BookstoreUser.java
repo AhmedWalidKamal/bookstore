@@ -8,11 +8,13 @@ import java.util.Objects;
 
 public class BookstoreUser {
 
+    public static final String USER_ID_COLNAME = "USER_ID";
     public static final String USER_NAME_COLNAME = "USER_NAME";
     public static final String EMAIL_COLNAME = "EMAIL";
     public static final String PASSWORD_COLNAME = "PASSWORD";
     public static final String USER_GROUP_COLNAME = "USER_GROUP";
 
+    private int userID;
     private String userName;
     private String email;
     private String userGroup;
@@ -65,18 +67,27 @@ public class BookstoreUser {
         this.cart = cart;
     }
 
+    public int getUserID() {
+
+        return userID;
+    }
+
+    public void setUserID(int userID) {
+        this.userID = userID;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         BookstoreUser that = (BookstoreUser) o;
-        return Objects.equals(userName, that.userName);
+        return userID == that.userID;
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(userName);
+        return Objects.hash(userID);
     }
 
     public class UserProfile {

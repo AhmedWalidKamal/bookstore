@@ -8,6 +8,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -57,14 +58,13 @@ public class BackendServices {
             String firstName = sys.login("Barry", "bassword").getProfile().getFirstName();
             System.out.println(firstName);
 
-            System.out.println(sys.updatePassword("b4", "pw", "pw"));
-            String usergroup = sys.login("b4", "pw").getProfile().getBirthDate().toString();
-            System.out.println(usergroup);
+            System.out.println(sys.updatePassword(1, "pw", "pw"));
+
             for (Book book : sys.getBooks(1, 5, Book.BOOKS_IN_STOCK_COLNAME, true).getBooks()) {
                 System.out.println(book.getBookTitle() + "\t" + book.getISBN() + "\t" + book.getCategory() + "\t" + book.getPublisherName() + "\t" + book.getBooksInStock() + "\t" + Arrays.toString(book.getAuthors().toArray()));
             }
             System.out.println("" + sys.getNumberOfBooks() + " " + sys.getNumberOfPages(3));
-            System.out.println("\n" + sys.buyBook("b4", "1234567890126", 500) + "\n");
+            System.out.println("\n" + sys.buyBook(1, "1234567890126", 500) + "\n");
             System.out.println(sys.confirmOrder(sys.orderBook("1234567890126", 5000)));
 
             for (Book book : sys.findBooks(1, 5, Book.PUBLISHER_NAME_COLNAME, "Ahmed Walid", Book.ISBN_COLNAME, false, true).getBooks()) {
@@ -84,7 +84,7 @@ public class BackendServices {
             LinkedHashMap<String, String> userUpdates = new LinkedHashMap<>();
             userUpdates.put(BookstoreUser.UserProfile.FIRST_NAME_COLNAME, "Ahmed");
             userUpdates.put(BookstoreUser.UserProfile.LAST_NAME_COLNAME, "Walid");
-            sys.updateUser("Barry", userUpdates);
+            sys.updateUser(1, userUpdates);
 
 
             System.out.println("Book Orders: ");
@@ -110,6 +110,7 @@ public class BackendServices {
 
     private BookstoreUser getUser(ResultSet rs) throws SQLException {
         BookstoreUser curUser = new BookstoreUser();
+        curUser.setUserID(rs.getInt(BookstoreUser.USER_ID_COLNAME));
         curUser.setUserName(rs.getString(BookstoreUser.USER_NAME_COLNAME));
         curUser.setEmail(rs.getString(BookstoreUser.EMAIL_COLNAME));
         curUser.setUserGroup(rs.getString(BookstoreUser.USER_GROUP_COLNAME));
@@ -179,10 +180,13 @@ public class BackendServices {
 
         int updateCount = preparedStatement.executeUpdate();
 
+        ResultSet rs = preparedStatement.getGeneratedKeys();
+
         BookstoreUser curUser = new BookstoreUser();
         curUser.setUserGroup(userGroup);
         curUser.setEmail(email);
         curUser.setUserName(userName);
+        curUser.setUserID(rs.getInt(1));
 
         return curUser;
     }
@@ -248,6 +252,57 @@ public class BackendServices {
                 books.setNext(true);
                 continue;
             }
+            Book curBook = books.findBook(ISBN);
+            curBook = getBook(curBook, rs);
+            books.addBook(curBook);
+        }
+        return books;
+    }
+
+    public BookList getBooks(ArrayList<String> ISBNValues, String orderCol, boolean ascending) throws SQLException {
+
+        if (!Book.columns.contains(orderCol)) {
+            return null;
+        }
+
+        if (ISBNValues.isEmpty()) {
+            return new BookList();
+        }
+
+        StringBuilder listSB = new StringBuilder();
+
+        for (int i = 0 ; i < ISBNValues.size() ; i++) {
+            if (i < ISBNValues.size() - 1) {
+                listSB.append("?, ");
+            } else {
+                listSB.append("?");
+            }
+        }
+
+        String sqlQuery = "SELECT * FROM BOOK LEFT OUTER JOIN BOOK_AUTHORS ON BOOK_AUTHORS."
+                + BookAuthor.ISBN_COLNAME + " = BOOK." + Book.ISBN_COLNAME
+                + " WHERE BOOK." + Book.ISBN_COLNAME
+                + " IN (" + listSB.toString() + ") ORDER BY BOOK.`" + orderCol + "`";
+        if (ascending) {
+            sqlQuery += " ASC";
+        } else {
+            sqlQuery += " DESC";
+        }
+
+        PreparedStatement preparedStatement = DBConnection.prepareStatement(sqlQuery);
+
+        for (int i = 0 ; i < ISBNValues.size() ; i++) {
+            preparedStatement.setString(i + 1, ISBNValues.get(i));
+        }
+
+        System.out.println(preparedStatement.toString());
+        ResultSet rs = preparedStatement.executeQuery();
+
+        BookList books = new BookList();
+
+        while (rs.next()) {
+            String ISBN = rs.getString(Book.ISBN_COLNAME);
+
             Book curBook = books.findBook(ISBN);
             curBook = getBook(curBook, rs);
             books.addBook(curBook);
@@ -371,9 +426,9 @@ public class BackendServices {
         for (String colName : authorConditions.keySet()) {
             for (int j = 0; j < authorConditions.get(colName).size(); i++, j++) {
 
-                if (colName.endsWith(bookTitleSuffix)
+                if (useLikeQueries && (colName.endsWith(bookTitleSuffix)
                         || colName.endsWith(bookPublisherSuffix)
-                        || colName.endsWith(bookAuthorSuffix)) {
+                        || colName.endsWith(bookAuthorSuffix))) {
                     preparedStatement.setString(i,  "%" + authorConditions.get(colName).get(j) + "%");
                 } else {
                     preparedStatement.setString(i, authorConditions.get(colName).get(j));
@@ -406,7 +461,7 @@ public class BackendServices {
     public BookList findBooks(int pageNumber, int pageSize,
                               LinkedHashMap<String, ArrayList<String>> colValues,
                               String orderCol, boolean ascending) throws SQLException {
-        return findBooks(pageNumber, pageSize, colValues, orderCol, ascending, true);
+        return findBooks(pageNumber, pageSize, colValues, orderCol, ascending, false);
     }
 
     public BookList findBooks(int pageNumber, int pageSize,
@@ -698,6 +753,44 @@ public class BackendServices {
         return -1;
     }
 
+    public boolean updateUser(int userID, LinkedHashMap<String, String> colValues) throws SQLException {
+
+        if (colValues == null || colValues.isEmpty()) {
+            return false;
+        }
+        StringBuilder sqlQuery = new StringBuilder();
+        sqlQuery.append("UPDATE BOOKSTORE_USER SET");
+
+        int i = 0;
+
+        for (String colName : colValues.keySet()) {
+            sqlQuery.append(" BOOKSTORE_USER.`");
+            sqlQuery.append(colName);
+            sqlQuery.append("` = ?");
+            if (i++ < colValues.size() - 1) {
+                sqlQuery.append(",");
+            }
+        }
+
+        sqlQuery.append(" WHERE " + BookstoreUser.USER_ID_COLNAME + " = ?");
+
+        PreparedStatement preparedStatement = DBConnection.prepareStatement(sqlQuery.toString());
+
+        int pos = 1;
+
+        for (String colName : colValues.keySet()) {
+            preparedStatement.setString(pos++, colValues.get(colName));
+        }
+
+        preparedStatement.setInt(pos, userID);
+
+        int updateCount = preparedStatement.executeUpdate();
+
+        System.out.println(preparedStatement);
+
+        return updateCount > 0;
+    }
+
     public boolean updateUser(String userName, LinkedHashMap<String, String> colValues) throws SQLException {
 
         if (colValues == null || colValues.isEmpty()) {
@@ -742,10 +835,10 @@ public class BackendServices {
         return updateUser(userName, colValues);
     }
 
-    public boolean updatePassword(String userName, String oldPassword, String newPassword) throws SQLException {
+    public boolean updatePassword(int userID, String oldPassword, String newPassword) throws SQLException {
         String sqlQuery = "{CALL UPDATE_PASSWORD(?, ?, ?, ?, ?)}";
         CallableStatement callStatement = DBConnection.prepareCall(sqlQuery);
-        callStatement.setString(1, userName);
+        callStatement.setInt(1, userID);
         callStatement.setString(2, oldPassword);
         callStatement.setString(3, newPassword);
         callStatement.registerOutParameter(4, Types.BOOLEAN);
@@ -770,7 +863,7 @@ public class BackendServices {
         return (getNumberOfBooks() - 1) / pageSize + 1;
     }
 
-    public boolean buyBooks(String userName,
+    public boolean buyBooks(int userID,
                             Map<String, Integer> bookQuantities,
                             Date purchaseDate) throws SQLException {
         String sqlQuery = "{CALL MAKE_PURCHASE(?, ?, ?, ?, ?, ?, ?, ?)}";
@@ -790,7 +883,7 @@ public class BackendServices {
 
                 statements.add(callStatement);
 
-                callStatement.setString(1, userName);
+                callStatement.setInt(1, userID);
                 callStatement.setString(2, ISBN);
                 callStatement.setDate(3, new java.sql.Date(purchaseDate.getTime()));
                 callStatement.setInt(4, bookQuantities.get(ISBN));
@@ -844,16 +937,16 @@ public class BackendServices {
         return retVal;
     }
 
-    public boolean buyBook(String userName, Map<String, Integer> bookQuantities) throws SQLException {
-        return buyBooks(userName, bookQuantities, new Date());
+    public boolean buyBook(int userID, Map<String, Integer> bookQuantities) throws SQLException {
+        return buyBooks(userID, bookQuantities, new Date());
     }
 
-    public boolean buyBook(String userName, String ISBN, int quantity) throws SQLException {
+    public boolean buyBook(int userID, String ISBN, int quantity) throws SQLException {
         Map<String, Integer> bookQuantities = new HashMap<>();
 
         bookQuantities.put(ISBN, quantity);
 
-        return buyBook(userName, bookQuantities);
+        return buyBook(userID, bookQuantities);
     }
 
     public int orderBook(String ISBN, int quantity) throws SQLException {
@@ -950,6 +1043,10 @@ public class BackendServices {
             curOrder.setOrderNo(rs.getInt(BookOrder.ORDER_NO_COLNAME));
             curOrder.setPublisherName(rs.getString(BookOrder.PUBLISHER_NAME_COLNAME));
             curOrder.setQuantity(rs.getInt(BookOrder.QUANTITY_COLNAME));
+
+            Calendar gmt = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+            Timestamp orderDate = rs.getTimestamp(BookOrder.ORDER_DATE_COLNAME);
+            curOrder.setOrderDate(orderDate.toLocalDateTime());
 
             orders.add(curOrder);
         }

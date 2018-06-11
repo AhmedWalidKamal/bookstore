@@ -102,9 +102,9 @@ class BookController {
 
     private void addToCart() {
         int quantity = MainController.getInstance().getCurrentUser()
-                .getCart().getCart().getOrDefault(book.getISBN(), 0);
+                .getCart().getOrDefault(book.getISBN(), 0);
         MainController.getInstance().getCurrentUser()
-                .getCart().getCart().put(book.getISBN(), quantity + 1);
+                .getCart().add(book.getISBN(), quantity + 1);
         System.out.println(quantity);
     }
 

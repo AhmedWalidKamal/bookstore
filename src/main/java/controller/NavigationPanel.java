@@ -9,10 +9,11 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import model.CartListener;
 
 import java.io.IOException;
 
-class NavigationPanel {
+class NavigationPanel implements CartListener {
 
     @FXML
     private StackPane navigationPanelRootPane;
@@ -28,6 +29,9 @@ class NavigationPanel {
 
     @FXML
     private Label userEmail;
+
+    @FXML
+    private Label cartLabel;
 
     @FXML
     private HBox homeButton;
@@ -122,11 +126,15 @@ class NavigationPanel {
         profileButton.setOnMouseClicked(mouseEvent -> loadProfile());
         administrationButton.setOnMouseClicked(mouseEvent -> loadAdministration());
         signOutButton.setOnMouseClicked(mouseEvent -> signOut());
+
+        MainController.getInstance().getCurrentUser().getCart().addListener(this);
     }
 
     void loadHome() {
         if (home == null) {
             home = new Home();
+        } else {
+            home.handleRefresh();
         }
         borderPane.getChildren().remove(borderPane.getCenter());
         borderPane.setCenter(home.getNode());
@@ -136,6 +144,8 @@ class NavigationPanel {
     private void loadShoppingCart() {
         if (shoppingCart == null) {
             shoppingCart = new ShoppingCart(navigationPanelRootPane);
+        } else {
+            shoppingCart.refresh();
         }
         // TODO: Make sure to keep the current state of the shopping cart for each user (session).
         borderPane.getChildren().remove(borderPane.getCenter());
@@ -173,11 +183,14 @@ class NavigationPanel {
 
     void disableAdminPrivileges() {
         administrationButton.setDisable(true);
-//        home.disableAdminPrivileges();
     }
 
     void enableAdminPrivileges() {
         administrationButton.setDisable(false);
-//        home.enableAdminPrivileges();
+    }
+    
+    @Override
+    public void cartSizeHasChanged() {
+        cartLabel.setText(Integer.toString(MainController.getInstance().getCurrentUser().getCart().size()));
     }
 }

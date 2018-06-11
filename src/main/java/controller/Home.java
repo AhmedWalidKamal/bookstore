@@ -166,6 +166,7 @@ class Home {
 
             pageNumberLabel.setText(Integer.toString(pageNumber));
         } catch (SQLException e) {
+            e.printStackTrace();
             snackBar.enqueue(new JFXSnackbar.SnackbarEvent("Failed to retrieve books."));
         }
     }
@@ -225,7 +226,7 @@ class Home {
         }
     }
 
-    private void handleRefresh() {
+    public void handleRefresh() {
         fetchPage(pageNumber, pageSize);
     }
 
