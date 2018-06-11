@@ -1,5 +1,7 @@
 package model;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class BookOrder {
@@ -8,11 +10,13 @@ public class BookOrder {
     public static final String QUANTITY_COLNAME = "QUANTITY";
     public static final String PUBLISHER_NAME_COLNAME = "PUBLISHER_NAME";
     public static final String ORDER_NO_COLNAME = "ORDER_NO";
+    public static final String ORDER_DATE_COLNAME = "ORDER_DATE";
 
     private int orderNo;
     private String publisherName;
     private String ISBN;
     private int quantity;
+    private LocalDateTime orderDate;
 
     public BookOrder() {
 
@@ -48,6 +52,14 @@ public class BookOrder {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public LocalDateTime getOrderDate() {
+        return orderDate;
+    }
+
+    public void setOrderDate(LocalDateTime orderDate) {
+        this.orderDate = orderDate;
     }
 
     @Override
