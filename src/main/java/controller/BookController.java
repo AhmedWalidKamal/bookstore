@@ -169,7 +169,7 @@ class BookController {
 
     @FXML
     private void deleteBookButtonAction(ActionEvent event) {
-        
+
     }
 
     @FXML

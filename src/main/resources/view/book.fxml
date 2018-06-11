@@ -171,8 +171,8 @@
                         </Label>
                         <HBox alignment="CENTER" prefHeight="26.0" prefWidth="137.0" spacing="10.0" HBox.hgrow="ALWAYS">
                            <children>
-                              <JFXButton fx:id="editButton" layoutX="117.0" layoutY="10.0" onAction="#editBookButtonAction" prefHeight="5.0" prefWidth="23.0" styleClass="edit-btn" text=" " />
-                              <JFXButton fx:id="deleteButton" layoutX="143.0" layoutY="10.0" onAction="#deleteBookButtonAction" prefHeight="5.0" prefWidth="23.0" styleClass="delete-btn" text=" " />
+                              <JFXButton fx:id="editButton" layoutX="117.0" layoutY="10.0" prefHeight="5.0" prefWidth="23.0" styleClass="edit-btn" text=" " />
+                              <JFXButton fx:id="deleteButton" layoutX="143.0" layoutY="10.0" prefHeight="5.0" prefWidth="23.0" styleClass="delete-btn" text=" " />
                            </children>
                            <padding>
                               <Insets right="60.0" />
