@@ -52,7 +52,9 @@ class CartItemController {
     private Book book;
     private Node node;
 
-    CartItemController(CardPane parentCardPane, Book book) {
+    private ShoppingCart parentController;
+
+    CartItemController(CardPane parentCardPane, Book book, ShoppingCart parentController) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/cartItem.fxml"));
         fxmlLoader.setController(this);
         try {
@@ -62,6 +64,7 @@ class CartItemController {
         }
         this.parentCardPane = parentCardPane;
         this.book = book;
+        this.parentController = parentController;
         init();
     }
 
@@ -141,6 +144,8 @@ class CartItemController {
 
         quantityField.focusedProperty().addListener((o, oldVal, newVal) -> {
             if (!newVal) quantityField.validate();
+
         });
+        
     }
 }

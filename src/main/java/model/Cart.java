@@ -47,6 +47,15 @@ public class Cart {
         return getValue(key);
     }
 
+    public LinkedHashMap<String, Integer> getCart() {
+        return new LinkedHashMap<>(cart);
+    }
+
+    public void clear() {
+        cart.clear();
+        notifyListeners();
+    }
+
     public Set<String> getKeys() {
         return cart.keySet();
     }
@@ -55,7 +64,7 @@ public class Cart {
         listeners.add(listener);
     }
 
-    public void removeListener(CartListener listener) {
+    public void unregisterListener(CartListener listener) {
         listeners.remove(listener);
     }
 

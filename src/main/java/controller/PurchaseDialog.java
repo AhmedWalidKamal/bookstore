@@ -11,6 +11,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.LinkedHashMap;
 
 class PurchaseDialog {
 
@@ -33,7 +35,9 @@ class PurchaseDialog {
 
     private AnchorPane dialogContentRootPane;
 
-    PurchaseDialog(StackPane rootPane) {
+    private ShoppingCart parentController;
+
+    PurchaseDialog(StackPane rootPane, ShoppingCart parent) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/purchaseDialog.fxml"));
         fxmlLoader.setController(this);
         try {
@@ -47,6 +51,7 @@ class PurchaseDialog {
         dialog = new JFXDialog(rootPane, dialogContentRootPane, JFXDialog.DialogTransition.TOP);
 
         init();
+        this.parentController = parent;
     }
 
     void show() {
@@ -63,7 +68,21 @@ class PurchaseDialog {
     }
 
     private void handleConfirmButtonAction() {
-        //TODO: process the purchase transaction.
+        LinkedHashMap<String, Integer> booksPurchased
+                = MainController.getInstance().getCurrentUser().getCart().getCart();
+        try {
+            if (MainController.getInstance().getBackendService().buyBooks(
+                    MainController.getInstance().getCurrentUser().getUserID(),
+                    booksPurchased)) {
+                parentController.clear();
+                parentController.showMessage("Purchased Successfully");
+            } else {
+                parentController.showError("Failed to buy books");
+            }
+        } catch (SQLException e) {
+            parentController.showError("Failed to buy books");
+        }
+
         close();
     }
 
