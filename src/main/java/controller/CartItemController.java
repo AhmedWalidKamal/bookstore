@@ -80,8 +80,10 @@ class CartItemController {
 
     private void handleRemoveFromCartAction() {
         parentCardPane.getCards().remove(node);
+        parentController.adjustLabels(book.getPrice(),
+                MainController.getInstance().getCurrentUser()
+                        .getCart().getOrDefault(book.getISBN(), 0), 0);
         MainController.getInstance().getCurrentUser().getCart().remove(book.getISBN());
-        // TODO: Update the labels like number of Items and total price.
     }
 
     private void initFields() {
@@ -146,6 +148,17 @@ class CartItemController {
             if (!newVal) quantityField.validate();
 
         });
-        
+
+        quantityField.textProperty().addListener((observableValue, oldVal, newVal) -> {
+            try {
+                int newCount = Integer.parseInt(newVal);
+                parentController.adjustLabels(book.getPrice(),
+                        MainController.getInstance().getCurrentUser()
+                                .getCart().getOrDefault(book.getISBN(), 0), newCount);
+                MainController.getInstance().getCurrentUser().getCart().add(book.getISBN(), newCount);
+            } catch (NumberFormatException e) {
+                return;
+            }
+        });
     }
 }

@@ -150,6 +150,9 @@ class ShoppingCart {
     public void clear() {
         cartItemCardPane.getCards().clear();
         MainController.getInstance().getCurrentUser().getCart().clear();
+        numberOfItems = 0;
+        totalCost = 0;
+        setLabels();
     }
 
     public void showError(String errorMessage) {
