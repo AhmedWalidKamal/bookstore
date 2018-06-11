@@ -120,6 +120,7 @@ class NavigationPanel {
         homeButton.setOnMouseClicked(mouseEvent -> loadHome());
         shoppingCartButton.setOnMouseClicked(mouseEvent -> loadShoppingCart());
         profileButton.setOnMouseClicked(mouseEvent -> loadProfile());
+
         administrationButton.setOnMouseClicked(mouseEvent -> loadAdministration());
         signOutButton.setOnMouseClicked(mouseEvent -> signOut());
     }
@@ -163,7 +164,11 @@ class NavigationPanel {
     }
 
     private void signOut() {
-        // TODO: I can clear the status of the current session.
+        // Clear the status of the current session.
+        profile = null;
+        shoppingCart = null;
+        home = null;
+        administration = null;
         MainController.getInstance().loadSignIn(false);
     }
 }
