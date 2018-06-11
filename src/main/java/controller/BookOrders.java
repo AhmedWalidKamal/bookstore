@@ -27,6 +27,10 @@ import model.Book;
 import model.BookOrder;
 
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 public class BookOrders {
 
@@ -131,7 +135,8 @@ public class BookOrders {
         if (validateFields()) {
             try {
                 System.out.println("Issuing order");
-                int orderNumber = MainController.getInstance().getBackendService().orderBook(isbnTextField.getText(), Integer.parseInt(quantityTextField.getText()));
+                int orderNumber = MainController.getInstance().getBackendService().orderBook(isbnTextField.getText(),
+                        Integer.parseInt(quantityTextField.getText()));
                 if (orderNumber != -1) {
                     clearFields();
                     dialog.close();
@@ -304,7 +309,8 @@ public class BookOrders {
         TableBookOrder(BookOrder bookOrder) {
             this.ISBN = new SimpleStringProperty(bookOrder.getISBN());
             this.publisher = new SimpleStringProperty(bookOrder.getPublisherName());
-            this.orderDate = new SimpleStringProperty(bookOrder.getOrderDate().toString());
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            this.orderDate = new SimpleStringProperty(bookOrder.getOrderDate().format(formatter));
             this.orderNo = new SimpleIntegerProperty(bookOrder.getOrderNo());
             this.quantity = new SimpleIntegerProperty(bookOrder.getQuantity());
         }
@@ -329,11 +335,7 @@ public class BookOrders {
             return quantity;
         }
 
-        public String getOrderDate() {
-            return orderDate.get();
-        }
-
-        public StringProperty orderDateProperty() {
+        StringProperty orderDateProperty() {
             return orderDate;
         }
     }
