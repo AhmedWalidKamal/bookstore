@@ -60,6 +60,10 @@ public class Cart {
         return cart.keySet();
     }
 
+    public Collection<Integer> getValues() {
+        return cart.values();
+    }
+
     public void addListener(CartListener listener) {
         listeners.add(listener);
     }

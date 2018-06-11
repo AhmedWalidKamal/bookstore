@@ -163,9 +163,28 @@ class ShoppingCart {
         snackBar.enqueue(new JFXSnackbar.SnackbarEvent(message));
     }
 
-    public void adjustLabels(double price, int oldCount, int newCount) {
-        numberOfItems += newCount - oldCount;
-        totalCost += (newCount - oldCount) * price;
+    private int calculateNumberOfItems() {
+        int count = 0;
+        for (int quantity : MainController.getInstance().getCurrentUser().getCart().getValues()) {
+            count += quantity;
+        }
+        return count;
+    }
+
+    private double calculateTotalCost() {
+        double cost = 0;
+
+        for (String ISBN : MainController.getInstance().getCurrentUser().getCart().getKeys()) {
+            cost += books.findBook(ISBN).getPrice() * MainController.getInstance().
+                    getCurrentUser().getCart().getOrDefault(ISBN, 0);
+        }
+        return cost;
+    }
+
+    public void adjustLabels() {
+
+        numberOfItems = calculateNumberOfItems();
+        totalCost = calculateTotalCost();
         setLabels();
     }
 }
