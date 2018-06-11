@@ -67,7 +67,7 @@ public class BackendServices {
             System.out.println("\n" + sys.buyBook("b4", "1234567890126", 500) + "\n");
             System.out.println(sys.confirmOrder(sys.orderBook("1234567890126", 5000)));
 
-            for (Book book : sys.findBooks(1, 5, Book.PUBLISHER_NAME_COLNAME, "Ahmed Walid", Book.ISBN_COLNAME, false).getBooks()) {
+            for (Book book : sys.findBooks(1, 5, Book.PUBLISHER_NAME_COLNAME, "Ahmed Walid", Book.ISBN_COLNAME, false, true).getBooks()) {
                 System.out.println(book.getBookTitle() + "\t" + book.getISBN() + "\t" + book.getCategory() + "\t" + book.getPublisherName() + "\t" + book.getBooksInStock() + "\t" + Arrays.toString(book.getAuthors().toArray()));
             }
 
@@ -75,7 +75,7 @@ public class BackendServices {
             colValues.put("ISBN", new ArrayList<>(Arrays.asList("1234567890123", "1234567890127")));
             colValues.put("BOOKS_IN_STOCK", new ArrayList<>(Arrays.asList("0")));
             colValues.put(BookAuthor.AUTHOR_NAME_COLNAME, new ArrayList<>(Arrays.asList("A", "B")));
-            for (Book book : sys.findBooks(1, 5, colValues, Book.ISBN_COLNAME, true).getBooks()) {
+            for (Book book : sys.findBooks(1, 5, colValues, Book.ISBN_COLNAME, true, true).getBooks()) {
                 System.out.println(book.getBookTitle() + "\t" + book.getISBN() + "\t" + book.getCategory() + "\t" + book.getPublisherName() + "\t" + book.getBooksInStock() + "\t" + Arrays.toString(book.getAuthors().toArray()));
             }
             Book bookz = sys.getBook("1234567890125");
@@ -95,7 +95,7 @@ public class BackendServices {
             System.out.println("Books that contain Sleep");
             colValues.clear();
             colValues.put(Book.BOOK_TITLE_COLNAME, new ArrayList<>(Arrays.asList("Sleep")));
-            for (Book book : sys.findBooks(1, 5, colValues, Book.ISBN_COLNAME, false).getBooks()) {
+            for (Book book : sys.findBooks(1, 5, colValues, Book.ISBN_COLNAME, false, true).getBooks()) {
                 System.out.println(book.getBookTitle() + "\t" + book.getISBN() + "\t" + book.getCategory() + "\t" + book.getPublisherName() + "\t" + book.getBooksInStock() + "\t" + Arrays.toString(book.getAuthors().toArray()));
             }
 
@@ -256,7 +256,8 @@ public class BackendServices {
     }
 
     private void buildQueryCondition(StringBuilder sqlQuery,
-                                     LinkedHashMap<String, ArrayList<String>> colValues) {
+                                     LinkedHashMap<String, ArrayList<String>> colValues,
+                                     boolean useLikeQuery) {
         int cnt = 0;
         String  bookTitleSuffix = Book.BOOK_TITLE_COLNAME + "`";
         String  bookPublisherSuffix = Book.PUBLISHER_NAME_COLNAME + "`";
@@ -264,9 +265,9 @@ public class BackendServices {
         for (String colName : colValues.keySet()) {
             cnt++;
             sqlQuery.append(colName);
-            if (colName.endsWith(bookTitleSuffix)
+            if (useLikeQuery && (colName.endsWith(bookTitleSuffix)
                     || colName.endsWith(bookPublisherSuffix)
-                    || colName.endsWith(bookAuthorSuffix)) {
+                    || colName.endsWith(bookAuthorSuffix))) {
                 sqlQuery.append(" LIKE ?");
             } else {
                 sqlQuery.append(" = ?");
@@ -274,9 +275,9 @@ public class BackendServices {
             for (int i = 0; i < colValues.get(colName).size() - 1; i++) {
                 sqlQuery.append(" AND ");
                 sqlQuery.append(colName);
-                if (colName.endsWith(bookTitleSuffix)
+                if (useLikeQuery && (colName.endsWith(bookTitleSuffix)
                         || colName.endsWith(bookPublisherSuffix)
-                        || colName.endsWith(bookAuthorSuffix)) {
+                        || colName.endsWith(bookAuthorSuffix))) {
                     sqlQuery.append(" LIKE ?");
                 } else {
                     sqlQuery.append(" = ?");
@@ -291,7 +292,7 @@ public class BackendServices {
 
     public BookList findBooks(int pageNumber, int pageSize,
                               LinkedHashMap<String, ArrayList<String>> colValues,
-                              String orderCol, boolean ascending) throws SQLException {
+                              String orderCol, boolean ascending, boolean useLikeQueries) throws SQLException {
         LinkedHashMap<String, ArrayList<String>> authorConditions = new LinkedHashMap<>();
         LinkedHashMap<String, ArrayList<String>> bookConditions = new LinkedHashMap<>();
 
@@ -317,9 +318,24 @@ public class BackendServices {
                 "` WHERE ");*/
         if (!bookConditions.isEmpty()) {
             sqlQuery.append(" WHERE ");
-            buildQueryCondition(sqlQuery, bookConditions);
+            buildQueryCondition(sqlQuery, bookConditions, useLikeQueries);
         }
 
+        if (!authorConditions.isEmpty()) {
+            if (!bookConditions.isEmpty()) {
+                sqlQuery.append(" AND ");
+            } else {
+                sqlQuery.append(" WHERE ");
+            }
+            sqlQuery.append("BOOK.`");
+            sqlQuery.append(Book.ISBN_COLNAME);
+            sqlQuery.append("` IN (SELECT DISTINCT ");
+            sqlQuery.append(BookAuthor.ISBN_COLNAME);
+            sqlQuery.append(" FROM BOOK_AUTHORS");
+            sqlQuery.append(" WHERE ");
+            buildQueryCondition(sqlQuery, authorConditions, useLikeQueries);
+            sqlQuery.append(")");
+        }
         sqlQuery.append(" ORDER BY BOOK.`").append(orderCol).append("`");
         if (ascending) {
             sqlQuery.append(" ASC");
@@ -331,10 +347,7 @@ public class BackendServices {
                 + " LEFT OUTER JOIN BOOK_AUTHORS ON BOOK_AUTHORS.`"
                 + BookAuthor.ISBN_COLNAME + "` = " + alias + ".`" + Book.ISBN_COLNAME + "`");
 
-        if (!authorConditions.isEmpty()) {
-            sqlQuery.append(" WHERE ");
-            buildQueryCondition(sqlQuery, authorConditions);
-        }
+
 
         String  bookTitleSuffix = Book.BOOK_TITLE_COLNAME + "`";
         String  bookPublisherSuffix = Book.PUBLISHER_NAME_COLNAME + "`";
@@ -344,9 +357,9 @@ public class BackendServices {
         int i = 1;
         for (String colName : bookConditions.keySet()) {
             for (int j = 0; j < bookConditions.get(colName).size(); i++, j++) {
-                if (colName.endsWith(bookTitleSuffix)
+                if (useLikeQueries && (colName.endsWith(bookTitleSuffix)
                         || colName.endsWith(bookPublisherSuffix)
-                        || colName.endsWith(bookAuthorSuffix)) {
+                        || colName.endsWith(bookAuthorSuffix))) {
                     preparedStatement.setString(i,  "%" + bookConditions.get(colName).get(j) + "%");
                 } else {
                     preparedStatement.setString(i, bookConditions.get(colName).get(j));
@@ -354,8 +367,6 @@ public class BackendServices {
             }
         }
 
-        preparedStatement.setInt(i++, pageSize + 1);
-        preparedStatement.setInt(i++, (pageNumber - 1) * pageSize);
 
         for (String colName : authorConditions.keySet()) {
             for (int j = 0; j < authorConditions.get(colName).size(); i++, j++) {
@@ -369,9 +380,11 @@ public class BackendServices {
                 }
             }
         }
+        preparedStatement.setInt(i++, pageSize + 1);
+        preparedStatement.setInt(i++, (pageNumber - 1) * pageSize);
 
-        ResultSet rs = preparedStatement.executeQuery();
         System.out.println(preparedStatement.toString());
+        ResultSet rs = preparedStatement.executeQuery();
 
         BookList books = new BookList();
 
@@ -391,24 +404,32 @@ public class BackendServices {
     }
 
     public BookList findBooks(int pageNumber, int pageSize,
-                              String colName, ArrayList<String> values,
+                              LinkedHashMap<String, ArrayList<String>> colValues,
                               String orderCol, boolean ascending) throws SQLException {
+        return findBooks(pageNumber, pageSize, colValues, orderCol, ascending, true);
+    }
+
+    public BookList findBooks(int pageNumber, int pageSize,
+                              String colName, ArrayList<String> values,
+                              String orderCol, boolean ascending,
+                              boolean useLikeQuery) throws SQLException {
         LinkedHashMap<String, ArrayList<String>> colValues = new LinkedHashMap<>();
         colValues.put(colName, values);
-        return findBooks(pageNumber, pageSize, colValues, orderCol, ascending);
+        return findBooks(pageNumber, pageSize, colValues, orderCol, ascending, useLikeQuery);
     }
 
     public BookList findBooks(int pageNumber, int pageSize,
                               String colName, String value,
-                              String orderCol, boolean ascending) throws SQLException {
+                              String orderCol, boolean ascending,
+                              boolean useLikeQuery) throws SQLException {
         ArrayList<String> values = new ArrayList<>();
         values.add(value);
-        return findBooks(pageNumber, pageSize, colName, values, orderCol, ascending);
+        return findBooks(pageNumber, pageSize, colName, values, orderCol, ascending, useLikeQuery);
     }
 
     public Book getBook(String ISBN) throws SQLException {
         BookList books = findBooks(1, 1, Book.ISBN_COLNAME, ISBN,
-                Book.ISBN_COLNAME, true);
+                Book.ISBN_COLNAME,true,false);
 
         return books.findBook(ISBN);
     }
