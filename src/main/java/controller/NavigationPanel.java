@@ -9,10 +9,11 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import model.CartListener;
 
 import java.io.IOException;
 
-class NavigationPanel {
+class NavigationPanel implements CartListener {
 
     @FXML
     private StackPane navigationPanelRootPane;
@@ -28,6 +29,9 @@ class NavigationPanel {
 
     @FXML
     private Label userEmail;
+
+    @FXML
+    private Label cartLabel;
 
     @FXML
     private HBox homeButton;
@@ -122,6 +126,8 @@ class NavigationPanel {
         profileButton.setOnMouseClicked(mouseEvent -> loadProfile());
         administrationButton.setOnMouseClicked(mouseEvent -> loadAdministration());
         signOutButton.setOnMouseClicked(mouseEvent -> signOut());
+
+        MainController.getInstance().getCurrentUser().getCart().addListener(this);
     }
 
     void loadHome() {
@@ -165,5 +171,10 @@ class NavigationPanel {
     private void signOut() {
         // TODO: I can clear the status of the current session.
         MainController.getInstance().loadSignIn(false);
+    }
+
+    @Override
+    public void cartSizeHasChanged() {
+        cartLabel.setText(Integer.toString(MainController.getInstance().getCurrentUser().getCart().size()));
     }
 }

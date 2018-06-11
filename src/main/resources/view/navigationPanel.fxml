@@ -54,7 +54,7 @@
                              <Insets left="7.0" />
                          </HBox.margin>
                      </Label>
-                  <Label styleClass="round-label" text="0">
+                  <Label fx:id="cartLabel" styleClass="round-label" text="0">
                      <HBox.margin>
                         <Insets left="7.0" />
                      </HBox.margin>
