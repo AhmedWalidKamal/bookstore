@@ -81,8 +81,6 @@ class SignIn {
                 loginErrorLabel.setVisible(true);
             } else {
                 // Sign in succeeded.
-                JFXSnackbar bar = new JFXSnackbar(rootPane);
-                bar.enqueue(new JFXSnackbar.SnackbarEvent("Login Successful!"));
                 clearInputFields();
                 loginErrorLabel.setVisible(false);
                 MainController.getInstance().setCurrentUser(user);

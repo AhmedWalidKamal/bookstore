@@ -173,8 +173,20 @@ class NavigationPanel implements CartListener {
     }
 
     private void signOut() {
-        // TODO: I can clear the status of the current session.
+        // Clear the status of the current session.
+        profile = null;
+        shoppingCart = null;
+        home = null;
+        administration = null;
         MainController.getInstance().loadSignIn(false);
+    }
+
+    void disableAdminPrivileges() {
+        administrationButton.setDisable(true);
+    }
+
+    void enableAdminPrivileges() {
+        administrationButton.setDisable(false);
     }
 
     @Override

@@ -27,6 +27,10 @@ import model.Book;
 import model.BookOrder;
 
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 public class BookOrders {
 
@@ -55,7 +59,7 @@ public class BookOrders {
     @FXML
     private Label errorLabel;
 
-    private JFXTreeTableColumn<TableBookOrder, String> publisher, isbn;
+    private JFXTreeTableColumn<TableBookOrder, String> publisher, isbn, orderDate;
     private JFXTreeTableColumn<TableBookOrder, Number> quantity, orderNumber;
     private JFXTreeTableColumn<TableBookOrder, Boolean> confirm;
     private ObservableList<TableBookOrder> orders;
@@ -131,7 +135,8 @@ public class BookOrders {
         if (validateFields()) {
             try {
                 System.out.println("Issuing order");
-                int orderNumber = MainController.getInstance().getBackendService().orderBook(isbnTextField.getText(), Integer.parseInt(quantityTextField.getText()));
+                int orderNumber = MainController.getInstance().getBackendService().orderBook(isbnTextField.getText(),
+                        Integer.parseInt(quantityTextField.getText()));
                 if (orderNumber != -1) {
                     clearFields();
                     dialog.close();
@@ -188,7 +193,7 @@ public class BookOrders {
     private void initTable() {
         this.ordersTable = new JFXTreeTableView<>();
         initColumns();
-        ordersTable.getColumns().setAll(orderNumber, isbn, publisher, quantity, confirm);
+        ordersTable.getColumns().setAll(orderNumber, isbn, publisher, quantity, orderDate,confirm);
         ordersTable.setColumnResizePolicy(JFXTreeTableView.CONSTRAINED_RESIZE_POLICY);
         ordersTable.setShowRoot(false);
     }
@@ -233,7 +238,17 @@ public class BookOrders {
         initISBNCol();
         initPublisherCol();
         initQuantityCol();
+        initOrderDateCol();
         initConfirmCol();
+    }
+
+    private void initOrderDateCol() {
+        orderDate = new JFXTreeTableColumn<>("Order Date");
+        orderDate.setPrefWidth(300);
+        orderDate.setCellValueFactory((TreeTableColumn.CellDataFeatures<TableBookOrder, String> param) -> {
+            if(orderDate.validateValue(param)) return param.getValue().getValue().orderDateProperty();
+            else return orderDate.getComputedValue(param);
+        });
     }
 
     private void initConfirmCol() {
@@ -286,6 +301,7 @@ public class BookOrders {
     class TableBookOrder extends RecursiveTreeObject<TableBookOrder> {
         private StringProperty ISBN;
         private StringProperty publisher;
+        private StringProperty orderDate;
 
         private IntegerProperty orderNo;
         private IntegerProperty quantity;
@@ -293,6 +309,8 @@ public class BookOrders {
         TableBookOrder(BookOrder bookOrder) {
             this.ISBN = new SimpleStringProperty(bookOrder.getISBN());
             this.publisher = new SimpleStringProperty(bookOrder.getPublisherName());
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            this.orderDate = new SimpleStringProperty(bookOrder.getOrderDate().format(formatter));
             this.orderNo = new SimpleIntegerProperty(bookOrder.getOrderNo());
             this.quantity = new SimpleIntegerProperty(bookOrder.getQuantity());
         }
@@ -316,6 +334,10 @@ public class BookOrders {
         IntegerProperty quantityProperty() {
             return quantity;
         }
+
+        StringProperty orderDateProperty() {
+            return orderDate;
+        }
     }
 
     private class ConfirmButtonCell extends JFXTreeTableCell<TableBookOrder, Boolean> {
@@ -329,28 +351,26 @@ public class BookOrders {
             confirmButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent actionEvent) {
-                    System.out.println(getTreeTableRow().getTreeItem().getValue().getOrderNo());
+                    int ordNo = getTreeTableRow().getTreeItem().getValue().getOrderNo();
+                    System.out.println(ordNo);
                     try {
                         boolean success = MainController.getInstance().getBackendService().
-                                confirmOrder(getTreeTableRow().getTreeItem().getValue().getOrderNo());
+                                confirmOrder(ordNo);
                         if (success) {
                             TreeItem<TableBookOrder> item = getTreeTableRow().getTreeItem();
                             item.getParent().getChildren().remove(item);
                             loadPage(pagination.getCurrentPageIndex());
                             JFXSnackbar bar = new JFXSnackbar(ordersRootPane);
-                            bar.enqueue(new JFXSnackbar.SnackbarEvent("Order #" + getTreeTableRow().
-                                    getTreeItem().getValue().getOrderNo() + " confirmed successfully"));
+                            bar.enqueue(new JFXSnackbar.SnackbarEvent("Order #" + ordNo
+                                    + " confirmed successfully"));
                         } else {
-                            System.out.println("Couldn't confirm order number: " + getTreeTableRow().
-                                    getTreeItem().getValue().getOrderNo());
+                            System.out.println("Couldn't confirm order number: " + ordNo);
                         }
                     } catch (SQLException e) {
                         e.printStackTrace();
-                        System.out.println("Couldn't confirm order number: " + getTreeTableRow().getTreeItem().
-                                getValue().getOrderNo());
+                        System.out.println("Couldn't confirm order number: " + ordNo);
 
                     }
-
                 }
             });
         }

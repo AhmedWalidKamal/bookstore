@@ -357,4 +357,12 @@ class Home {
         editBookDialog = new EditBookDialog(homeRootPane, bookToEdit);
         editBookDialog.show();
     }
+
+    void disableAdminPrivileges() {
+
+    }
+
+    void enableAdminPrivileges() {
+
+    }
 }

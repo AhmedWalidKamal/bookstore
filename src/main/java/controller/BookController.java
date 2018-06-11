@@ -84,6 +84,10 @@ class BookController {
         initCoverImage();
         initRating();
         this.home = home;
+        if (MainController.getInstance().getCurrentUser().getUserGroup().equalsIgnoreCase("customer")) {
+            deleteButton.setVisible(false);
+            editButton.setVisible(false);
+        }
     }
 
     Node getNode() {
