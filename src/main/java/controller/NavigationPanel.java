@@ -133,6 +133,8 @@ class NavigationPanel implements CartListener {
     void loadHome() {
         if (home == null) {
             home = new Home();
+        } else {
+            home.handleRefresh();
         }
         borderPane.getChildren().remove(borderPane.getCenter());
         borderPane.setCenter(home.getNode());
@@ -142,6 +144,8 @@ class NavigationPanel implements CartListener {
     private void loadShoppingCart() {
         if (shoppingCart == null) {
             shoppingCart = new ShoppingCart(navigationPanelRootPane);
+        } else {
+            shoppingCart.refresh();
         }
         // TODO: Make sure to keep the current state of the shopping cart for each user (session).
         borderPane.getChildren().remove(borderPane.getCenter());

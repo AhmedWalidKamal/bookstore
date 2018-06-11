@@ -3,6 +3,7 @@ package model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.Set;
 
 public class Cart {
     private LinkedHashMap<String, Integer> cart;
@@ -44,6 +45,10 @@ public class Cart {
             return defaultValue;
         }
         return getValue(key);
+    }
+
+    public Set<String> getKeys() {
+        return cart.keySet();
     }
 
     public void addListener(CartListener listener) {

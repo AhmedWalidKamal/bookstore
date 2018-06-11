@@ -259,6 +259,57 @@ public class BackendServices {
         return books;
     }
 
+    public BookList getBooks(ArrayList<String> ISBNValues, String orderCol, boolean ascending) throws SQLException {
+
+        if (!Book.columns.contains(orderCol)) {
+            return null;
+        }
+
+        if (ISBNValues.isEmpty()) {
+            return new BookList();
+        }
+
+        StringBuilder listSB = new StringBuilder();
+
+        for (int i = 0 ; i < ISBNValues.size() ; i++) {
+            if (i < ISBNValues.size() - 1) {
+                listSB.append("?, ");
+            } else {
+                listSB.append("?");
+            }
+        }
+
+        String sqlQuery = "SELECT * FROM BOOK LEFT OUTER JOIN BOOK_AUTHORS ON BOOK_AUTHORS."
+                + BookAuthor.ISBN_COLNAME + " = BOOK." + Book.ISBN_COLNAME
+                + " WHERE BOOK." + Book.ISBN_COLNAME
+                + " IN (" + listSB.toString() + ") ORDER BY BOOK.`" + orderCol + "`";
+        if (ascending) {
+            sqlQuery += " ASC";
+        } else {
+            sqlQuery += " DESC";
+        }
+
+        PreparedStatement preparedStatement = DBConnection.prepareStatement(sqlQuery);
+
+        for (int i = 0 ; i < ISBNValues.size() ; i++) {
+            preparedStatement.setString(i + 1, ISBNValues.get(i));
+        }
+
+        System.out.println(preparedStatement.toString());
+        ResultSet rs = preparedStatement.executeQuery();
+
+        BookList books = new BookList();
+
+        while (rs.next()) {
+            String ISBN = rs.getString(Book.ISBN_COLNAME);
+
+            Book curBook = books.findBook(ISBN);
+            curBook = getBook(curBook, rs);
+            books.addBook(curBook);
+        }
+        return books;
+    }
+
     private void buildQueryCondition(StringBuilder sqlQuery,
                                      LinkedHashMap<String, ArrayList<String>> colValues,
                                      boolean useLikeQuery) {
