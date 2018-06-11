@@ -52,7 +52,9 @@ class CartItemController {
     private Book book;
     private Node node;
 
-    CartItemController(CardPane parentCardPane, Book book) {
+    private ShoppingCart parentController;
+
+    CartItemController(CardPane parentCardPane, Book book, ShoppingCart parentController) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/cartItem.fxml"));
         fxmlLoader.setController(this);
         try {
@@ -62,6 +64,7 @@ class CartItemController {
         }
         this.parentCardPane = parentCardPane;
         this.book = book;
+        this.parentController = parentController;
         init();
     }
 
@@ -78,7 +81,7 @@ class CartItemController {
     private void handleRemoveFromCartAction() {
         parentCardPane.getCards().remove(node);
         MainController.getInstance().getCurrentUser().getCart().remove(book.getISBN());
-        // TODO: Update the labels like number of Items and total price.
+        parentController.adjustLabels();
     }
 
     private void initFields() {
@@ -141,6 +144,22 @@ class CartItemController {
 
         quantityField.focusedProperty().addListener((o, oldVal, newVal) -> {
             if (!newVal) quantityField.validate();
+
+        });
+
+        quantityField.textProperty().addListener((observableValue, oldVal, newVal) -> {
+            try {
+                int newCount = Integer.parseInt(newVal);
+                if (newCount <= 0) {
+                    quantityField.setText(oldVal);
+                    return;
+                }
+                MainController.getInstance().getCurrentUser().getCart().add(book.getISBN(), newCount);
+                parentController.adjustLabels();
+            } catch (NumberFormatException e) {
+                quantityField.setText(oldVal);
+                return;
+            }
         });
     }
 }

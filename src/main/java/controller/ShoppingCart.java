@@ -23,7 +23,7 @@ class ShoppingCart {
     private AnchorPane shoppingCartRootPane;
 
     @FXML
-    private Label numberOfItems;
+    private Label numberOfItemsLabel;
 
     @FXML
     private Label totalPriceLabel;
@@ -42,6 +42,11 @@ class ShoppingCart {
 
     private Node node;
 
+    private BookList books;
+
+    private int numberOfItems;
+    private double totalCost;
+
     ShoppingCart(StackPane rootPane) {
         this.rootPane = rootPane;
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/shoppingCart.fxml"));
@@ -51,6 +56,8 @@ class ShoppingCart {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        totalCost = 0;
+        numberOfItems = 0;
         init();
 
         snackBar = new JFXSnackbar(shoppingCartRootPane);
@@ -71,13 +78,18 @@ class ShoppingCart {
                 System.out.println("Error: book was null");
                 continue;
             }
-            CartItemController cartItemController = new CartItemController(cartItemCardPane, book);
+            CartItemController cartItemController = new CartItemController(cartItemCardPane, book, this);
             cartItemCardPane.getCards().add(cartItemController.getNode());
         }
     }
 
     private void clearBooks() {
         cartItemCardPane.getCards().clear();
+    }
+
+    private void setLabels() {
+        numberOfItemsLabel.setText(Integer.toString(numberOfItems));
+        totalPriceLabel.setText(Double.toString(totalCost));
     }
 
     private void fetchBooks() {
@@ -104,6 +116,16 @@ class ShoppingCart {
 
             populateBookView(books);
 
+            this.books = books;
+
+            numberOfItems = books.size();
+            totalCost = 0;
+            for (Book book : books.getBooks()) {
+                totalCost += book.getPrice() * MainController.getInstance().getCurrentUser()
+                        .getCart().getOrDefault(book.getISBN(), 0);
+            }
+
+            setLabels();
         } catch (SQLException e) {
             e.printStackTrace();
             snackBar.enqueue(new JFXSnackbar.SnackbarEvent("Failed to retrieve books."));
@@ -116,12 +138,53 @@ class ShoppingCart {
 
     private void handlePurchaseButtonAction() {
         if (purchaseDialog == null) {
-            purchaseDialog = new PurchaseDialog(rootPane);
+            purchaseDialog = new PurchaseDialog(rootPane, this);
         }
         purchaseDialog.show();
     }
 
     public void refresh() {
         fetchBooks();
+    }
+
+    public void clear() {
+        cartItemCardPane.getCards().clear();
+        MainController.getInstance().getCurrentUser().getCart().clear();
+        numberOfItems = 0;
+        totalCost = 0;
+        setLabels();
+    }
+
+    public void showError(String errorMessage) {
+        snackBar.enqueue(new JFXSnackbar.SnackbarEvent(errorMessage));
+    }
+
+    public void showMessage(String message) {
+        snackBar.enqueue(new JFXSnackbar.SnackbarEvent(message));
+    }
+
+    private int calculateNumberOfItems() {
+        int count = 0;
+        for (int quantity : MainController.getInstance().getCurrentUser().getCart().getValues()) {
+            count += quantity;
+        }
+        return count;
+    }
+
+    private double calculateTotalCost() {
+        double cost = 0;
+
+        for (String ISBN : MainController.getInstance().getCurrentUser().getCart().getKeys()) {
+            cost += books.findBook(ISBN).getPrice() * MainController.getInstance().
+                    getCurrentUser().getCart().getOrDefault(ISBN, 0);
+        }
+        return cost;
+    }
+
+    public void adjustLabels() {
+
+        numberOfItems = calculateNumberOfItems();
+        totalCost = calculateTotalCost();
+        setLabels();
     }
 }

@@ -462,7 +462,7 @@ public class BackendServices {
     public BookList findBooks(int pageNumber, int pageSize,
                               LinkedHashMap<String, ArrayList<String>> colValues,
                               String orderCol, boolean ascending) throws SQLException {
-        return findBooks(pageNumber, pageSize, colValues, orderCol, ascending, false);
+        return findBooks(pageNumber, pageSize, colValues, orderCol, ascending, true);
     }
 
     public BookList findBooks(int pageNumber, int pageSize,
@@ -865,9 +865,8 @@ public class BackendServices {
     }
 
     public boolean buyBooks(int userID,
-                            Map<String, Integer> bookQuantities,
-                            Date purchaseDate) throws SQLException {
-        String sqlQuery = "{CALL MAKE_PURCHASE(?, ?, ?, ?, ?, ?, ?, ?)}";
+                            Map<String, Integer> bookQuantities) throws SQLException {
+        String sqlQuery = "{CALL MAKE_PURCHASE(?, ?, ?, ?, ?, ?, ?)}";
         Collection<Statement> statements = new ArrayList<>();
 
         if (bookQuantities.isEmpty()) {
@@ -886,27 +885,26 @@ public class BackendServices {
 
                 callStatement.setInt(1, userID);
                 callStatement.setString(2, ISBN);
-                callStatement.setDate(3, new java.sql.Date(purchaseDate.getTime()));
-                callStatement.setInt(4, bookQuantities.get(ISBN));
-                callStatement.registerOutParameter(5, Types.BOOLEAN);
-                callStatement.registerOutParameter(6, Types.INTEGER);
-                callStatement.registerOutParameter(7, Types.FLOAT);
-                callStatement.registerOutParameter(8, Types.VARCHAR);
+                callStatement.setInt(3, bookQuantities.get(ISBN));
+                callStatement.registerOutParameter(4, Types.BOOLEAN);
+                callStatement.registerOutParameter(5, Types.INTEGER);
+                callStatement.registerOutParameter(6, Types.FLOAT);
+                callStatement.registerOutParameter(7, Types.VARCHAR);
 
 
                 int updateCount = callStatement.executeUpdate();
 
                 System.out.println(callStatement);
 
-                boolean success = callStatement.getBoolean(5);
+                boolean success = callStatement.getBoolean(4);
 
 
-                int purchaseId = callStatement.getInt(6);
+                int purchaseId = callStatement.getInt(5);
 
-                double totalCost = callStatement.getDouble(7);
+                double totalCost = callStatement.getDouble(6);
 
 
-                String errorMessage = callStatement.getString(8);
+                String errorMessage = callStatement.getString(7);
 
                 if (!success) {
                     throw new SQLException(errorMessage);
@@ -938,16 +936,12 @@ public class BackendServices {
         return retVal;
     }
 
-    public boolean buyBook(int userID, Map<String, Integer> bookQuantities) throws SQLException {
-        return buyBooks(userID, bookQuantities, new Date());
-    }
-
     public boolean buyBook(int userID, String ISBN, int quantity) throws SQLException {
         Map<String, Integer> bookQuantities = new HashMap<>();
 
         bookQuantities.put(ISBN, quantity);
 
-        return buyBook(userID, bookQuantities);
+        return buyBooks(userID, bookQuantities);
     }
 
     public int orderBook(String ISBN, int quantity) throws SQLException {
@@ -1111,7 +1105,7 @@ public class BackendServices {
     private void showJasperReport(Stage primaryStage, String reportTitle,
                                   String inputFile) {
         HashMap<String, Object> parametersMap = new HashMap<>();
-        parametersMap.put("Report Title", reportTitle);
+        parametersMap.put("ReportTitle", reportTitle);
 
         JasperReportService.showJasperReport(primaryStage, reportTitle,
                 jasperPath + File.separator + inputFile + JasperReportService.JASPER_EXTENSION,
