@@ -102,6 +102,11 @@ public class MainController {
         }
         navigationPanel.setUserInfo(getCurrentUser().getUserName(), getCurrentUser().getEmail()
                                                     , getCurrentUser().getProfile().getUserPhotoPath());
+        if (currentUser.getUserGroup().equalsIgnoreCase("customer")) {
+            navigationPanel.disableAdminPrivileges();
+        } else {
+            navigationPanel.enableAdminPrivileges();
+        }
 
         if (primaryStage.getScene() == null) {
             Scene scene = new Scene(navigationPanel.getParent(), SCENE_WIDTH, SCENE_HEIGHT);

@@ -120,7 +120,6 @@ class NavigationPanel {
         homeButton.setOnMouseClicked(mouseEvent -> loadHome());
         shoppingCartButton.setOnMouseClicked(mouseEvent -> loadShoppingCart());
         profileButton.setOnMouseClicked(mouseEvent -> loadProfile());
-
         administrationButton.setOnMouseClicked(mouseEvent -> loadAdministration());
         signOutButton.setOnMouseClicked(mouseEvent -> signOut());
     }
@@ -170,5 +169,15 @@ class NavigationPanel {
         home = null;
         administration = null;
         MainController.getInstance().loadSignIn(false);
+    }
+
+    void disableAdminPrivileges() {
+        administrationButton.setDisable(true);
+//        home.disableAdminPrivileges();
+    }
+
+    void enableAdminPrivileges() {
+        administrationButton.setDisable(false);
+//        home.enableAdminPrivileges();
     }
 }
