@@ -129,7 +129,7 @@ class Home {
                 System.out.println("Error: book was null");
                 continue;
             }
-            BookController bookController = new BookController(book);
+            BookController bookController = new BookController(book, this);
             bookCardPane.getCards().add(bookController.getNode());
         }
     }
@@ -207,6 +207,21 @@ class Home {
         pageSize = newSize;
         pageNumber = (firstElement - 1) / pageSize + 1;
         fetchPage(pageNumber, pageSize);
+    }
+
+    void deleteBook(String ISBN) {
+        try {
+            boolean success = MainController.getInstance().getBackendService().deleteBook(ISBN);
+            if (success) {
+                handleRefresh();
+                snackBar.enqueue(new JFXSnackbar.SnackbarEvent("Book deleted successfully"));
+            } else {
+                snackBar.enqueue(new JFXSnackbar.SnackbarEvent("Failed to delete book"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            snackBar.enqueue(new JFXSnackbar.SnackbarEvent("Failed to delete book"));
+        }
     }
 
     private void handleRefresh() {
