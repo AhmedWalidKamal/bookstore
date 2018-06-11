@@ -40,6 +40,8 @@ class ShoppingCart {
             e.printStackTrace();
         }
         init();
+        // For testing purposes only.
+//     cartItemCardPane.getCards().add(new CartItemController(cartItemCardPane, null).getNode());
     }
 
     Node getNode() {

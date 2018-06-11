@@ -1,7 +1,7 @@
 package controller;
 
+import com.gluonhq.charm.glisten.control.Icon;
 import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.validation.RequiredFieldValidator;
@@ -24,10 +24,7 @@ class PurchaseDialog {
     private JFXTextField creditCardNumberField;
 
     @FXML
-    private JFXTextField cvvField;
-
-    @FXML
-    private JFXDatePicker expirationDateField;
+    private JFXTextField expirationDateField;
 
     @FXML
     private JFXTextField shippingAddressField;
@@ -61,7 +58,7 @@ class PurchaseDialog {
         cancelButton.setOnMouseClicked(mouseEvent -> handleCancelButtonAction());
 
         initCreditCardNumberField();
-        initCvvField();
+        initExpirationDateField();
         initShippingAddressField();
     }
 
@@ -83,12 +80,12 @@ class PurchaseDialog {
         });
     }
 
-    private void initCvvField() {
+    private void initExpirationDateField() {
         RequiredFieldValidator validator = new RequiredFieldValidator();
-        validator.setMessage("CVV Code Required");
-        cvvField.getValidators().add(validator);
-        cvvField.focusedProperty().addListener((o, oldVal, newVal) -> {
-            if (!newVal) cvvField.validate();
+        validator.setMessage("Expiration Date Required");
+        expirationDateField.getValidators().add(validator);
+        expirationDateField.focusedProperty().addListener((o, oldVal, newVal) -> {
+            if (!newVal) expirationDateField.validate();
         });
     }
 
@@ -108,8 +105,7 @@ class PurchaseDialog {
     // To be used on clearing the user session data.
     private void clearInputFields() {
         creditCardNumberField.clear();
-        cvvField.clear();
-        expirationDateField.setValue(null);
+        expirationDateField.clear();
         shippingAddressField.clear();
     }
 }

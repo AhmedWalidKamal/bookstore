@@ -13,7 +13,7 @@
 
 <!--<AnchorPane xmlns="http://javafx.com/javafx/8.0.162-ea" xmlns:fx="http://javafx.com/fxml/1">-->
 <!--<children>-->
-<HBox alignment="CENTER_LEFT" layoutX="31.0" layoutY="121.0" minWidth="-Infinity" prefWidth="550.0" style="-fx-border-color: BLACK;" AnchorPane.bottomAnchor="260.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="260.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1">
+<HBox alignment="CENTER_LEFT" layoutX="31.0" layoutY="121.0" minWidth="-Infinity" prefWidth="550.0" AnchorPane.bottomAnchor="260.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="260.0" xmlns="http://javafx.com/javafx/8.0.162-ea" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <ImageView fx:id="bookCoverView" fitHeight="165.0" fitWidth="124.0" pickOnBounds="true" preserveRatio="true">
             <image>
@@ -37,7 +37,7 @@
                         </Label>
                         <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
                            <children>
-                              <JFXButton prefHeight="28.0" prefWidth="32.0" styleClass="remove-from-cart-btn" stylesheets="@css/cartItem.css" text=" " />
+                              <JFXButton fx:id="removeFromCartButton" prefHeight="28.0" prefWidth="32.0" styleClass="remove-from-cart-btn" stylesheets="@css/cartItem.css" text=" " />
                            </children>
                         </HBox>
                     </children>
@@ -47,7 +47,7 @@
                 </HBox>
                 <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0">
                     <children>
-                        <Label text="by" translateX="15.0">
+                        <Label fx:id="byLabel" text="by" translateX="15.0">
                             <font>
                                 <Font size="10.0" />
                             </font>
@@ -80,12 +80,12 @@
                                 <Insets right="5.0" />
                             </HBox.margin>
                         </Label>
-                        <Label fx:id="categoryLabel" layoutX="17.0" layoutY="17.0" text=" 978-1-5011-2974-2">
+                        <Label fx:id="isbnLabel" layoutX="17.0" layoutY="17.0" text=" 978-1-5011-2974-2">
                             <font>
                                 <Font size="11.0" />
                             </font>
                         </Label>
-                        <HBox alignment="CENTER_RIGHT" prefHeight="31.0" prefWidth="215.0" HBox.hgrow="ALWAYS">
+                        <HBox alignment="CENTER" prefHeight="31.0" prefWidth="215.0" HBox.hgrow="ALWAYS">
                            <children>
                               <Label text="Quantity">
                                  <HBox.margin>
@@ -95,7 +95,7 @@
                                     <Font size="11.0" />
                                  </font>
                               </Label>
-                              <JFXTextField prefHeight="26.0" prefWidth="83.0" />
+                              <JFXTextField fx:id="quantityField" alignment="CENTER" prefHeight="26.0" prefWidth="119.0" />
                            </children>
                            <padding>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
