@@ -348,31 +348,29 @@ public class BookOrders {
             paddedButton.setPadding(new Insets(3));
             paddedButton.getChildren().add(confirmButton);
             confirmButton.getStyleClass().add("blue-btn");
-            confirmButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent actionEvent) {
-                    int ordNo = getTreeTableRow().getTreeItem().getValue().getOrderNo();
-                    System.out.println(ordNo);
-                    try {
-                        boolean success = MainController.getInstance().getBackendService().
-                                confirmOrder(ordNo);
-                        if (success) {
-                            TreeItem<TableBookOrder> item = getTreeTableRow().getTreeItem();
-                            item.getParent().getChildren().remove(item);
-                            loadPage(pagination.getCurrentPageIndex());
-                            JFXSnackbar bar = new JFXSnackbar(ordersRootPane);
-                            bar.enqueue(new JFXSnackbar.SnackbarEvent("Order #" + ordNo
-                                    + " confirmed successfully"));
-                        } else {
-                            System.out.println("Couldn't confirm order number: " + ordNo);
-                        }
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                        System.out.println("Couldn't confirm order number: " + ordNo);
+            confirmButton.setOnAction(actionEvent -> handleConfirmButtonAction());
+        }
 
-                    }
+        private void handleConfirmButtonAction() {
+            int ordNo = getTreeTableRow().getTreeItem().getValue().getOrderNo();
+            System.out.println(ordNo);
+            try {
+                boolean success = MainController.getInstance().getBackendService().
+                        confirmOrder(ordNo);
+                if (success) {
+                    TreeItem<TableBookOrder> item = getTreeTableRow().getTreeItem();
+                    item.getParent().getChildren().remove(item);
+                    loadPage(pagination.getCurrentPageIndex());
+                    JFXSnackbar bar = new JFXSnackbar(ordersRootPane);
+                    bar.enqueue(new JFXSnackbar.SnackbarEvent("Order #" + ordNo
+                            + " confirmed successfully"));
+                } else {
+                    System.out.println("Couldn't confirm order number: " + ordNo);
                 }
-            });
+            } catch (SQLException e) {
+                e.printStackTrace();
+                System.out.println("Couldn't confirm order number: " + ordNo);
+            }
         }
 
         // Places confirm button if field isn't empty
