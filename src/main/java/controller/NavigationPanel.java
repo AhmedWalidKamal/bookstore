@@ -8,13 +8,17 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 
 import java.io.IOException;
 
 class NavigationPanel {
 
     @FXML
-    private BorderPane rootPane;
+    private StackPane navigationPanelRootPane;
+
+    @FXML
+    private BorderPane borderPane;
 
     @FXML
     private Avatar userAvatar;
@@ -124,18 +128,18 @@ class NavigationPanel {
         if (home == null) {
             home = new Home();
         }
-        rootPane.getChildren().remove(rootPane.getCenter());
-        rootPane.setCenter(home.getNode());
+        borderPane.getChildren().remove(borderPane.getCenter());
+        borderPane.setCenter(home.getNode());
         MainController.getInstance().getPrimaryStage().setTitle("Library Bookstores | Home");
     }
 
     private void loadShoppingCart() {
         if (shoppingCart == null) {
-            shoppingCart = new ShoppingCart();
+            shoppingCart = new ShoppingCart(navigationPanelRootPane);
         }
         // TODO: Make sure to keep the current state of the shopping cart for each user (session).
-        rootPane.getChildren().remove(rootPane.getCenter());
-        rootPane.setCenter(shoppingCart.getNode());
+        borderPane.getChildren().remove(borderPane.getCenter());
+        borderPane.setCenter(shoppingCart.getNode());
         MainController.getInstance().getPrimaryStage().setTitle("Library Bookstores | Shopping Cart");
     }
 
@@ -144,8 +148,8 @@ class NavigationPanel {
             profile = new Profile();
         }
         // TODO: Makes sure once the user sign in his available data fill the profile fields.
-        rootPane.getChildren().remove(rootPane.getCenter());
-        rootPane.setCenter(profile.getNode());
+        borderPane.getChildren().remove(borderPane.getCenter());
+        borderPane.setCenter(profile.getNode());
         MainController.getInstance().getPrimaryStage().setTitle("Library Bookstores | Profile");
     }
 
@@ -153,8 +157,8 @@ class NavigationPanel {
         if (administration == null) {
             administration = new Administration();
         }
-        rootPane.getChildren().remove(rootPane.getCenter());
-        rootPane.setCenter(administration.getNode());
+        borderPane.getChildren().remove(borderPane.getCenter());
+        borderPane.setCenter(administration.getNode());
         MainController.getInstance().getPrimaryStage().setTitle("Library Bookstores | Administration");
     }
 

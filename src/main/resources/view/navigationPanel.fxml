@@ -1,97 +1,108 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.gluonhq.charm.glisten.control.Avatar?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="rootPane" styleClass="BorderPane" stylesheets="@css/navigationPanel.css"
-    xmlns="http://javafx.com/javafx/8.0.162-ea" xmlns:fx="http://javafx.com/fxml/1">
-   <left>
-       <VBox styleClass="nav-panel">
-           <VBox styleClass="user-info">
-               <Avatar fx:id="userAvatar" styleClass="user-info-avatar">
-               <VBox.margin>
-                  <Insets bottom="20.0" />
-               </VBox.margin></Avatar>
-               <Label fx:id="userName" styleClass="user-info-username" text="Username">
-               <VBox.margin>
-                  <Insets bottom="15.0" />
-               </VBox.margin>
-               </Label>
-               <Label fx:id="userEmail" styleClass="user-info-email" text="Email" />
-           </VBox>
-         <Separator>
-            <VBox.margin>
-               <Insets left="27.0" right="27.0" />
-            </VBox.margin></Separator>
-           <HBox fx:id="homeButton" styleClass="nav-entry">
-               <ImageView fitHeight="17.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
-                   <Image url="@images/home-icon.png" />
-               </ImageView>
-               <Label styleClass="nav-entry-label" text="Home">
-                   <HBox.margin>
-                       <Insets left="7.0" />
-                   </HBox.margin>
-               </Label>
-           </HBox>
-           <HBox fx:id="shoppingCartButton" styleClass="nav-entry">
-               <ImageView fitHeight="17.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
-                   <Image url="@images/shopping-cart-icon.png" />
-               </ImageView>
-               <Label styleClass="nav-entry-label" text="Shopping Cart">
-                   <HBox.margin>
-                       <Insets left="7.0" />
-                   </HBox.margin>
-               </Label>
-            <Label styleClass="round-label" text="0">
-               <HBox.margin>
-                  <Insets left="7.0" />
-               </HBox.margin>
-            </Label>
-           </HBox>
-           <HBox fx:id="profileButton" styleClass="nav-entry">
-               <ImageView fitHeight="17.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
-                   <Image url="@images/profile-icon.png" />
-               </ImageView>
-               <Label styleClass="nav-entry-label" text="Profile">
-                   <HBox.margin>
-                       <Insets left="7.0" />
-                   </HBox.margin>
-               </Label>
-           </HBox>
-           <HBox fx:id="administrationButton" styleClass="nav-entry">
-               <ImageView fitHeight="17.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
-                   <Image url="@images/admin-icon.png" />
-               </ImageView>
-               <Label styleClass="nav-entry-label" text="Administration">
-                   <HBox.margin>
-                       <Insets left="7.0" />
-                   </HBox.margin>
-               </Label>
-           </HBox>
-           <VBox styleClass="sign-out-VBox">
-               <VBox.margin>
-                   <Insets top="80.0" />
-               </VBox.margin>
-               <HBox fx:id="signOutButton" styleClass="sign-out-HBox">
-                   <ImageView fitHeight="17.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
-                       <Image url="@images/sign-out-icon.png" />
-                   </ImageView>
-                   <Label styleClass="nav-entry-label" text="Sign Out">
-                       <HBox.margin>
-                           <Insets left="7.0" />
-                       </HBox.margin>
-                   </Label>
-               <padding>
-                  <Insets bottom="10.0" top="10.0" />
-               </padding>
-               </HBox>
-           </VBox>
-         <opaqueInsets>
-            <Insets />
-         </opaqueInsets>
-       </VBox>
-   </left>
-</BorderPane>
+
+<StackPane fx:id="navigationPanelRootPane" xmlns="http://javafx.com/javafx/8.0.162-ea" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <BorderPane fx:id="borderPane" styleClass="BorderPane" stylesheets="@css/navigationPanel.css">
+         <left>
+             <VBox styleClass="nav-panel">
+                 <VBox styleClass="user-info">
+                     <Avatar fx:id="userAvatar" styleClass="user-info-avatar">
+                     <VBox.margin>
+                        <Insets bottom="20.0" />
+                     </VBox.margin>
+                  </Avatar>
+                     <Label fx:id="userName" styleClass="user-info-username" text="Username">
+                     <VBox.margin>
+                        <Insets bottom="15.0" />
+                     </VBox.margin>
+                     </Label>
+                     <Label fx:id="userEmail" styleClass="user-info-email" text="Email" />
+                 </VBox>
+               <Separator>
+                  <VBox.margin>
+                     <Insets left="27.0" right="27.0" />
+                  </VBox.margin>
+               </Separator>
+                 <HBox fx:id="homeButton" styleClass="nav-entry">
+                     <ImageView fitHeight="17.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                         <Image url="@images/home-icon.png" />
+                     </ImageView>
+                     <Label styleClass="nav-entry-label" text="Home">
+                         <HBox.margin>
+                             <Insets left="7.0" />
+                         </HBox.margin>
+                     </Label>
+                 </HBox>
+                 <HBox fx:id="shoppingCartButton" styleClass="nav-entry">
+                     <ImageView fitHeight="17.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                         <Image url="@images/shopping-cart-icon.png" />
+                     </ImageView>
+                     <Label styleClass="nav-entry-label" text="Shopping Cart">
+                         <HBox.margin>
+                             <Insets left="7.0" />
+                         </HBox.margin>
+                     </Label>
+                  <Label styleClass="round-label" text="0">
+                     <HBox.margin>
+                        <Insets left="7.0" />
+                     </HBox.margin>
+                  </Label>
+                 </HBox>
+                 <HBox fx:id="profileButton" styleClass="nav-entry">
+                     <ImageView fitHeight="17.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                         <Image url="@images/profile-icon.png" />
+                     </ImageView>
+                     <Label styleClass="nav-entry-label" text="Profile">
+                         <HBox.margin>
+                             <Insets left="7.0" />
+                         </HBox.margin>
+                     </Label>
+                 </HBox>
+                 <HBox fx:id="administrationButton" styleClass="nav-entry">
+                     <ImageView fitHeight="17.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                         <Image url="@images/admin-icon.png" />
+                     </ImageView>
+                     <Label styleClass="nav-entry-label" text="Administration">
+                         <HBox.margin>
+                             <Insets left="7.0" />
+                         </HBox.margin>
+                     </Label>
+                 </HBox>
+                 <VBox styleClass="sign-out-VBox">
+                     <VBox.margin>
+                         <Insets top="80.0" />
+                     </VBox.margin>
+                     <HBox fx:id="signOutButton" styleClass="sign-out-HBox">
+                         <ImageView fitHeight="17.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                             <Image url="@images/sign-out-icon.png" />
+                         </ImageView>
+                         <Label styleClass="nav-entry-label" text="Sign Out">
+                             <HBox.margin>
+                                 <Insets left="7.0" />
+                             </HBox.margin>
+                         </Label>
+                     <padding>
+                        <Insets bottom="10.0" top="10.0" />
+                     </padding>
+                     </HBox>
+                 </VBox>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+             </VBox>
+         </left>
+      </BorderPane>
+   </children>
+</StackPane>
