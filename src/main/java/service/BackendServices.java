@@ -648,14 +648,48 @@ public class BackendServices {
         return updateCount > 0;
     }
 
-    public boolean promote(int userID, String newRole) throws SQLException {
-        LinkedHashMap<String, String> colValues = new LinkedHashMap<>();
-        colValues.put(BookstoreUser.USER_GROUP_COLNAME, newRole);
-        return updateUser(userID, colValues);
+    public boolean updateUser(String userName, LinkedHashMap<String, String> colValues) throws SQLException {
+
+        if (colValues == null || colValues.isEmpty()) {
+            return false;
+        }
+        StringBuilder sqlQuery = new StringBuilder();
+        sqlQuery.append("UPDATE BOOKSTORE_USER SET");
+
+        int i = 0;
+
+        for (String colName : colValues.keySet()) {
+            sqlQuery.append(" BOOKSTORE_USER.`");
+            sqlQuery.append(colName);
+            sqlQuery.append("` = ?");
+            if (i++ < colValues.size() - 1) {
+                sqlQuery.append(",");
+            }
+        }
+
+        sqlQuery.append(" WHERE " + BookstoreUser.USER_NAME_COLNAME + " = ?");
+
+        PreparedStatement preparedStatement = DBConnection.prepareStatement(sqlQuery.toString());
+
+        int pos = 1;
+
+        for (String colName : colValues.keySet()) {
+            preparedStatement.setString(pos++, colValues.get(colName));
+        }
+
+        preparedStatement.setString(pos, userName);
+
+        int updateCount = preparedStatement.executeUpdate();
+
+        System.out.println(preparedStatement);
+
+        return updateCount > 0;
     }
 
     public boolean promote(String userName, String newRole) throws SQLException {
-        return false;
+        LinkedHashMap<String, String> colValues = new LinkedHashMap<>();
+        colValues.put(BookstoreUser.USER_GROUP_COLNAME, newRole);
+        return updateUser(userName, colValues);
     }
 
     public boolean updatePassword(int userID, String oldPassword, String newPassword) throws SQLException {
