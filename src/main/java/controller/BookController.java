@@ -8,15 +8,12 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Paint;
 import model.Book;
 import model.BookAuthor;
 
-import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 
 class BookController {
@@ -177,6 +174,6 @@ class BookController {
     }
 
     private void editBook() {
-//        boolean success = MainController.getInstance().getBackendService().modifyBook(this.book.getISBN(), <MyMap>);
+        this.home.editBook(book);
     }
 }

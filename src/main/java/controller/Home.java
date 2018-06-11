@@ -24,9 +24,10 @@ class Home {
     private int pageNumber;
     private String orderCol;
     private boolean ascending;
+    private EditBookDialog editBookDialog;
 
     @FXML
-    private AnchorPane homeRootPane;
+    private StackPane homeRootPane;
 
     @FXML
     private JFXTextField searchTextField;
@@ -349,5 +350,10 @@ class Home {
 
     private void initHome() {
         fetchPage(pageNumber, pageSize);
+    }
+
+    void editBook(Book bookToEdit) {
+        editBookDialog = new EditBookDialog(homeRootPane, bookToEdit);
+        editBookDialog.show();
     }
 }
