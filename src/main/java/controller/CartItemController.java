@@ -3,6 +3,8 @@ package controller;
 import com.gluonhq.charm.glisten.control.CardPane;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.validation.NumberValidator;
+import com.jfoenix.validation.RequiredFieldValidator;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -104,7 +106,7 @@ class CartItemController {
             authorsLabel.setVisible(false);
             byLabel.setVisible(false);
         }
-        quantityField.setText("1");
+        initQuantityField();
         priceLabel.setText(Double.toString(book.getPrice()));
     }
 
@@ -120,5 +122,19 @@ class CartItemController {
         }
 
         bookCoverView.setImage(new Image(imagePath));
+    }
+    private void initQuantityField() {
+        quantityField.setText("1");
+        RequiredFieldValidator requiredFieldValidator = new RequiredFieldValidator();
+        NumberValidator numberValidator = new NumberValidator();
+
+        requiredFieldValidator.setMessage("Quantity Required");
+        numberValidator.setMessage("Integers Only");
+
+        quantityField.getValidators().addAll(requiredFieldValidator, numberValidator);
+
+        quantityField.focusedProperty().addListener((o, oldVal, newVal) -> {
+            if (!newVal) quantityField.validate();
+        });
     }
 }

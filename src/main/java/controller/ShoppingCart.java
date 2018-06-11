@@ -41,7 +41,7 @@ class ShoppingCart {
         }
         init();
         // For testing purposes only.
-//        cartItemCardPane.getCards().add(new CartItemController(cartItemCardPane).getNode());
+//     cartItemCardPane.getCards().add(new CartItemController(cartItemCardPane, null).getNode());
     }
 
     Node getNode() {
