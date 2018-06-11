@@ -56,6 +56,7 @@ class Profile {
         changePassword.setOnMouseClicked(mouseEvent -> handleChangePasswordAction());
         updateProfile.setOnMouseClicked(mouseEvent -> handleUpdateProfileAction());
 
+        shippingAddress.setMinWidth(200);
         shippingAddress.prefColumnCountProperty().bind(shippingAddress.textProperty().length().add(1));
         initFields();
     }
