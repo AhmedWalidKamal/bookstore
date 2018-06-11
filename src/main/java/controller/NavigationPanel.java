@@ -188,7 +188,7 @@ class NavigationPanel implements CartListener {
     void enableAdminPrivileges() {
         administrationButton.setDisable(false);
     }
-    
+
     @Override
     public void cartSizeHasChanged() {
         cartLabel.setText(Integer.toString(MainController.getInstance().getCurrentUser().getCart().size()));

@@ -172,7 +172,7 @@ public class BackendServices {
                 BookstoreUser.PASSWORD_COLNAME + ", " +
                 BookstoreUser.USER_GROUP_COLNAME + ") VALUES(?, ?, ?, ?)";
 
-        PreparedStatement preparedStatement = DBConnection.prepareStatement(sqlQuery);
+        PreparedStatement preparedStatement = DBConnection.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
         preparedStatement.setString(1, userName);
         preparedStatement.setString(2, email);
         preparedStatement.setString(3, password);
@@ -186,8 +186,9 @@ public class BackendServices {
         curUser.setUserGroup(userGroup);
         curUser.setEmail(email);
         curUser.setUserName(userName);
-        curUser.setUserID(rs.getInt(1));
-
+        if (rs.next()) {
+            curUser.setUserID(rs.getInt(1));
+        }
         return curUser;
     }
 

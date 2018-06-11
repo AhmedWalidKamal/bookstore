@@ -89,6 +89,7 @@ class SignUp {
                 registrationErrorLabel.setVisible(true);
             }
         } catch (SQLException e) {
+            e.printStackTrace();
             passwordField.clear();
             registrationErrorLabel.setText("Username already exists!");
             registrationErrorLabel.setVisible(true);
