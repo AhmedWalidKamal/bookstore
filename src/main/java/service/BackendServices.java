@@ -1105,7 +1105,7 @@ public class BackendServices {
     private void showJasperReport(Stage primaryStage, String reportTitle,
                                   String inputFile) {
         HashMap<String, Object> parametersMap = new HashMap<>();
-        parametersMap.put("Report Title", reportTitle);
+        parametersMap.put("ReportTitle", reportTitle);
 
         JasperReportService.showJasperReport(primaryStage, reportTitle,
                 jasperPath + File.separator + inputFile + JasperReportService.JASPER_EXTENSION,
