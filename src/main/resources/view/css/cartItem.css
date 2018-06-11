@@ -1,0 +1,5 @@
+.remove-from-cart-btn {
+    -fx-background-image: url('../images/close-icon.png');
+    -fx-background-position: center;
+    -fx-background-repeat: stretch;
+}

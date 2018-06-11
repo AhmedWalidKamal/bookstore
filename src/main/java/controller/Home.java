@@ -86,7 +86,7 @@ class Home {
             e.printStackTrace();
         }
 
-        pageSize = 5;
+        pageSize = 10;
         pageNumber = 1;
 
         orderCol = Book.BOOK_TITLE_COLNAME;
@@ -114,13 +114,6 @@ class Home {
         initButtons();
         initHome();
 
-//        Book test = new Book();
-//        test.setBookTitle("Testssss");
-//
-//        // for book view testing purposes only.
-//        bookCardPane.getCards().add(new BookController(test).getNode());
-//        bookCardPane.getCards().add(new BookController(test).getNode());
-//        bookCardPane.getCards().add(new BookController(test).getNode());
     }
 
     Node getNode() {

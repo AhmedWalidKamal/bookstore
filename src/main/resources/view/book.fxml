@@ -96,7 +96,7 @@
                   </HBox>
                   <HBox alignment="CENTER_LEFT" layoutX="17.0" layoutY="64.0" prefHeight="28.0" prefWidth="389.0">
                      <children>
-                        <Label prefHeight="9.0" prefWidth="55.0" text="Published">
+                        <Label prefHeight="9.0" prefWidth="55.0" text="Published in">
                            <font>
                               <Font size="11.0" />
                            </font>

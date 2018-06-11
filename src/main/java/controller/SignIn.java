@@ -86,7 +86,7 @@ class SignIn {
                 clearInputFields();
                 loginErrorLabel.setVisible(false);
                 MainController.getInstance().setCurrentUser(user);
-                MainController.getInstance().loadNavigationPanel(); // Should be changed to load home when home is ready.
+                MainController.getInstance().loadNavigationPanel();
             }
         } catch (SQLException e) {
             passwordField.clear();
