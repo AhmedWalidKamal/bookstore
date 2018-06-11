@@ -150,9 +150,14 @@ class CartItemController {
         quantityField.textProperty().addListener((observableValue, oldVal, newVal) -> {
             try {
                 int newCount = Integer.parseInt(newVal);
+                if (newCount <= 0) {
+                    quantityField.setText(oldVal);
+                    return;
+                }
                 MainController.getInstance().getCurrentUser().getCart().add(book.getISBN(), newCount);
                 parentController.adjustLabels();
             } catch (NumberFormatException e) {
+                quantityField.setText(oldVal);
                 return;
             }
         });
