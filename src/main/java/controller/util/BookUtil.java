@@ -89,13 +89,14 @@ public class BookUtil {
         });
     }
 
+    /* Authors are absolutely not required */
     private void initAuthors() {
-        RequiredFieldValidator validator = new RequiredFieldValidator();
-        validator.setMessage("Author(s) Required");
-        authors.getValidators().add(validator);
-        authors.focusedProperty().addListener((o, oldVal, newVal) -> {
-            if (!newVal) authors.validate();
-        });
+//        RequiredFieldValidator validator = new RequiredFieldValidator();
+//        validator.setMessage("Author(s) Required");
+//        authors.getValidators().add(validator);
+//        authors.focusedProperty().addListener((o, oldVal, newVal) -> {
+//            if (!newVal) authors.validate();
+//        });
     }
 
     private void initTitle() {
@@ -189,10 +190,10 @@ public class BookUtil {
     }
 
     private boolean validateAuthors() {
-        if (authors.getText().isEmpty()) {
-            failLabel.setText("Invalid Authors");
-            return false;
-        }
+//        if (authors.getText().isEmpty()) {
+//            failLabel.setText("Invalid Authors");
+//            return false;
+//        }
         return true;
     }
 

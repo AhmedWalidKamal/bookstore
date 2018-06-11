@@ -462,7 +462,7 @@ public class BackendServices {
     public BookList findBooks(int pageNumber, int pageSize,
                               LinkedHashMap<String, ArrayList<String>> colValues,
                               String orderCol, boolean ascending) throws SQLException {
-        return findBooks(pageNumber, pageSize, colValues, orderCol, ascending, false);
+        return findBooks(pageNumber, pageSize, colValues, orderCol, ascending, true);
     }
 
     public BookList findBooks(int pageNumber, int pageSize,

@@ -353,8 +353,8 @@ class Home {
         fetchPage(pageNumber, pageSize);
     }
 
-    void editBook(Book bookToEdit) {
-        editBookDialog = new EditBookDialog(homeRootPane, bookToEdit);
+    void editBook(Book bookToEdit, BookController controller) {
+        editBookDialog = new EditBookDialog(homeRootPane, bookToEdit, controller);
         editBookDialog.show();
     }
 
