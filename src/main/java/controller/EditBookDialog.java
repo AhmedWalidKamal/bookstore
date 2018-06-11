@@ -95,8 +95,9 @@ class EditBookDialog {
                 newVals.put(Book.MIN_THRESHOLD_COLNAME, threshold.getText());
                 newVals.put(Book.PUBLICATION_YEAR_COLNAME, publicationYear.getText());
                 newVals.put(Book.CATEGORY_COLNAME, category.getValue().getText());
-                // Modify authors
-                boolean success = MainController.getInstance().getBackendService().modifyBook(bookToEdit.getISBN(), newVals);
+                boolean success = MainController.getInstance().
+                        getBackendService().modifyBook(bookToEdit.getISBN(),
+                        newVals, bookUtil.getAuthorsList(authors.getText()));
                 if (success) {
                     snackbar.enqueue(new JFXSnackbar.SnackbarEvent("Book Edited Successfully"));
                     failLabel.setVisible(false);
