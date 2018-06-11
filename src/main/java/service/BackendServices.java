@@ -530,6 +530,98 @@ public class BackendServices {
                 publicationYear, price, category, bookAuthors);
     }
 
+    public boolean modifyBook(String ISBN, LinkedHashMap<String, String> colValues, Collection<String> authorsList) throws SQLException {
+        if (authorsList == null || authorsList.isEmpty()) {
+            return modifyBook(ISBN, colValues);
+        }
+        if (colValues == null || colValues.isEmpty()) {
+            return false;
+        }
+        DBConnection.setAutoCommit(false);
+
+        StringBuilder modifyBookQuery = new StringBuilder();
+        modifyBookQuery.append("UPDATE BOOK SET");
+
+        int i = 0;
+        for (String colName : colValues.keySet()) {
+            modifyBookQuery.append(" BOOK.`");
+            modifyBookQuery.append(colName);
+            modifyBookQuery.append("` = ? ");
+            if (i++ < colValues.size() - 1) {
+                modifyBookQuery.append(",");
+            }
+        }
+        modifyBookQuery.append(" WHERE " + Book.ISBN_COLNAME + " = ?");
+
+        PreparedStatement bookUpdateStatement = null;
+        PreparedStatement authorInsertStatement = null;
+        PreparedStatement authorDeleteStatement = null;
+        boolean retVal = false;
+
+        try {
+            // Update Book Table
+            bookUpdateStatement = DBConnection.prepareStatement(modifyBookQuery.toString());
+            int pos = 1;
+            for (String colName : colValues.keySet()) {
+                bookUpdateStatement.setString(pos++, colValues.get(colName));
+            }
+            bookUpdateStatement.setString(pos, ISBN);
+
+            System.out.println(bookUpdateStatement);
+            int modifyBookUpdateCount = bookUpdateStatement.executeUpdate(); // Should be > 0
+
+            // Delete Authors corresponding to old ISBN
+            String sqlQuery = "DELETE FROM BOOK_AUTHORS WHERE " +
+                    Book.ISBN_COLNAME + " = ?";
+
+            authorDeleteStatement = DBConnection.prepareStatement(sqlQuery);
+            authorDeleteStatement.setString(1, ISBN);
+
+            System.out.println(authorDeleteStatement);
+            int deleteAuthorsUpdateCount = authorDeleteStatement.executeUpdate();
+
+            // Insert Authors corresponding to new ISBN
+            StringBuilder authorInsertQuery = new StringBuilder();
+                authorInsertQuery.append("INSERT INTO BOOK_AUTHORS VALUES ");
+
+                for (int j = 0; j < authorsList.size(); j++) {
+                    authorInsertQuery.append("(?, ?)");
+
+                    if (j < authorsList.size() - 1) {
+                        authorInsertQuery.append(", ");
+                    }
+                }
+                authorInsertStatement = DBConnection.prepareStatement(authorInsertQuery.toString());
+
+                int currPos = 1;
+
+                for (String author : authorsList) {
+                    authorInsertStatement.setString(currPos++, ISBN);
+                    authorInsertStatement.setString(currPos++, author);
+                }
+
+                System.out.println(authorInsertStatement);
+                authorInsertStatement.executeUpdate();
+
+                DBConnection.commit();
+                retVal = true;
+        } catch (SQLException ex) {
+            DBConnection.rollback();
+        } finally {
+            if (bookUpdateStatement != null) {
+                bookUpdateStatement.close();
+            }
+            if (authorDeleteStatement != null) {
+                authorDeleteStatement.close();
+            }
+            if (authorInsertStatement != null) {
+                authorInsertStatement.close();
+            }
+            DBConnection.setAutoCommit(true);
+        }
+        return retVal;
+    }
+
     public boolean modifyBook(String ISBN, LinkedHashMap<String, String> colValues) throws SQLException {
         if (colValues == null || colValues.isEmpty()) {
             return false;

@@ -60,11 +60,6 @@ class Profile {
         initFields();
     }
 
-    @FXML
-    private void handlePlaceOrder(ActionEvent event) {
-        
-    }
-
     private void initFields() {
         System.out.println(this.firstName.getText());
         this.firstName.setText(MainController.getInstance()

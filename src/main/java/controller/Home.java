@@ -24,9 +24,10 @@ class Home {
     private int pageNumber;
     private String orderCol;
     private boolean ascending;
+    private EditBookDialog editBookDialog;
 
     @FXML
-    private AnchorPane homeRootPane;
+    private StackPane homeRootPane;
 
     @FXML
     private JFXTextField searchTextField;
@@ -129,7 +130,7 @@ class Home {
                 System.out.println("Error: book was null");
                 continue;
             }
-            BookController bookController = new BookController(book);
+            BookController bookController = new BookController(book, this);
             bookCardPane.getCards().add(bookController.getNode());
         }
     }
@@ -207,6 +208,21 @@ class Home {
         pageSize = newSize;
         pageNumber = (firstElement - 1) / pageSize + 1;
         fetchPage(pageNumber, pageSize);
+    }
+
+    void deleteBook(String ISBN) {
+        try {
+            boolean success = MainController.getInstance().getBackendService().deleteBook(ISBN);
+            if (success) {
+                handleRefresh();
+                snackBar.enqueue(new JFXSnackbar.SnackbarEvent("Book deleted successfully"));
+            } else {
+                snackBar.enqueue(new JFXSnackbar.SnackbarEvent("Failed to delete book"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            snackBar.enqueue(new JFXSnackbar.SnackbarEvent("Failed to delete book"));
+        }
     }
 
     private void handleRefresh() {
@@ -334,5 +350,10 @@ class Home {
 
     private void initHome() {
         fetchPage(pageNumber, pageSize);
+    }
+
+    void editBook(Book bookToEdit) {
+        editBookDialog = new EditBookDialog(homeRootPane, bookToEdit);
+        editBookDialog.show();
     }
 }

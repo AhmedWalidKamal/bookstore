@@ -8,7 +8,6 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Paint;
 import model.Book;
 import model.BookAuthor;
@@ -55,6 +54,12 @@ class BookController {
     @FXML
     private JFXButton addToCartButton;
 
+    @FXML
+    private JFXButton deleteButton;
+
+    @FXML
+    private JFXButton editButton;
+
     private static final String BOOK_COVER_PATH = "/view" + File.separator
             + "images" + File.separator + "books" + File.separator;
     private static final String DEFAULT_IMAGE = "default.png";
@@ -62,8 +67,9 @@ class BookController {
 
     private Book book;
     private Node node;
+    private Home home;
 
-    BookController(Book book) {
+    BookController(Book book, Home home) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/book.fxml"));
         fxmlLoader.setController(this);
         try {
@@ -77,6 +83,7 @@ class BookController {
         initFields();
         initCoverImage();
         initRating();
+        this.home = home;
     }
 
     Node getNode() {
@@ -85,6 +92,8 @@ class BookController {
 
     private void initButtons() {
         addToCartButton.setOnAction(actionEvent -> addToCart());
+        deleteButton.setOnAction(actionEvent -> deleteBook());
+        editButton.setOnAction(actionEvent -> editBook());
     }
 
     private void addToCart() {
@@ -158,5 +167,13 @@ class BookController {
                 star.setFill(Paint.valueOf("#cccccc"));
             }
         }
+    }
+
+    private void deleteBook() {
+        this.home.deleteBook(book.getISBN());
+    }
+
+    private void editBook() {
+        this.home.editBook(book);
     }
 }
