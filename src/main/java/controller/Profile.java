@@ -62,33 +62,48 @@ class Profile {
     }
 
     private void initFields() {
-        System.out.println(this.firstName.getText());
-        this.firstName.setText(MainController.getInstance()
-                .getCurrentUser().getProfile().getFirstName());
-        this.lastName.setText(MainController.getInstance()
-                .getCurrentUser().getProfile().getLastName());
+        if (MainController.getInstance()
+                .getCurrentUser().getProfile().getFirstName() != null) {
+            this.firstName.setText(MainController.getInstance()
+                    .getCurrentUser().getProfile().getFirstName());
+        }
+        if (MainController.getInstance()
+                .getCurrentUser().getProfile().getLastName() != null) {
+            this.lastName.setText(MainController.getInstance()
+                    .getCurrentUser().getProfile().getLastName());
+        }
         LocalDate localDate = MainController.getInstance()
                 .getCurrentUser().getProfile().getBirthDate();
         if (localDate != null) {
             System.out.println(localDate.toString());
             this.birthDate.setValue(localDate);
         }
-        this.phoneNumber.setText(MainController.getInstance()
-                .getCurrentUser().getProfile().getPhoneNumber());
-        this.shippingAddress.setText(MainController.getInstance()
-                .getCurrentUser().getProfile().getShippingAddress());
+        if (MainController.getInstance()
+                .getCurrentUser().getProfile().getPhoneNumber() != null) {
+            this.phoneNumber.setText(MainController.getInstance()
+                    .getCurrentUser().getProfile().getPhoneNumber());
+        }
+        if (MainController.getInstance()
+                .getCurrentUser().getProfile().getShippingAddress() != null) {
 
+            this.shippingAddress.setText(MainController.getInstance()
+                    .getCurrentUser().getProfile().getShippingAddress());
+        }
         /// TODO: Load avatar from DB if there was one.
     }
 
     private void handleUpdateProfileAction() {
         if (validPhoneNumber()) {
             LinkedHashMap<String, String> colsValues = new LinkedHashMap<>();
-            colsValues.put(BookstoreUser.UserProfile.FIRST_NAME_COLNAME, firstName.getText().trim());
-            colsValues.put(BookstoreUser.UserProfile.LAST_NAME_COLNAME, lastName.getText().trim());
-            colsValues.put(BookstoreUser.UserProfile.SHIPPING_ADDRESS_COLNAME, shippingAddress.getText().trim());
-            colsValues.put(BookstoreUser.UserProfile.BIRTH_DATE_COLNAME, birthDate.getValue().toString());
-            colsValues.put(BookstoreUser.UserProfile.PHONE_NUMBER_COLNAME, phoneNumber.getText().trim());
+            colsValues.put(BookstoreUser.UserProfile.FIRST_NAME_COLNAME, firstName.getText());
+            colsValues.put(BookstoreUser.UserProfile.LAST_NAME_COLNAME, lastName.getText());
+            colsValues.put(BookstoreUser.UserProfile.SHIPPING_ADDRESS_COLNAME, shippingAddress.getText());
+            if (birthDate.getValue() == null) {
+                colsValues.put(BookstoreUser.UserProfile.BIRTH_DATE_COLNAME, null);
+            } else {
+                colsValues.put(BookstoreUser.UserProfile.BIRTH_DATE_COLNAME, birthDate.getValue().toString());
+            }
+            colsValues.put(BookstoreUser.UserProfile.PHONE_NUMBER_COLNAME, phoneNumber.getText());
             try {
                 MainController.getInstance().getBackendService().updateUser(
                         MainController.getInstance().getCurrentUser().getUserID(), colsValues);
@@ -145,6 +160,7 @@ class Profile {
     }
 
     private boolean validPhoneNumber() {
-        return phoneNumber.getText().matches("[0-9]+") && phoneNumber.getText().length() == 11;
+        return phoneNumber.getText() == null || phoneNumber.getText().isEmpty() ||
+                phoneNumber.getText().matches("[0-9]+") && phoneNumber.getText().length() == 11;
     }
 }
