@@ -108,7 +108,7 @@ class BookController {
         System.out.println(quantity);
     }
 
-    private void initFields() {
+    public void initFields() {
         if (titleLabel == null) {
             System.out.println("Error Title label was null");
         }
@@ -132,6 +132,9 @@ class BookController {
         if (authorsLabel.getText().isEmpty()) {
             authorsLabel.setVisible(false);
             byLabel.setVisible(false);
+        } else {
+            authorsLabel.setVisible(true);
+            byLabel.setVisible(true);
         }
         categoryLabel.setText(book.getCategory());
         String year = "";
@@ -178,6 +181,6 @@ class BookController {
     }
 
     private void editBook() {
-        this.home.editBook(book);
+        this.home.editBook(book, this);
     }
 }

@@ -462,7 +462,7 @@ public class BackendServices {
     public BookList findBooks(int pageNumber, int pageSize,
                               LinkedHashMap<String, ArrayList<String>> colValues,
                               String orderCol, boolean ascending) throws SQLException {
-        return findBooks(pageNumber, pageSize, colValues, orderCol, ascending, false);
+        return findBooks(pageNumber, pageSize, colValues, orderCol, ascending, true);
     }
 
     public BookList findBooks(int pageNumber, int pageSize,
@@ -660,6 +660,7 @@ public class BackendServices {
         } catch (SQLException ex) {
             DBConnection.rollback();
         } finally {
+            DBConnection.setAutoCommit(true);
             if (bookUpdateStatement != null) {
                 bookUpdateStatement.close();
             }
@@ -669,7 +670,6 @@ public class BackendServices {
             if (authorInsertStatement != null) {
                 authorInsertStatement.close();
             }
-            DBConnection.setAutoCommit(true);
         }
         return retVal;
     }
@@ -1105,7 +1105,7 @@ public class BackendServices {
     private void showJasperReport(Stage primaryStage, String reportTitle,
                                   String inputFile) {
         HashMap<String, Object> parametersMap = new HashMap<>();
-        parametersMap.put("Report Title", reportTitle);
+        parametersMap.put("ReportTitle", reportTitle);
 
         JasperReportService.showJasperReport(primaryStage, reportTitle,
                 jasperPath + File.separator + inputFile + JasperReportService.JASPER_EXTENSION,

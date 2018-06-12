@@ -13,6 +13,8 @@ import model.BookAuthor;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.StringJoiner;
 
@@ -36,8 +38,9 @@ class EditBookDialog {
     private JFXDialog dialog;
     private BookUtil bookUtil;
     private Book bookToEdit;
+    private BookController bookController;
 
-    EditBookDialog(StackPane homeRootPane, Book bookToEdit) {
+    EditBookDialog(StackPane homeRootPane, Book bookToEdit, BookController bookController) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/editBook.fxml"));
         fxmlLoader.setController(this);
         try {
@@ -46,6 +49,7 @@ class EditBookDialog {
             e.printStackTrace();
         }
         this.bookToEdit = bookToEdit;
+        this.bookController = bookController;
         dialog = new JFXDialog(homeRootPane, dialogContentRootPane, JFXDialog.DialogTransition.CENTER);
         bookUtil = new BookUtil(isbn, title, authors, publisher, price, threshold, publicationYear, category, failLabel);
         snackbar = new JFXSnackbar(homeRootPane);
@@ -57,7 +61,7 @@ class EditBookDialog {
     private void initFields() {
         this.isbn.setText(bookToEdit.getISBN());
         this.title.setText(bookToEdit.getBookTitle());
-        StringJoiner authorsStringJoiner = new StringJoiner(",");
+        StringJoiner authorsStringJoiner = new StringJoiner(", ");
         for (BookAuthor author : bookToEdit.getAuthors()) {
             authorsStringJoiner.add(author.getAuthorName());
         }
@@ -101,6 +105,22 @@ class EditBookDialog {
                 if (success) {
                     snackbar.enqueue(new JFXSnackbar.SnackbarEvent("Book Edited Successfully"));
                     failLabel.setVisible(false);
+                    bookToEdit.setISBN(isbn.getText());
+                    bookToEdit.setBookTitle(title.getText());
+                    bookToEdit.setPublisherName(publisher.getText());
+                    bookToEdit.setPrice(Double.parseDouble(price.getText()));
+                    bookToEdit.setMinThreshold(Integer.parseInt(threshold.getText()));
+                    bookToEdit.setPublicationYear(LocalDate.of(Integer.parseInt(
+                            publicationYear.getText()), 1, 1));
+                    bookToEdit.setCategory(category.getValue().getText());
+                    bookToEdit.getAuthors().clear();
+                    for (String author : authors.getText().split(",")) {
+                        BookAuthor newAuthor = new BookAuthor();
+                        newAuthor.setISBN(bookToEdit.getISBN());
+                        newAuthor.setAuthorName(author.trim());
+                        bookToEdit.getAuthors().add(newAuthor);
+                    }
+                    bookController.initFields();
                     dialog.close();
                 } else {
                     failLabel.setText("Failed to edit book!");

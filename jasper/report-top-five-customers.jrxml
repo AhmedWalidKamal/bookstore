@@ -13,12 +13,12 @@
    <parameter name = "ReportTitle" class = "java.lang.String"/>
 
    <queryString>
-      <![CDATA[SELECT USER_NAME As "User", EMAIL AS `Email`, SUM(QUANTITY) AS `Copies Purchased`,
+      <![CDATA[SELECT USER_NAME As `User`, EMAIL AS `Email`, SUM(QUANTITY) AS `Copies Purchased`,
        SUM(TOTAL_COST) AS `Total Cost` FROM USER_PURCHASES
         NATURAL JOIN BOOKSTORE_USER
          WHERE PURCHASE_DATE BETWEEN (CURRENT_DATE() - INTERVAL 3 MONTH)
           AND
-           CURRENT_DATE() GROUP BY `User` ORDER BY `Copies Purchased` DESC LIMIT 5;]]>
+           CURRENT_DATE() GROUP BY `User`, `Email` ORDER BY `Copies Purchased` DESC LIMIT 5;]]>
    </queryString>
 
    <field name = "User" class = "java.lang.String">
