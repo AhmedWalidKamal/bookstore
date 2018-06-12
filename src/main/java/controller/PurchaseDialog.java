@@ -55,8 +55,6 @@ class PurchaseDialog {
             e.printStackTrace();
         }
 
-        shippingAddressField.setText(MainController.getInstance().getCurrentUser().getProfile().getShippingAddress());
-
         dialog = new JFXDialog(rootPane, dialogContentRootPane, JFXDialog.DialogTransition.TOP);
 
         init();
@@ -68,6 +66,7 @@ class PurchaseDialog {
         expirationDateField.resetValidation();
         shippingAddressField.resetValidation();
         clearInputFields();
+        shippingAddressField.setText(MainController.getInstance().getCurrentUser().getProfile().getShippingAddress());
         dialog.show();
     }
 

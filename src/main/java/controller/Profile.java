@@ -5,10 +5,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import model.BookstoreUser;
 
-import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -18,6 +19,9 @@ class Profile {
 
     @FXML
     private JFXTextField firstName, lastName, phoneNumber, shippingAddress;
+
+    @FXML
+    private ImageView userAvatar;
 
     @FXML
     private JFXPasswordField oldPassword, newPassword;
@@ -78,7 +82,10 @@ class Profile {
         this.shippingAddress.setText(MainController.getInstance()
                 .getCurrentUser().getProfile().getShippingAddress());
 
-        /// TODO: Load avatar from DB if there was one.
+        // Added the default user photo.
+        Image image = new Image(getClass().getResource("/view/images/user/user-default-photo.png").toExternalForm());
+        userAvatar.setImage(image);
+        //TODO: upload the user photo from DB if there is one.
     }
 
     private void handleUpdateProfileAction() {

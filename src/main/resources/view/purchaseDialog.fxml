@@ -26,7 +26,7 @@
             <Font size="11.0" />
          </font>
       </JFXTextField>
-      <JFXTextField fx:id="expirationDateField" layoutX="287.0" layoutY="78.0" prefHeight="26.0" prefWidth="259.0" promptText="Expiration Date (MM/YYYY)">
+      <JFXTextField fx:id="expirationDateField" layoutX="287.0" layoutY="78.0" prefHeight="26.0" prefWidth="259.0" promptText="Expiration Date (MM/20YY)">
          <font>
             <Font size="11.0" />
          </font>

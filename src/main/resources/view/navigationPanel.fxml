@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.gluonhq.charm.glisten.control.Avatar?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
@@ -11,18 +10,17 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-
 <StackPane fx:id="navigationPanelRootPane" xmlns="http://javafx.com/javafx/8.0.162-ea" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <BorderPane fx:id="borderPane" styleClass="BorderPane" stylesheets="@css/navigationPanel.css">
          <left>
              <VBox styleClass="nav-panel">
                  <VBox styleClass="user-info">
-                     <Avatar fx:id="userAvatar" styleClass="user-info-avatar">
+                  <ImageView fx:id="userAvatar" fitHeight="48.0" fitWidth="52.0" pickOnBounds="true" preserveRatio="true">
                      <VBox.margin>
-                        <Insets bottom="20.0" />
+                        <Insets bottom="10.0" />
                      </VBox.margin>
-                  </Avatar>
+                  </ImageView>
                      <Label fx:id="userName" styleClass="user-info-username" text="Username">
                      <VBox.margin>
                         <Insets bottom="15.0" />

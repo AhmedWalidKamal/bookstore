@@ -1,11 +1,11 @@
 package controller;
 
-import com.gluonhq.charm.glisten.control.Avatar;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -22,7 +22,7 @@ class NavigationPanel implements CartListener {
     private BorderPane borderPane;
 
     @FXML
-    private Avatar userAvatar;
+    private ImageView userAvatar;
 
     @FXML
     private Label userName;
@@ -173,7 +173,7 @@ class NavigationPanel implements CartListener {
     }
 
     private void signOut() {
-        // Clear the status of the current session.
+        cartLabel.setText("0");
         profile = null;
         shoppingCart = null;
         home = null;
