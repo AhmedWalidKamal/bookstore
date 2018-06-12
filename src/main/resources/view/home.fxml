@@ -24,7 +24,7 @@
                      <HBox.margin>
                         <Insets />
                      </HBox.margin></JFXButton>
-                  <JFXCheckBox text="Partial Matching">
+                  <JFXCheckBox fx:id="partialMatchingCheckBox" text="Partial Matching">
                      <HBox.margin>
                         <Insets left="10.0" />
                      </HBox.margin>

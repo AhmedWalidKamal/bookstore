@@ -2,6 +2,7 @@ package controller;
 
 import com.gluonhq.charm.glisten.control.CardPane;
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXSnackbar;
 import com.jfoenix.controls.JFXTextField;
 import javafx.fxml.FXML;
@@ -53,6 +54,9 @@ class Home {
     private Label pageNumberLabel;
     @FXML
     private JFXButton nextPageButton;
+
+    @FXML
+    private JFXCheckBox partialMatchingCheckBox;
 
     private String sortAscImage;
 
@@ -112,6 +116,8 @@ class Home {
         searchColumns.put("category", Book.CATEGORY_COLNAME);
         searchColumns.put("publisher", Book.PUBLISHER_NAME_COLNAME);
 
+        partialMatchingCheckBox.visibleProperty().bind(searchTextField.textProperty().isEmpty().not());
+
         initButtons();
         initHome();
 
@@ -145,7 +151,7 @@ class Home {
 
             if (isSearching && condition != null) {
                 books = MainController.getInstance().getBackendService().findBooks(pageNumber, pageSize,
-                        condition, orderCol, ascending);
+                        condition, orderCol, ascending, partialMatchingCheckBox.isSelected());
             } else {
                 books = MainController.getInstance().getBackendService().getBooks(pageNumber,
                         pageSize, orderCol, ascending);
@@ -290,6 +296,7 @@ class Home {
                 isSearching = true;
                 pageNumber = 1;
                 searchTextField.setDisable(true);
+                partialMatchingCheckBox.setDisable(true);
                 fetchPage(pageNumber, pageSize);
             } else {
                 snackBar.enqueue(new JFXSnackbar.SnackbarEvent("Invalid search query!"));
@@ -301,6 +308,7 @@ class Home {
             condition = null;
             pageNumber = 1;
             searchTextField.setDisable(false);
+            partialMatchingCheckBox.setDisable(false);
             fetchPage(pageNumber, pageSize);
         }
     }
