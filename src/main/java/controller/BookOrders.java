@@ -34,7 +34,7 @@ import java.util.Date;
 
 public class BookOrders {
 
-    private static final int MAX_ORDERS_PER_PAGE = 5;
+    private static final int MAX_ORDERS_PER_PAGE = 10;
 
     @FXML
     private StackPane ordersRootPane;

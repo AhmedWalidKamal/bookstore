@@ -660,6 +660,7 @@ public class BackendServices {
         } catch (SQLException ex) {
             DBConnection.rollback();
         } finally {
+            DBConnection.setAutoCommit(true);
             if (bookUpdateStatement != null) {
                 bookUpdateStatement.close();
             }
@@ -669,7 +670,6 @@ public class BackendServices {
             if (authorInsertStatement != null) {
                 authorInsertStatement.close();
             }
-            DBConnection.setAutoCommit(true);
         }
         return retVal;
     }
