@@ -2,6 +2,7 @@
 
 <?import com.gluonhq.charm.glisten.control.CardPane?>
 <?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXCheckBox?>
 <?import com.jfoenix.controls.JFXScrollPane?>
 <?import com.jfoenix.controls.JFXTextField?>
 <?import javafx.geometry.Insets?>
@@ -12,15 +13,22 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
-<StackPane fx:id="homeRootPane" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" stylesheets="@css/home.css">
+<StackPane fx:id="homeRootPane" prefHeight="600.0" prefWidth="581.0" stylesheets="@css/home.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <AnchorPane styleClass="home-pane">
          <children>
             <HBox alignment="CENTER" layoutX="-1.0" layoutY="25.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0">
                <children>
-                  <JFXTextField fx:id="searchTextField" promptText="Search" styleClass="search-bar" />
-                  <JFXButton fx:id="searchButton" prefHeight="32.0" prefWidth="40.0" styleClass="search-btn" text=" " />
+                  <JFXTextField fx:id="searchTextField" minWidth="375.0" prefWidth="375.0" promptText="Search" styleClass="search-bar" />
+                  <JFXButton fx:id="searchButton" prefHeight="32.0" prefWidth="40.0" styleClass="search-btn" text=" ">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin></JFXButton>
+                  <JFXCheckBox text="Partial Matching">
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </JFXCheckBox>
                </children>
             </HBox>
             <HBox alignment="CENTER_LEFT" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="85">
