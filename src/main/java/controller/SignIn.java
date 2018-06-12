@@ -56,6 +56,8 @@ class SignIn {
     void clearInputFields() {
         userNameTextField.clear();
         passwordField.clear();
+        userNameTextField.resetValidation();
+        passwordField.resetValidation();
     }
 
     void displayRegMessage() {

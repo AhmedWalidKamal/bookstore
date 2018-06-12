@@ -63,6 +63,9 @@ class SignUp {
         emailTextField.clear();
         userNameTextField.clear();
         passwordField.clear();
+        emailTextField.resetValidation();
+        userNameTextField.resetValidation();
+        passwordField.resetValidation();
     }
 
     private void init() {
