@@ -93,22 +93,22 @@ class JasperReportService {
 //            e.printStackTrace();
 //        }
 //
-//        try {
-//            compileJasper(reportTopFiveFileName);
-//        } catch (JRException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            compileJasper(reportTopFiveFileName);
+        } catch (JRException e) {
+            e.printStackTrace();
+        }
 
-        printReport(DBConnection, reportTopFiveTitle, reportTopFiveFileName + JASPER_EXTENSION,
-                reportTopFiveFileName + PDF_EXTENSION);
-
-        printReport(DBConnection, reportTopTenBooks,
-                reportTopTenBooksFileName + JASPER_EXTENSION,
-                reportTopTenBooksFileName + PDF_EXTENSION);
-
-        printReport(DBConnection, reportLastMonthTitle,
-                reportLastMonthFileName + JASPER_EXTENSION,
-                reportLastMonthFileName + PDF_EXTENSION);
+//        printReport(DBConnection, reportTopFiveTitle, reportTopFiveFileName + JASPER_EXTENSION,
+//                reportTopFiveFileName + PDF_EXTENSION);
+//
+//        printReport(DBConnection, reportTopTenBooks,
+//                reportTopTenBooksFileName + JASPER_EXTENSION,
+//                reportTopTenBooksFileName + PDF_EXTENSION);
+//
+//        printReport(DBConnection, reportLastMonthTitle,
+//                reportLastMonthFileName + JASPER_EXTENSION,
+//                reportLastMonthFileName + PDF_EXTENSION);
 
 
 
