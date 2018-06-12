@@ -97,9 +97,7 @@ public class MainController {
     }
 
     void loadNavigationPanel() {
-        if (navigationPanel == null) {
-            navigationPanel = new NavigationPanel();
-        }
+        navigationPanel = new NavigationPanel();
         navigationPanel.setUserInfo(getCurrentUser().getUserName(), getCurrentUser().getEmail()
                                                     , getCurrentUser().getProfile().getUserPhotoPath());
         if (currentUser.getUserGroup().equalsIgnoreCase("customer")) {
